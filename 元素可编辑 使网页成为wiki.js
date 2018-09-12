@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.13
+// @version      0.14
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -11,14 +11,15 @@
 
 (function() {
     'use strict';
+    //对本地打开的网页的修改貌似无法保存......
+
     //获取鼠标位置
-    //终极目标应该是无论什么只要在网页中打开就都能修改
     var path;
     document.addEventListener('mousemove', (event) => {
         path = event.path;
     });
 
-    //监测 alt+q 事件
+    //监测 alt+?事件
     document.addEventListener('keydown', (event) => {
         if (!event.altKey)
             return;
@@ -27,24 +28,35 @@
                 break;
             case "Backspace": deleteSelect()
                 break;
+            case "c": copyTitle()
+                break;
         }
     });
-
+    /**
+     * 设置元素可编辑并获取 逐级向上获取titile
+     */
     function editSelect() {
         var selectElem = path[0]
         selectElem.setAttribute("contenteditable", "true");
         copyTitle()
     }
-    //这个功能还不够完善 不能被保存....
-    //有个想法  将他们移动到一个容器中 然后将这个容器的innerhtml删掉
+
+    const div=document.createElement('div');
+    div.style.display="none";
+    /**
+     * 移除选中的元素 不使用remove 是因为这个方法并没有真正删除
+     */
     function deleteSelect() {
-        path[0].parentNode.removeChild(path[0]);
+        div.appendChild(path[0]);
+        div.innerHTML=""
     }
-    //设置一个影藏的文本框用来复制文本
     const input = document.createElement('input');
     input.setAttribute('type', 'hidden');
     input.setAttribute('readonly', 'readonly');
     document.body.appendChild(input);
+     /**
+     * 设置一个影藏的文本框用来复制文本
+     */
     function copyTitle() {
         //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
         var title
@@ -60,7 +72,7 @@
     }
 })();
 
-//修改了选择文本的方法，增加了删除元素的功能
+//完善了删除元素的功能
 // #使网页可编辑
 // *将鼠标移动到你要修改的文本上方 按下 alt+q 就会将该元素设为可编辑
 // *                               按下 alt+ Backspace （删除键） 就会删除该元素，如果失败请尝试移动一下鼠标
