@@ -28,7 +28,7 @@
                 break;
             case "Backspace": deleteSelect()
                 break;
-            case "c": copyTitle()
+            case "c": copyTitle()//复制title
                 break;
         }
     });
