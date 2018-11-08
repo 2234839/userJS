@@ -24,19 +24,19 @@
     document.addEventListener('keydown', function (event) {
         event.preventDefault();
         event.returnValue = false;
-        if (!event.shiftKey)
+        if (!event.ctrlKey)
             return false;
-        switch (event.keyCode) {
-            case 81: //  q
+        switch (event.code) {
+            case 'KeyQ':
                 editSelect();
                 break;
-            case 8: //8
+            case 'Backspace':
                 deleteSelect();
                 break;
-            case 67: //c
+            case 'KeyC': //c
                 copyTitle(); //复制title
                 break;
-            case 87: //w
+            case "KeyW": //w
                 console.log("path", path);
                 break;
         }
