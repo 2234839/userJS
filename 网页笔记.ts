@@ -21,8 +21,6 @@
     });
     //监测 shift+?事件
     document.addEventListener('keydown', (event) => {
-        event.preventDefault()
-        event.returnValue=false;
         if (!event.ctrlKey)
             return false;
         switch (event.code) {
@@ -33,12 +31,15 @@
                 deleteSelect()
                 break;
             case 'KeyC'://c
-                copyTitle()//复制title
-                break;
+                copyTitle()//复制title  这里不加break是为了不影响正常的复制行为
             case "KeyW"://w
                 console.log("path",path)
                 break;
-        }
+            default:
+                return true
+        }//屏蔽浏览器对于这些快捷键的响应避免一些奇奇怪怪的操作
+        event.preventDefault()
+        event.returnValue=false;
         return false;
     });
     /**
@@ -102,15 +103,17 @@
         return path
     }
 })();
-//完善了删除元素的功能
-// #使网页可编辑
-// *将鼠标移动到你要修改的文本上方 按下 alt+q 就会将该元素设为可编辑
-// *                               按下 alt+ Backspace （删除键） 就会删除该元素，如果失败请尝试移动一下鼠标
-// *                               按下 alt+c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
-// *程序会将该元素设置为可编辑,并且复制它的title到剪贴板中.
-// ##为什么要开发这样一个插件?
-// *这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
-// *突然察觉我为什么要多此一举?
-// *直接在网页中写笔记不好吗
-// *所以有了这个插件,你可以利用这个插件来修改网页上的文本,然后按下ctrl+s将这写改动永久保存在本地
-// *建议允许插件在文件地址上运行
+/*
+# 使网页可编辑
+* 将鼠标移动到你要修改的文本上方 按下 ctrl+q 就会将该元素设为可编辑，并且复制它的title到剪贴板中
+*                               按下 ctrl+ Backspace （删除键） 就会删除该元素
+*                               按下 ctrl+c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
+## 为什么要开发这样一个插件?
+* 这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
+* 突然察觉我为什么要多此一举?
+* 直接在网页中写笔记不好吗
+* 所以有了这个插件,你可以利用这个插件来修改网页上的文本,然后按下ctrl+s将这些改动永久保存在本地
+* 建议允许插件在文件地址上运行
+## v0.17 的更新介绍
+* 这次主要是修改了逻辑，更加优雅，还有添加了红边框能更清楚的知道到底是再对那个元素进行了操作
+*/
