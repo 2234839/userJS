@@ -40,7 +40,6 @@
         selectElem.setAttribute("contenteditable", "true");
         copyTitle()
     }
-
     const div=document.createElement('div');
     div.style.display="none";
     /**
