@@ -1,3 +1,5 @@
+import { a } from "./m1";
+
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -8,8 +10,11 @@
 // @include      *
 // @grant        none
 // ==/UserScript==
+
 (function() {
     'use strict';
+    console.log(a);
+
     //对本地打开的网页的修改貌似无法保存......
     //获取鼠标位置
     let path:HTMLElement[];
@@ -89,7 +94,7 @@
                 return
             }
             elemt.style.outline=""
-        },500)         
+        },500)
     }
     /**
      * 获取一个元素的所有父节点到html为止
