@@ -142,5 +142,3 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 })();
 },{}]},{},["qts0"], null)
-//# sourceMappingURL=/允许复制.js.map
-//测试同步功能
