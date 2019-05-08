@@ -1,17 +1,27 @@
-const input_copy=document.createElement('input')
-// input_copy.style.display='none'
+/** 用于复制文本的input */
+const input_copy = document.createElement('input')
+// input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
+input_copy.setAttribute('style', `
+        position: absolute;
+        top: -9999px;
+        left: -9999px;`)
 document.body.appendChild(input_copy)
 
+/** 工具类 */
 export default {
 
-    copyTitle(el:HTMLElement) {
-        //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
-        let title = el.getAttribute("title");
-        console.log('title',title)
-        input_copy.value=title
-        input_copy.select();
-        console.log(document.execCommand('copy')); //复制
-        console.log(el, title,input_copy,input_copy.value);
+    /** 复制一个元素的titil 或者一段字符串到剪贴板 */
+    copyTitle(el: HTMLElement | string) {
+        let title
+        if (typeof el === 'string')
+            title = el
+        else
+            title = el.getAttribute("title");
 
+        input_copy.setAttribute('readonly', 'readonly');
+        input_copy.setAttribute('value', title);
+        input_copy.select();
+        input_copy.setSelectionRange(0, 9999);
+        document.execCommand('copy')
     }
 }

@@ -60,7 +60,9 @@ import $ from "./util";
                 deleteSelect();
                 break;
             case 'KeyC':
-                copyTitle(); //复制title  这里不加break是为了不影响正常的复制行为
+                $.copyTitle(path[0])
+                if(event.ctrlKey===false)//因为ctrl+c不应该被阻止
+                    break
             case "KeyW":
                 console.log("path", path);
                 break;
@@ -77,8 +79,9 @@ import $ from "./util";
     function editSelect() {
         var selectElem = path[0];
         selectElem.contentEditable = 'true';
-        copyTitle();
+        $.copyTitle(selectElem)
     }
+
     var div = document.createElement('div');
     div.style.display = "none";
     /** 移除选中的元素 不使用remove 是因为这个方法并没有真正删除 */
@@ -86,29 +89,7 @@ import $ from "./util";
         div.appendChild(path[0]);
         div.innerHTML = "";
     }
-    var input = document.createElement('input');
-    input.setAttribute('type', 'hidden');
-    input.setAttribute('readonly', 'readonly');
-    document.body.appendChild(input);
-    /**
-    * 设置一个影藏的文本框用来复制文本
-    */
-    function copyTitle() {
-        console.log(path[0], path);
 
-        $.copyTitle(path[0])
-        //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
-        var title;
-        //这里抛弃后两个元素是因为他们不是一般的elem元素了
-        for (var index = 0; index < path.length - 2; index++) {
-            title = path[index].getAttribute("title");
-            if (title)
-                break;
-        }
-        input.setAttribute('value', title);
-        input.select();
-        document.execCommand('copy'); //复制
-    }
     function outline(elemt:HTMLElement) {
         if (elemt.style.outline == "2px solid red")
             return;
@@ -121,9 +102,7 @@ import $ from "./util";
             elemt.style.outline = "";
         }, 500);
     }
-    /**
-     * 获取一个元素的所有父节点到html为止
-     */
+    /** 获取一个元素的所有父节点到html为止 */
     function nodePath(...path:HTMLElement[]) {
         while (path[path.length-1].parentElement != null) {
             path.push(path[path.length - 1].parentElement);

@@ -124,19 +124,24 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var input_copy = document.createElement('input'); // input_copy.style.display='none'
 
+/** 用于复制文本的input */
+var input_copy = document.createElement('input'); // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
+
+input_copy.setAttribute('style', "\n        position: absolute;\n        top: -9999px;\n        left: -9999px;");
 document.body.appendChild(input_copy);
-var _default = {
-  copyTitle: function copyTitle(el) {
-    //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
-    var title = el.getAttribute("title");
-    console.log('title', title);
-    input_copy.value = title;
-    input_copy.select();
-    console.log(document.execCommand('copy')); //复制
+/** 工具类 */
 
-    console.log(el, title, input_copy, input_copy.value);
+var _default = {
+  /** 复制一个元素的titil 或者一段字符串到剪贴板 */
+  copyTitle: function copyTitle(el) {
+    var title;
+    if (typeof el === 'string') title = el;else title = el.getAttribute("title");
+    input_copy.setAttribute('readonly', 'readonly');
+    input_copy.setAttribute('value', title);
+    input_copy.select();
+    input_copy.setSelectionRange(0, 9999);
+    document.execCommand('copy');
   }
 };
 exports.default = _default;
@@ -215,8 +220,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         break;
 
       case 'KeyC':
-        copyTitle();
-      //复制title  这里不加break是为了不影响正常的复制行为
+        _util.default.copyTitle(path[0]);
+
+        if (event.ctrlKey === false) //因为ctrl+c不应该被阻止
+          break;
 
       case "KeyW":
         console.log("path", path);
@@ -239,7 +246,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   function editSelect() {
     var selectElem = path[0];
     selectElem.contentEditable = 'true';
-    copyTitle();
+
+    _util.default.copyTitle(selectElem);
   }
 
   var div = document.createElement('div');
@@ -249,32 +257,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   function deleteSelect() {
     div.appendChild(path[0]);
     div.innerHTML = "";
-  }
-
-  var input = document.createElement('input');
-  input.setAttribute('type', 'hidden');
-  input.setAttribute('readonly', 'readonly');
-  document.body.appendChild(input);
-  /**
-  * 设置一个影藏的文本框用来复制文本
-  */
-
-  function copyTitle() {
-    console.log(path[0], path);
-
-    _util.default.copyTitle(path[0]); //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
-
-
-    var title; //这里抛弃后两个元素是因为他们不是一般的elem元素了
-
-    for (var index = 0; index < path.length - 2; index++) {
-      title = path[index].getAttribute("title");
-      if (title) break;
-    }
-
-    input.setAttribute('value', title);
-    input.select();
-    document.execCommand('copy'); //复制
   }
 
   function outline(elemt) {
@@ -289,9 +271,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       elemt.style.outline = "";
     }, 500);
   }
-  /**
-   * 获取一个元素的所有父节点到html为止
-   */
+  /** 获取一个元素的所有父节点到html为止 */
 
 
   function nodePath() {
