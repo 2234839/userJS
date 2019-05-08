@@ -117,90 +117,104 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"IOSg":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.a = void 0;
-var a = "导入模块的尝试";
-exports.a = a;
-},{}],"GvD6":[function(require,module,exports) {
-"use strict";
-
-var _m = require("./m1");
-
-// ==UserScript==
+})({"网页笔记.ts":[function(require,module,exports) {
+var global = arguments[3];
+"use strict"; // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.17
+// @version      0.18
 // @description  所见即所得！
 // @author       You
 // @match        *
 // @include      *
-// @grant        none
+// @grant        GM_getValue    //油猴的存储接口
+// @grant        GM_setValue
 // ==/UserScript==
-(function () {
-  'use strict';
 
-  console.log(_m.a); //对本地打开的网页的修改貌似无法保存......
-  //获取鼠标位置
+(function () {
+  'use strict'; //为了在非油猴环境下存储依旧能起一部分的作用
+
+  if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
+    localStorage.getItem = window.GM_getValue;
+    localStorage.setItem = window.GM_setValue;
+  } //对本地打开的网页的修改 需要在浏览器中设置允许在文件地址上运行
+
+  /** 存储鼠标所在位置的所有元素 */
+
 
   var path;
-  document.addEventListener('mouseover', function (event) {
+  /** 监听鼠标移动 */
+
+  function mouse(event) {
     if (event.target instanceof HTMLElement) {
       path = nodePath(event.target);
       outline(event.target);
     }
-  }); //监测 shift+?事件
+  }
+
+  var global = {
+    state: 0,
+    elemtEdit: false
+  }; //监测按键事件
 
   document.addEventListener('keydown', function (event) {
-    if (!event.ctrlKey) return false;
+    var code = event.code;
 
-    switch (event.code) {
+    if (code === 'F2') {
+      global.elemtEdit = !global.elemtEdit;
+      console.log('切换编辑状态', global.elemtEdit);
+      if (global.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+        document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
+      event.preventDefault();
+      event.returnValue = false;
+      return false;
+    } //有元素获得焦点，视为正在输入文本，不执行下面的功能
+
+
+    if (document.querySelectorAll(":focus").length > 0) {
+      return true;
+    }
+
+    switch (code) {
       case 'KeyQ':
         editSelect();
         break;
 
-      case 'Backspace':
+      case 'KeyD':
         deleteSelect();
         break;
 
       case 'KeyC':
-        //c
         copyTitle();
       //复制title  这里不加break是为了不影响正常的复制行为
 
       case "KeyW":
-        //w
         console.log("path", path);
         break;
 
       default:
         return true;
-    } //屏蔽浏览器对于这些快捷键的响应避免一些奇奇怪怪的操作
-
-
-    event.preventDefault();
-    event.returnValue = false;
-    return false;
+    }
   });
-  /**
-   * 设置元素可编辑并获取 逐级向上获取titile
-   */
+  /** 监听焦点事件，用于判断元素是否被修改 */
+
+  function focus(event) {
+    console.log(event);
+  }
+
+  document.addEventListener('focus', focus, true); //useCapture  参数设为true来实现事件委托，但不同浏览器的实现可能不同.....
+
+  /** 设置元素可编辑并获取 逐级向上获取titile*/
 
   function editSelect() {
     var selectElem = path[0];
-    selectElem.setAttribute("contenteditable", "true");
+    selectElem.contentEditable = 'true';
     copyTitle();
   }
 
   var div = document.createElement('div');
   div.style.display = "none";
-  /**
-   * 移除选中的元素 不使用remove 是因为这个方法并没有真正删除
-   */
+  /** 移除选中的元素 不使用remove 是因为这个方法并没有真正删除 */
 
   function deleteSelect() {
     div.appendChild(path[0]);
@@ -246,30 +260,220 @@ var _m = require("./m1");
    */
 
 
-  function nodePath(node) {
-    var path = [node];
+  function nodePath() {
+    for (var _len = arguments.length, path = new Array(_len), _key = 0; _key < _len; _key++) {
+      path[_key] = arguments[_key];
+    }
 
-    while (node.parentElement != null) {
-      node = node.parentElement;
-      path.push(node);
+    while (path[path.length - 1].parentElement != null) {
+      path.push(path[path.length - 1].parentElement);
     }
 
     return path;
   }
 })();
-/*
-# 使网页可编辑
-* 将鼠标移动到你要修改的文本上方 按下 ctrl+q 就会将该元素设为可编辑，并且复制它的title到剪贴板中
-*                               按下 ctrl+ Backspace （删除键） 就会删除该元素
-*                               按下 ctrl+c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
-## 为什么要开发这样一个插件?
-* 这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
-* 突然察觉我为什么要多此一举?
-* 直接在网页中写笔记不好吗
-* 所以有了这个插件,你可以利用这个插件来修改网页上的文本,然后按下ctrl+s将这些改动永久保存在本地
-* 建议允许插件在文件地址上运行
-## v0.17 的更新介绍
-* 这次主要是修改了逻辑，更加优雅，还有添加了红边框能更清楚的知道到底是再对那个元素进行了操作
-*/
-},{"./m1":"IOSg"}]},{},["GvD6"], null)
+},{}],"C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var global = arguments[3];
+var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+
+function Module(moduleName) {
+  OldModule.call(this, moduleName);
+  this.hot = {
+    data: module.bundle.hotData,
+    _acceptCallbacks: [],
+    _disposeCallbacks: [],
+    accept: function (fn) {
+      this._acceptCallbacks.push(fn || function () {});
+    },
+    dispose: function (fn) {
+      this._disposeCallbacks.push(fn);
+    }
+  };
+  module.bundle.hotData = null;
+}
+
+module.bundle.Module = Module;
+var checkedAssets, assetsToAccept;
+var parent = module.bundle.parent;
+
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+  var hostname = "" || location.hostname;
+  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57957" + '/');
+
+  ws.onmessage = function (event) {
+    checkedAssets = {};
+    assetsToAccept = [];
+    var data = JSON.parse(event.data);
+
+    if (data.type === 'update') {
+      var handled = false;
+      data.assets.forEach(function (asset) {
+        if (!asset.isNew) {
+          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
+
+          if (didAccept) {
+            handled = true;
+          }
+        }
+      }); // Enable HMR for CSS by default.
+
+      handled = handled || data.assets.every(function (asset) {
+        return asset.type === 'css' && asset.generated.js;
+      });
+
+      if (handled) {
+        console.clear();
+        data.assets.forEach(function (asset) {
+          hmrApply(global.parcelRequire, asset);
+        });
+        assetsToAccept.forEach(function (v) {
+          hmrAcceptRun(v[0], v[1]);
+        });
+      } else {
+        window.location.reload();
+      }
+    }
+
+    if (data.type === 'reload') {
+      ws.close();
+
+      ws.onclose = function () {
+        location.reload();
+      };
+    }
+
+    if (data.type === 'error-resolved') {
+      console.log('[parcel] ✨ Error resolved');
+      removeErrorOverlay();
+    }
+
+    if (data.type === 'error') {
+      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
+      removeErrorOverlay();
+      var overlay = createErrorOverlay(data);
+      document.body.appendChild(overlay);
+    }
+  };
+}
+
+function removeErrorOverlay() {
+  var overlay = document.getElementById(OVERLAY_ID);
+
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function createErrorOverlay(data) {
+  var overlay = document.createElement('div');
+  overlay.id = OVERLAY_ID; // html encode message and stack trace
+
+  var message = document.createElement('div');
+  var stackTrace = document.createElement('pre');
+  message.innerText = data.error.message;
+  stackTrace.innerText = data.error.stack;
+  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
+  return overlay;
+}
+
+function getParents(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return [];
+  }
+
+  var parents = [];
+  var k, d, dep;
+
+  for (k in modules) {
+    for (d in modules[k][1]) {
+      dep = modules[k][1][d];
+
+      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
+        parents.push(k);
+      }
+    }
+  }
+
+  if (bundle.parent) {
+    parents = parents.concat(getParents(bundle.parent, id));
+  }
+
+  return parents;
+}
+
+function hmrApply(bundle, asset) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (modules[asset.id] || !bundle.parent) {
+    var fn = new Function('require', 'module', 'exports', asset.generated.js);
+    asset.isNew = !modules[asset.id];
+    modules[asset.id] = [fn, asset.deps];
+  } else if (bundle.parent) {
+    hmrApply(bundle.parent, asset);
+  }
+}
+
+function hmrAcceptCheck(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (!modules[id] && bundle.parent) {
+    return hmrAcceptCheck(bundle.parent, id);
+  }
+
+  if (checkedAssets[id]) {
+    return;
+  }
+
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+
+  return getParents(global.parcelRequire, id).some(function (id) {
+    return hmrAcceptCheck(global.parcelRequire, id);
+  });
+}
+
+function hmrAcceptRun(bundle, id) {
+  var cached = bundle.cache[id];
+  bundle.hotData = {};
+
+  if (cached) {
+    cached.hot.data = bundle.hotData;
+  }
+
+  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
+    cached.hot._disposeCallbacks.forEach(function (cb) {
+      cb(bundle.hotData);
+    });
+  }
+
+  delete bundle.cache[id];
+  bundle(id);
+  cached = bundle.cache[id];
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    cached.hot._acceptCallbacks.forEach(function (cb) {
+      cb();
+    });
+
+    return true;
+  }
+}
+},{}]},{},["C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","网页笔记.ts"], null)
 //# sourceMappingURL=/网页笔记.js.map
