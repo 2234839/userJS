@@ -117,8 +117,37 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"网页笔记.ts":[function(require,module,exports) {
+})({"util.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var input_copy = document.createElement('input'); // input_copy.style.display='none'
+
+document.body.appendChild(input_copy);
+var _default = {
+  copyTitle: function copyTitle(el) {
+    //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
+    var title = el.getAttribute("title");
+    console.log('title', title);
+    input_copy.value = title;
+    input_copy.select();
+    console.log(document.execCommand('copy')); //复制
+
+    console.log(el, title, input_copy, input_copy.value);
+  }
+};
+exports.default = _default;
+},{}],"网页笔记.ts":[function(require,module,exports) {
 var global = arguments[3];
+"use strict";
+
+var _util = _interopRequireDefault(require("./util"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 "use strict"; // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -130,6 +159,7 @@ var global = arguments[3];
 // @grant        GM_getValue    //油猴的存储接口
 // @grant        GM_setValue
 // ==/UserScript==
+
 
 (function () {
   'use strict'; //为了在非油猴环境下存储依旧能起一部分的作用
@@ -230,7 +260,11 @@ var global = arguments[3];
   */
 
   function copyTitle() {
-    //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
+    console.log(path[0], path);
+
+    _util.default.copyTitle(path[0]); //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
+
+
     var title; //这里抛弃后两个元素是因为他们不是一般的elem元素了
 
     for (var index = 0; index < path.length - 2; index++) {
@@ -272,7 +306,30 @@ var global = arguments[3];
     return path;
   }
 })();
-},{}],"C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+/*
+# 使网页可编辑
+* 按下F2启用元素编辑，再次按下可以关闭
+* 将鼠标移动到你要修改的文本上方 按下 q 就会将该元素设为可编辑，并且复制它的title到剪贴板中
+*                           按下 d 就会删除该元素
+*                           按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
+* 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
+
+## 为什么要开发这样一个插件?
+* 这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
+* 突然察觉我为什么要多此一举?
+* 直接在网页中写笔记不好吗
+* 所以有了这个插件,你可以利用这个插件来修改网页上的文本,然后按下ctrl+s将这些改动永久保存在本地
+* 建议允许插件在文件地址上运行
+* 正在想方法让笔记存在云端
+
+## v0.19 的更新介绍
+* 最近得空了，开始更新
+* 因为（ctrl + 其他键）的模式 在一些浏览器上还是会出现冲突，故改为F2键来作为开关
+* 下一版本将实现便签功能，以及撤销功能
+* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
+* 希望各位能将你们想要的功能进行一个反馈
+*/
+},{"./util":"util.ts"}],"C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

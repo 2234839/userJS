@@ -1,3 +1,5 @@
+import $ from "./util";
+
 "use strict";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -92,6 +94,9 @@
     * 设置一个影藏的文本框用来复制文本
     */
     function copyTitle() {
+        console.log(path[0], path);
+
+        $.copyTitle(path[0])
         //获取元素的描述并将他们添加到剪贴板  目前支持mdn 其它的可能支持
         var title;
         //这里抛弃后两个元素是因为他们不是一般的elem元素了

@@ -83,5 +83,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+.map
 
 node_modules
