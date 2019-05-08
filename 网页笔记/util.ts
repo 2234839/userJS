@@ -25,3 +25,5 @@ export default {
         document.execCommand('copy')
     }
 }
+
+console.log(1211);

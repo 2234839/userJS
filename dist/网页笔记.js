@@ -145,6 +145,7 @@ var _default = {
   }
 };
 exports.default = _default;
+console.log(1211);
 },{}],"网页笔记.ts":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
@@ -309,7 +310,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts"}],"C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -337,7 +338,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57957" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50678" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -512,5 +513,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["C:/Users/22348/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","网页笔记.ts"], null)
-//# sourceMappingURL=/网页笔记.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","网页笔记.ts"], null)
+//# sourceMappingURL=../dist/网页笔记.js.map
