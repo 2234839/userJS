@@ -2,6 +2,11 @@ import $ from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl } from "./Command";
 
+/** 调试用 */
+(<any>window).CommandControl = CommandControl
+document.getElementById('backout').onclick = () => { CommandControl.backout()}
+document.getElementById('reform').onclick = () => { CommandControl.reform()}
+
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -13,9 +18,8 @@ import { deleteSelect, CommandControl } from "./Command";
 // @grant        GM_getValue    //油猴的存储接口
 // @grant        GM_setValue
 // ==/UserScript==
-(function () {
-    /** 调试用 */
-    (<any>window).CommandControl = CommandControl
+;(function () {
+
     //为了在非油猴环境下存储依旧能起一部分的作用
     if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
         localStorage.getItem = (<any>window).GM_getValue;
@@ -75,7 +79,6 @@ import { deleteSelect, CommandControl } from "./Command";
     /** 元素失去焦点 */
     document.addEventListener('focusout',function(){
         console.log(event.target);
-
     })
 
     /** 设置元素可编辑并获取 逐级向上获取titile*/

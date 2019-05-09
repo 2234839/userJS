@@ -182,12 +182,12 @@ function () {
     _classCallCheck(this, deleteSelect);
 
     this.selectEL = select;
-    this.selectEL_display = select.style.display;
   }
 
   _createClass(deleteSelect, [{
     key: "do",
     value: function _do() {
+      this.selectEL_display = this.selectEL.style.display;
       this.selectEL.style.display = "none";
       return this;
     }
@@ -200,28 +200,44 @@ function () {
   }, {
     key: "redo",
     value: function redo() {
-      this.selectEL.style.display = this.selectEL_display;
+      this.do();
       return this;
     }
   }]);
 
   return deleteSelect;
 }();
-/** 命令栈 */
+/** 命令控制器 */
 
 
 exports.deleteSelect = deleteSelect;
 var CommandControl = {
   commandStack: [],
+  backoutStack: [],
   pushCommand: function pushCommand(command) {
     return this.commandStack.push(command);
   },
   run: function run(command) {
-    return CommandControl.pushCommand(command.do());
+    this.backoutStack.splice(0, this.backoutStack.length);
+    return this.pushCommand(command.do());
   },
   backout: function backout() {
-    console.log(this);
-    return 1;
+    if (this.commandStack.length === 0) {
+      console.warn('命令栈已空，无法进行撤销');
+      return;
+    }
+
+    var command = this.commandStack.pop();
+    return this.backoutStack.push(command.undo());
+  },
+  reform: function reform() {
+    if (this.backoutStack.length === 0) {
+      console.warn('撤销栈已空，无法进行重做');
+      return;
+    }
+
+    var command = this.backoutStack.pop();
+    return this.commandStack.push(command.redo());
   }
 };
 exports.CommandControl = CommandControl;
@@ -236,21 +252,19 @@ var _Command = require("./Command");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// ==UserScript==
-// @name         网页文本编辑,做笔记的好选择
-// @namespace    http://tampermonkey.net/
-// @version      0.18
-// @description  所见即所得！
-// @author       You
-// @match        *
-// @include      *
-// @grant        GM_getValue    //油猴的存储接口
-// @grant        GM_setValue
-// ==/UserScript==
-(function () {
-  /** 调试用 */
-  window.CommandControl = _Command.CommandControl; //为了在非油猴环境下存储依旧能起一部分的作用
+/** 调试用 */
+window.CommandControl = _Command.CommandControl;
 
+document.getElementById('backout').onclick = function () {
+  _Command.CommandControl.backout();
+};
+
+document.getElementById('reform').onclick = function () {
+  _Command.CommandControl.reform();
+};
+
+(function () {
+  //为了在非油猴环境下存储依旧能起一部分的作用
   if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
     localStorage.getItem = window.GM_getValue;
     localStorage.setItem = window.GM_setValue;

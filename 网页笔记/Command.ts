@@ -1,57 +1,77 @@
 
 /** 每一个命令都应该实现的东西 */
-interface Command{
+interface Command {
     /** 执行这个命令 */
-    do():this
-    /** 撤销命令 */
+    do(): this
+    /** 撤销这个命令 */
     undo(): this
     /** 重新执行命令 */
     redo(): this
 }
 
 /** 删除一个元素 */
-export class deleteSelect implements Command{
+export class deleteSelect implements Command {
     selectEL: HTMLElement
-    selectEL_display:string
-    constructor(/** 要被删除的元素 */ select:HTMLElement){
-        this.selectEL=select
-        this.selectEL_display=select.style.display
+    selectEL_display: string
+    constructor(/** 要被删除的元素 */ select: HTMLElement) {
+        this.selectEL = select
     }
-    do(){
-        this.selectEL.style.display="none"
+    do() {
+        this.selectEL_display = this.selectEL.style.display
+        this.selectEL.style.display = "none"
         return this
     }
-    undo(){
+    undo() {
         this.selectEL.style.display = this.selectEL_display
         return this
     }
-    redo(){
-        this.selectEL.style.display = this.selectEL_display
+    redo() {
+        this.do()
         return this
     }
 }
 
-/** 命令栈 */
-export const CommandControl:CommandControl={
-    commandStack : [],
-    pushCommand: function (command: Command){
+/** 命令控制器 */
+export const CommandControl: CommandControl = {
+    commandStack: [],
+    backoutStack: [],
+    pushCommand(command: Command) {
         return this.commandStack.push(command)
     },
-    run: function (command: Command) {
-        return CommandControl.pushCommand(command.do())
+    run(command: Command) {
+        this.backoutStack.splice(0,this.backoutStack.length)
+        return this.pushCommand(command.do())
     },
-    backout:function(){
-        console.log(this);
-
-        return 1
+    backout() {
+        if (this.commandStack.length===0){
+            console.warn('命令栈已空，无法进行撤销');
+            return
+        }
+        const command=this.commandStack.pop()
+        return this.backoutStack.push(command.undo())
+    },
+    reform(){
+        if (this.backoutStack.length === 0) {
+            console.warn('撤销栈已空，无法进行重做');
+            return
+        }
+        const command = this.backoutStack.pop()
+        return this.commandStack.push(command.redo())
     }
 }
 
-
-/** 命令栈的接口 */
-interface CommandControl{
-    commandStack:Command[]
-    pushCommand(command :Command):number
+/** 命令控制器的接口 */
+interface CommandControl {
+    /** 命令栈，执行过的 */
+    commandStack: Command[]
+    /** 撤销栈，被撤销的命令 */
+    backoutStack: Command[]
+    /** 向命令栈中添加一个命令 */
+    pushCommand(command: Command): number
+    /** 执行一个命令并加入命令栈，清空撤销栈 */
     run(command: Command): number
-    backout():number
+    /** 撤销最后一个命令并加入撤消栈 */
+    backout(): number
+    /** 重做,重做撤销栈中的命令,命令会被转移至命令栈 */
+    reform():number
 }
