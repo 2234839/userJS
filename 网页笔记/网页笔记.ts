@@ -1,11 +1,9 @@
 import $ from "./util";
 import config from "./config";
-import { deleteSelect, CommandControl } from "./Command";
+import { deleteSelect, CommandControl, editSelect } from "./Command";
 
 /** 调试用 */
-(<any>window).CommandControl = CommandControl
-document.getElementById('backout').onclick = () => { CommandControl.backout()}
-document.getElementById('reform').onclick = () => { CommandControl.reform()}
+// (<any>window).CommandControl = CommandControl
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -59,7 +57,7 @@ document.getElementById('reform').onclick = () => { CommandControl.reform()}
         }
         switch (code) {
             case 'KeyQ':
-                editSelect(path[0]);
+                CommandControl.run(new editSelect(path[0]))
                 break;
             case 'KeyD':
                 CommandControl.run(new deleteSelect(path[0]))
@@ -71,6 +69,12 @@ document.getElementById('reform').onclick = () => { CommandControl.reform()}
             case "KeyW":
                 path[0].contentEditable = 'false';
                 break;
+            case 'KeyZ':
+                CommandControl.backout()
+                break;
+            case "KeyY":
+                CommandControl.reform()
+                break;
             default:
                 return true;
         }
@@ -80,12 +84,6 @@ document.getElementById('reform').onclick = () => { CommandControl.reform()}
     document.addEventListener('focusout',function(){
         console.log(event.target);
     })
-
-    /** 设置元素可编辑并获取 逐级向上获取titile*/
-    function editSelect(selectElem:HTMLElement) {
-        selectElem.contentEditable = 'true';
-        $.copyTitle(selectElem)
-    }
 
 
     /** 轮廓线,用以显示当前元素 */
@@ -112,10 +110,12 @@ document.getElementById('reform').onclick = () => { CommandControl.reform()}
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
-* 将鼠标移动到你要修改的文本上方 按下 q 就会将该元素设为可编辑，并且复制它的title到剪贴板中
+* 将鼠标移动到你要修改的文本上方 按下 q 就会将该元素设为可编辑
 *                           按下 w 设置元素为不可编辑
 *                           按下 d 就会删除该元素
-*                           按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
+*                           按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
+*                           按下 z 将会撤销一次命令
+*                           按下 y 将重做一次命令
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 
@@ -129,6 +129,7 @@ document.getElementById('reform').onclick = () => { CommandControl.reform()}
 
 ## v0.19 的更新介绍
 * 最近得空了，开始更新
+* 新增了撤销和重做功能，优化了代码
 * 因为（ctrl + 其他键）的模式 在一些浏览器上还是会出现冲突，故改为F2键来作为开关
 * 下一版本将实现便签功能，以及撤销功能
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端

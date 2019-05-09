@@ -31,6 +31,28 @@ export class deleteSelect implements Command {
     }
 }
 
+/** 使元素可编辑 */
+export class editSelect implements Command {
+    selectEL: HTMLElement
+    selectEL_contentEditable: string
+    constructor(/** 要操作的元素 */ select: HTMLElement) {
+        this.selectEL = select
+    }
+    do() {
+        this.selectEL_contentEditable=this.selectEL.contentEditable
+        this.selectEL.contentEditable = 'true';
+        return this
+    }
+    undo() {
+        this.selectEL.contentEditable=this.selectEL_contentEditable
+        return this
+    }
+    redo() {
+        this.do()
+        return this
+    }
+}
+
 /** 命令控制器 */
 export const CommandControl: CommandControl = {
     commandStack: [],
