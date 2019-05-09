@@ -1,7 +1,7 @@
 import $ from "./util";
 import config from "./config";
+import { deleteSelect, CommandControl } from "./Command";
 
-"use strict";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -14,7 +14,8 @@ import config from "./config";
 // @grant        GM_setValue
 // ==/UserScript==
 (function () {
-    'use strict';
+    /** 调试用 */
+    (<any>window).CommandControl = CommandControl
     //为了在非油猴环境下存储依旧能起一部分的作用
     if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
         localStorage.getItem = (<any>window).GM_getValue;
@@ -57,8 +58,7 @@ import config from "./config";
                 editSelect(path[0]);
                 break;
             case 'KeyD':
-                console.log(new deleteSelect(path[0]));
-
+                CommandControl.run(new deleteSelect(path[0]))
                 break;
             case 'KeyC':
                 $.copyTitle(path[0])

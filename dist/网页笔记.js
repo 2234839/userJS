@@ -158,6 +158,73 @@ var _default = {
   elemtEdit: location.href.includes('127.0.0.1')
 };
 exports.default = _default;
+},{}],"Command.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommandControl = exports.deleteSelect = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/** 删除一个元素 */
+var deleteSelect =
+/*#__PURE__*/
+function () {
+  function deleteSelect(
+  /** 要被删除的元素 */
+  select) {
+    _classCallCheck(this, deleteSelect);
+
+    this.selectEL = select;
+    this.selectEL_display = select.style.display;
+  }
+
+  _createClass(deleteSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL.style.display = "none";
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.style.display = this.selectEL_display;
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.selectEL.style.display = this.selectEL_display;
+      return this;
+    }
+  }]);
+
+  return deleteSelect;
+}();
+/** 命令栈 */
+
+
+exports.deleteSelect = deleteSelect;
+var CommandControl = {
+  commandStack: [],
+  pushCommand: function pushCommand(command) {
+    return this.commandStack.push(command);
+  },
+  run: function run(command) {
+    return CommandControl.pushCommand(command.do());
+  },
+  backout: function backout() {
+    console.log(this);
+    return 1;
+  }
+};
+exports.CommandControl = CommandControl;
 },{}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
@@ -165,9 +232,11 @@ var _util = _interopRequireDefault(require("./util"));
 
 var _config = _interopRequireDefault(require("./config"));
 
+var _Command = require("./Command");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-"use strict"; // ==UserScript==
+// ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
 // @version      0.18
@@ -178,10 +247,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // @grant        GM_getValue    //油猴的存储接口
 // @grant        GM_setValue
 // ==/UserScript==
-
-
 (function () {
-  'use strict'; //为了在非油猴环境下存储依旧能起一部分的作用
+  /** 调试用 */
+  window.CommandControl = _Command.CommandControl; //为了在非油猴环境下存储依旧能起一部分的作用
 
   if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
     localStorage.getItem = window.GM_getValue;
@@ -229,7 +297,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         break;
 
       case 'KeyD':
-        console.log(new deleteSelect(path[0]));
+        _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
+
         break;
 
       case 'KeyC':
@@ -313,7 +382,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -341,7 +410,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61220" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61347" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
