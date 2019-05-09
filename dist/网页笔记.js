@@ -126,7 +126,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 /** 用于复制文本的input */
-var input_copy = document.createElement('input'); // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
+var input_copy = document.createElement('input');
+input_copy.id = '__'; // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
 
 input_copy.setAttribute('style', "\n        position: absolute;\n        top: -9999px;\n        left: -9999px;");
 document.body.appendChild(input_copy);
@@ -145,12 +146,24 @@ var _default = {
   }
 };
 exports.default = _default;
-console.log(1211);
+},{}],"config.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  state: 0,
+  elemtEdit: location.href.includes('127.0.0.1')
+};
+exports.default = _default;
 },{}],"网页笔记.ts":[function(require,module,exports) {
-var global = arguments[3];
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
+
+var _config = _interopRequireDefault(require("./config"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -173,8 +186,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
     localStorage.getItem = window.GM_getValue;
     localStorage.setItem = window.GM_setValue;
-  } //对本地打开的网页的修改 需要在浏览器中设置允许在文件地址上运行
-
+  }
   /** 存储鼠标所在位置的所有元素 */
 
 
@@ -188,18 +200,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
   }
 
-  var global = {
-    state: 0,
-    elemtEdit: false
-  }; //监测按键事件
+  if (_config.default.elemtEdit) {
+    document.addEventListener('mouseover', mouse);
+  } //监测按键事件
+
 
   document.addEventListener('keydown', function (event) {
     var code = event.code;
 
     if (code === 'F2') {
-      global.elemtEdit = !global.elemtEdit;
-      console.log('切换编辑状态', global.elemtEdit);
-      if (global.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+      _config.default.elemtEdit = !_config.default.elemtEdit;
+      console.log('切换编辑状态', _config.default.elemtEdit);
+      if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
         document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
       event.preventDefault();
       event.returnValue = false;
@@ -208,16 +220,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
     if (document.querySelectorAll(":focus").length > 0) {
-      return true;
+      return;
     }
 
     switch (code) {
       case 'KeyQ':
-        editSelect();
+        editSelect(path[0]);
         break;
 
       case 'KeyD':
-        deleteSelect();
+        console.log(new deleteSelect(path[0]));
         break;
 
       case 'KeyC':
@@ -227,38 +239,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
           break;
 
       case "KeyW":
-        console.log("path", path);
+        path[0].contentEditable = 'false';
         break;
 
       default:
         return true;
     }
   });
-  /** 监听焦点事件，用于判断元素是否被修改 */
+  /** 元素失去焦点 */
 
-  function focus(event) {
-    console.log(event);
-  }
-
-  document.addEventListener('focus', focus, true); //useCapture  参数设为true来实现事件委托，但不同浏览器的实现可能不同.....
-
+  document.addEventListener('focusout', function () {
+    console.log(event.target);
+  });
   /** 设置元素可编辑并获取 逐级向上获取titile*/
 
-  function editSelect() {
-    var selectElem = path[0];
+  function editSelect(selectElem) {
     selectElem.contentEditable = 'true';
 
     _util.default.copyTitle(selectElem);
   }
+  /** 轮廓线,用以显示当前元素 */
 
-  var div = document.createElement('div');
-  div.style.display = "none";
-  /** 移除选中的元素 不使用remove 是因为这个方法并没有真正删除 */
-
-  function deleteSelect() {
-    div.appendChild(path[0]);
-    div.innerHTML = "";
-  }
 
   function outline(elemt) {
     if (elemt.style.outline == "2px solid red") return;
@@ -270,7 +271,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       }
 
       elemt.style.outline = "";
-    }, 500);
+    }, 400);
   }
   /** 获取一个元素的所有父节点到html为止 */
 
@@ -291,9 +292,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
 * 将鼠标移动到你要修改的文本上方 按下 q 就会将该元素设为可编辑，并且复制它的title到剪贴板中
+*                           按下 w 设置元素为不可编辑
 *                           按下 d 就会删除该元素
 *                           按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
+* 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 
 ## 为什么要开发这样一个插件?
 * 这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
@@ -310,7 +313,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -338,7 +341,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50678" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61220" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
