@@ -8,7 +8,7 @@ import { deleteSelect, CommandControl, editSelect } from "./Command";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.18
+// @version      0.19
 // @description  所见即所得！
 // @author       You
 // @match        *
