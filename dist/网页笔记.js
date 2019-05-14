@@ -280,7 +280,89 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{}],"网页笔记.ts":[function(require,module,exports) {
+},{}],"ui/style.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Style = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Style = function Style() {
+  _classCallCheck(this, Style);
+};
+
+exports.Style = Style;
+Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+},{}],"ui/message.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Message = void 0;
+
+var _style = require("./style");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Message =
+/*#__PURE__*/
+function () {
+  function Message(_ref) {
+    var msg = _ref.msg,
+        _ref$style = _ref.style,
+        style = _ref$style === void 0 ? _style.Style.message : _ref$style;
+
+    _classCallCheck(this, Message);
+
+    this.el = document.createElement('msg-llej');
+    this.autoHideTime = 1000 * 3;
+    this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
+  }
+  /** 展示el */
+
+
+  _createClass(Message, [{
+    key: "show",
+    value: function show() {
+      document.body.appendChild(this.el);
+      return this;
+    }
+    /** 隐藏el */
+
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.el.remove();
+      return this;
+    }
+    /** 展示el  autoHideTime 毫秒后隐藏*/
+
+  }, {
+    key: "autoHide",
+    value: function autoHide() {
+      var _this = this;
+
+      this.show();
+      setTimeout(function () {
+        _this.hide();
+      }, this.autoHideTime);
+    }
+  }]);
+
+  return Message;
+}();
+
+exports.Message = Message;
+},{"./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -289,22 +371,12 @@ var _config = _interopRequireDefault(require("./config"));
 
 var _Command = require("./Command");
 
+var _message = require("./ui/message");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /** 调试用 */
-// (<any>window).CommandControl = CommandControl
-// ==UserScript==
-// @name         网页文本编辑,做笔记的好选择
-// @namespace    http://tampermonkey.net/
-// @version      0.19
-// @description  所见即所得！
-// @author       You
-// @match        *
-// @include      *
-// @grant        GM_getValue    //油猴的存储接口
-// @grant        GM_setValue
-// ==/UserScript==
-;
+window.CommandControl = _Command.CommandControl;
 
 (function () {
   //为了在非油猴环境下存储依旧能起一部分的作用
@@ -334,13 +406,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     var code = event.code;
 
     if (code === 'F2') {
-      _config.default.elemtEdit = !_config.default.elemtEdit;
-      console.log('切换编辑状态', _config.default.elemtEdit);
-      if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
-        document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
-      event.preventDefault();
-      event.returnValue = false;
-      return false;
+      return switchState(mouse, event);
     } //有元素获得焦点，视为正在输入文本，不执行下面的功能
 
 
@@ -402,7 +468,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       elemt.style.outline = "";
     }, 400);
   }
-  /** 获取一个元素的所有父节点到html为止 */
+  /** 获取一个元素的所有父节点到html为止  */
 
 
   function nodePath() {
@@ -416,7 +482,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
     return path;
   }
+  /** 切换状态 */
+
+
+  function switchState(mouse, event) {
+    _config.default.elemtEdit = !_config.default.elemtEdit;
+    console.log('切换编辑状态', _config.default.elemtEdit);
+    if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+      document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
+    event.preventDefault();
+    event.returnValue = false;
+    return false;
+  }
 })();
+
+var a = new _message.Message({
+  msg: '你好'
+});
+a.autoHide();
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
@@ -446,7 +529,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/message":"ui/message.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -474,7 +557,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61347" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49815" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,8 +1,12 @@
 const Bundler = require('parcel-bundler');
 const Path = require('path');
+const fs = require('fs');
 
+// const fileName='网页笔记'
+const fileName = process.argv[2]
 
-const fileName='网页笔记'
+console.log(fileName);
+
 
 // 入口文件路径
 const file = Path.join(__dirname, `./${fileName}/${fileName}.ts`);
@@ -34,3 +38,4 @@ const bundler = new Bundler(file, options);
     const bundle = await bundler.bundle();
     console.log("编译完毕");
 })()
+

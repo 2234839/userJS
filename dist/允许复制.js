@@ -131,10 +131,11 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 (function () {
   'use strict';
 
+  var old_addEventListener = window.addEventListener;
   window.addEventListener('load', function () {
     setTimeout(function () {
       document.removeEventListener('copy', getEventListeners(document).copy[0].listener);
-      console.log('解除cop禁制成功');
+      console.log('解除cop禁制成功 ');
     }, 2000);
   });
 
@@ -170,7 +171,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61190" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52169" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

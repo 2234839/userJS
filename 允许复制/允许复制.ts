@@ -10,10 +10,11 @@
 
 (function () {
     'use strict';
+    const old_addEventListener = window.addEventListener
     window.addEventListener('load',function(){
         setTimeout(() => {
             document.removeEventListener('copy', getEventListeners(document).copy[0].listener)
-            console.log('解除cop禁制成功');
+            console.log('解除cop禁制成功 ');
 
         }, 2000);
     })

@@ -1,9 +1,10 @@
 import $ from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect } from "./Command";
+import { Message } from "./ui/message";
 
 /** 调试用 */
-// (<any>window).CommandControl = CommandControl
+(<any>window).CommandControl = CommandControl
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -41,15 +42,7 @@ import { deleteSelect, CommandControl, editSelect } from "./Command";
     document.addEventListener('keydown', function (event) {
         var code = event.code;
         if (code === 'F2') {
-            config.elemtEdit = !config.elemtEdit;
-            console.log('切换编辑状态', config.elemtEdit );
-            if (config.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
-                document.addEventListener('mouseover', mouse);
-            else
-                document.removeEventListener("mouseover", mouse);
-            event.preventDefault();
-            event.returnValue = false;
-            return false;
+            return switchState(mouse, event);
         }
         //有元素获得焦点，视为正在输入文本，不执行下面的功能
         if (document.querySelectorAll(":focus").length > 0) {
@@ -82,7 +75,7 @@ import { deleteSelect, CommandControl, editSelect } from "./Command";
 
     /** 元素失去焦点 */
     document.addEventListener('focusout',function(){
-        console.log(event.target);
+        console.log(event.target );
     })
 
     /** 轮廓线,用以显示当前元素 */
@@ -98,14 +91,32 @@ import { deleteSelect, CommandControl, editSelect } from "./Command";
             elemt.style.outline = "";
         }, 400);
     }
-    /** 获取一个元素的所有父节点到html为止 */
+    /** 获取一个元素的所有父节点到html为止  */
     function nodePath(...path:HTMLElement[]) {
         while (path[path.length-1].parentElement != null) {
             path.push(path[path.length - 1].parentElement);
         }
         return path;
     }
+    /** 切换状态 */
+    function switchState(mouse: (event: Event) => void, event: KeyboardEvent) {
+        config.elemtEdit = !config.elemtEdit;
+        console.log('切换编辑状态', config.elemtEdit);
+        if (config.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+            document.addEventListener('mouseover', mouse);
+        else
+            document.removeEventListener("mouseover", mouse);
+        event.preventDefault();
+        event.returnValue = false;
+        return false;
+    }
 })();
+
+
+const a= new Message({msg:'你好'})
+a.autoHide()
+
+
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
