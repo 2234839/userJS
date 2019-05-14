@@ -112,8 +112,8 @@ import { Message } from "./ui/message";
     }
 })();
 
-
-const a= new Message({msg:'你好'})
+new Message({ msg: '你好' }).autoHide()
+const a= Message.getMessage({msg:'hello'})
 a.autoHide()
 
 

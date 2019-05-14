@@ -1,13 +1,22 @@
 import { Style } from "./style";
 
+const old_message:Message[]=[]
+const new_message: Message[] = []
+
 export class Message{
     el=document.createElement('msg-llej')
     private autoHideTime=1000*3
-    constructor({ msg, style = Style.message }: Message_Data){
-        this.el.innerHTML=`
-        <div style="${style}">${msg}</div>
-        `
+    constructor(par: Message_Data){
+        this.setThis(par);
+        new_message.push(this)
     }
+    /** 进行一些赋值工作 */
+    private setThis({ style,msg}:Message_Data) {
+        this.el.innerHTML = `
+        <div style="${style}">${msg}</div>
+        `;
+    }
+
     /** 展示el */
     show(){
         document.body.appendChild(this.el)
@@ -16,6 +25,7 @@ export class Message{
     /** 隐藏el */
     hide() {
         this.el.remove()
+        old_message.push(this)
         return this
     }
     /** 展示el  autoHideTime 毫秒后隐藏*/
@@ -24,6 +34,15 @@ export class Message{
         setTimeout(() => {
             this.hide()
         }, this.autoHideTime);
+    }
+    /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
+    static getMessage(par:Message_Data){
+        if(old_message.length===0){/** 没有旧的对象 */
+            return new Message(par)
+        }
+        const msg=old_message.pop()
+        msg.setThis(par)
+        new_message.push(msg)
     }
 }
 

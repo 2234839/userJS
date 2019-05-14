@@ -280,23 +280,6 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{}],"ui/style.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Style = void 0;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Style = function Style() {
-  _classCallCheck(this, Style);
-};
-
-exports.Style = Style;
-Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
-Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
 },{}],"ui/message.ts":[function(require,module,exports) {
 "use strict";
 
@@ -305,32 +288,39 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Message = void 0;
 
-var _style = require("./style");
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var old_message = [];
+var new_message = [];
+
 var Message =
 /*#__PURE__*/
 function () {
-  function Message(_ref) {
-    var msg = _ref.msg,
-        _ref$style = _ref.style,
-        style = _ref$style === void 0 ? _style.Style.message : _ref$style;
-
+  function Message(par) {
     _classCallCheck(this, Message);
 
     this.el = document.createElement('msg-llej');
     this.autoHideTime = 1000 * 3;
-    this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
+    this.setThis(par);
+    new_message.push(this);
   }
-  /** 展示el */
+  /** 进行一些赋值工作 */
 
 
   _createClass(Message, [{
+    key: "setThis",
+    value: function setThis(_ref) {
+      var style = _ref.style,
+          msg = _ref.msg;
+      this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
+    }
+    /** 展示el */
+
+  }, {
     key: "show",
     value: function show() {
       document.body.appendChild(this.el);
@@ -342,6 +332,7 @@ function () {
     key: "hide",
     value: function hide() {
       this.el.remove();
+      old_message.push(this);
       return this;
     }
     /** 展示el  autoHideTime 毫秒后隐藏*/
@@ -356,13 +347,27 @@ function () {
         _this.hide();
       }, this.autoHideTime);
     }
+    /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
+
+  }], [{
+    key: "getMessage",
+    value: function getMessage(par) {
+      if (old_message.length === 0) {
+        /** 没有旧的对象 */
+        return new Message(par);
+      }
+
+      var msg = old_message.pop();
+      msg.setThis(par);
+      new_message.push(msg);
+    }
   }]);
 
   return Message;
 }();
 
 exports.Message = Message;
-},{"./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -496,9 +501,14 @@ window.CommandControl = _Command.CommandControl;
   }
 })();
 
-var a = new _message.Message({
+new _message.Message({
   msg: '你好'
+}).autoHide();
+
+var a = _message.Message.getMessage({
+  msg: 'hello'
 });
+
 a.autoHide();
 /*
 # 使网页可编辑
