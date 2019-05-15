@@ -9,7 +9,7 @@ import { Message } from "./ui/message";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.20
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -17,6 +17,8 @@ import { Message } from "./ui/message";
 // @grant        GM_getValue    //油猴的存储接口
 // @grant        GM_setValue
 // ==/UserScript==
+
+
 ;(function () {
     //尝试解决无效的脚本头部的问题
 
