@@ -1,7 +1,6 @@
 import $ from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
-import { Message } from "./ui/message";
 import { Warning } from "./ui/warning";
 
 /** 调试用 */
@@ -74,7 +73,7 @@ import { Warning } from "./ui/warning";
                 CommandControl.run(new addNote(path[0]))
                 break;
             case "KeyS":/** 保存所有的修改 */
-                saveEdit(editElement);
+                saveChanges(editElement);
                 break;
             default:
                 return true;
@@ -111,11 +110,13 @@ import { Warning } from "./ui/warning";
         }, 400);
     }
     /** 获取一个元素的所有父节点到html为止  */
-    function nodePath(...path:Element[]) {
+    function nodePath(...path:Element[]):HTMLElement[]{
         while (path[path.length-1].parentElement != null) {
             path.push(path[path.length - 1].parentElement);
         }
-        return path;
+        /** 只需要是HTMLElement的 */
+        const HTMLElementPath =<HTMLElement[]> path.filter(el => el instanceof HTMLElement)
+        return HTMLElementPath;
     }
     /** 切换状态 */
     function switchState(mouse: (event: Event) => void, event: KeyboardEvent) {
@@ -131,9 +132,24 @@ import { Warning } from "./ui/warning";
     }
 
     /** 保存修改 */
-    function saveEdit(editElement: Set<HTMLElement>) {
-        editElement.forEach(getSelectors)
+    function saveChanges(editElement: Set<HTMLElement>) {
+        const saveList:string[] = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) :[]
+        const saveSet=new Set(saveList)
+        editElement.forEach(el=>{
+            const selectors= getSelectors(el)
+            saveSet.add(selectors)
+            localStorage.setItem(selectors,el.innerHTML)
+        })
+        localStorage.setItem('saveList',JSON.stringify([...saveSet]))
     }
+
+    /** 加载修改 */
+    function loadChanges(){
+        const saveList: string[] = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : []
+        saveList.forEach(selectors=>{
+            document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
+        })
+    }; loadChanges()
 
     /** 获取一个元素的选择器 */
     function getSelectors(el:Element){
@@ -158,7 +174,6 @@ import { Warning } from "./ui/warning";
     }
 })();
 
-
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
@@ -169,6 +184,8 @@ import { Warning } from "./ui/warning";
 *      按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
+*      按下 n 将添加一个便签笔记
+*      按下 s 保存你的所有修改
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 

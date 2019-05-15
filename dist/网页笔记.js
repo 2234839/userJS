@@ -597,6 +597,14 @@ var _warning = require("./ui/warning");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 /** 调试用 */
 window.CommandControl = _Command.CommandControl;
 
@@ -686,7 +694,7 @@ window.CommandControl = _Command.CommandControl;
 
       case "KeyS":
         /** 保存所有的修改 */
-        saveEdit(editElement);
+        saveChanges(editElement);
         break;
 
       default:
@@ -733,8 +741,13 @@ window.CommandControl = _Command.CommandControl;
     while (path[path.length - 1].parentElement != null) {
       path.push(path[path.length - 1].parentElement);
     }
+    /** 只需要是HTMLElement的 */
 
-    return path;
+
+    var HTMLElementPath = path.filter(function (el) {
+      return el instanceof HTMLElement;
+    });
+    return HTMLElementPath;
   }
   /** 切换状态 */
 
@@ -751,11 +764,29 @@ window.CommandControl = _Command.CommandControl;
   /** 保存修改 */
 
 
-  function saveEdit(editElement) {
-    editElement.forEach(getSelectors);
+  function saveChanges(editElement) {
+    var saveList = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : [];
+    var saveSet = new Set(saveList);
+    editElement.forEach(function (el) {
+      var selectors = getSelectors(el);
+      saveSet.add(selectors);
+      localStorage.setItem(selectors, el.innerHTML);
+    });
+    localStorage.setItem('saveList', JSON.stringify(_toConsumableArray(saveSet)));
   }
-  /** 获取一个元素的选择器 */
+  /** 加载修改 */
 
+
+  function loadChanges() {
+    var saveList = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : [];
+    saveList.forEach(function (selectors) {
+      document.querySelector(selectors).innerHTML = localStorage.getItem(selectors);
+    });
+  }
+
+  ;
+  loadChanges();
+  /** 获取一个元素的选择器 */
 
   function getSelectors(el) {
     /** 通过path路径来确定元素 */
@@ -790,6 +821,8 @@ window.CommandControl = _Command.CommandControl;
 *      按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
+*      按下 n 将添加一个便签笔记
+*      按下 s 保存你的所有修改
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 
