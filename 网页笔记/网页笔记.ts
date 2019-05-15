@@ -2,6 +2,7 @@ import $ from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Warning } from "./ui/warning";
+import { Message } from "./ui/message";
 
 /** 调试用 */
 (<any>window).CommandControl = CommandControl
@@ -74,6 +75,7 @@ import { Warning } from "./ui/warning";
                 break;
             case "KeyS":/** 保存所有的修改 */
                 saveChanges(editElement);
+                new Message({ msg: '保存成功' }).autoHide()
                 break;
             default:
                 return true;
@@ -142,6 +144,11 @@ import { Warning } from "./ui/warning";
         })
         localStorage.setItem('saveList',JSON.stringify([...saveSet]))
     }
+    /** 自动保存 */
+    setInterval(function(){
+        saveChanges(editElement);
+        new Message({ msg: '自动保存成功...' }).autoHide()
+    },1000*60)
 
     /** 加载修改 */
     function loadChanges(){
@@ -150,7 +157,6 @@ import { Warning } from "./ui/warning";
             document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
         })
     }; loadChanges()
-
     /** 获取一个元素的选择器 */
     function getSelectors(el:Element){
         /** 通过path路径来确定元素 */

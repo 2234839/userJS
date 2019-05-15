@@ -595,6 +595,8 @@ var _Command = require("./Command");
 
 var _warning = require("./ui/warning");
 
+var _message = require("./ui/message");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -695,6 +697,9 @@ window.CommandControl = _Command.CommandControl;
       case "KeyS":
         /** 保存所有的修改 */
         saveChanges(editElement);
+        new _message.Message({
+          msg: '保存成功'
+        }).autoHide();
         break;
 
       default:
@@ -774,8 +779,16 @@ window.CommandControl = _Command.CommandControl;
     });
     localStorage.setItem('saveList', JSON.stringify(_toConsumableArray(saveSet)));
   }
-  /** 加载修改 */
+  /** 自动保存 */
 
+
+  setInterval(function () {
+    saveChanges(editElement);
+    new _message.Message({
+      msg: '自动保存成功...'
+    }).autoHide();
+  }, 1000 * 60);
+  /** 加载修改 */
 
   function loadChanges() {
     var saveList = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : [];
@@ -842,7 +855,7 @@ window.CommandControl = _Command.CommandControl;
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
