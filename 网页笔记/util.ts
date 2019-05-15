@@ -1,6 +1,6 @@
 /** 用于复制文本的input */
 const input_copy = document.createElement('input')
-input_copy.id='__'
+input_copy.id = '__'
 // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
 input_copy.setAttribute('style', `
         position: absolute;
@@ -24,4 +24,48 @@ export default {
         input_copy.setSelectionRange(0, 9999);
         document.execCommand('copy')
     }
+}
+
+/** 获取一个元素的选择器 */
+
+export function getSelectors(el: Element) {
+    /** 通过path路径来确定元素 */
+    let pathSelectors = nodePath(el).reverse().map(el => {
+        return el.nodeName + `:nth-child(${getIndex(el)})`
+    }).join('>')
+
+    /** 通过id以及class来确定元素 */
+    let id_className = ""
+    const id = el.id
+    if (id)
+        id_className += `#${id}`
+
+    el.classList.forEach(className => {
+        id_className += `.${className}`
+    })
+
+    /** nth-child 选择 看它是第几个元素 */
+    const index = getIndex(el)
+
+    /** 最终构造出来的选择器 */
+    return `${pathSelectors}${id_className}:nth-child(${index})`
+}
+
+/** 获取元素它在第几位 */
+
+export function getIndex(el: Element) {
+    if (el.nodeName === 'HTML')
+        return 1
+    return 1 + Array.from(el.parentElement.children).findIndex(child => child === el)
+}
+
+/** 获取一个元素的所有父节点到html为止  */
+
+export function nodePath(...path: Element[]): HTMLElement[] {
+    while (path[path.length - 1].parentElement != null) {
+        path.push(path[path.length - 1].parentElement);
+    }
+    /** 只需要是HTMLElement的 */
+    const HTMLElementPath = <HTMLElement[]>path.filter(el => el instanceof HTMLElement)
+    return HTMLElementPath;
 }

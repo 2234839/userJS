@@ -1,10 +1,8 @@
-import $ from "./util";
+import $, { nodePath, getSelectors } from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
-
-
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -18,12 +16,10 @@ import { Message } from "./ui/message";
 // @grant        GM_setValue
 // ==/UserScript==
 
-
 ;(function () {
-    //尝试解决无效的脚本头部的问题
-
     /** 调试用 */
-    // (<any>window).CommandControl = CommandControl
+    (<any>window).CommandControl = CommandControl
+    console.log();
 
     //为了在非油猴环境下存储依旧能起一部分的作用
     if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
@@ -116,15 +112,7 @@ import { Message } from "./ui/message";
             elemt.style.outline = "";
         }, 400);
     }
-    /** 获取一个元素的所有父节点到html为止  */
-    function nodePath(...path:Element[]):HTMLElement[]{
-        while (path[path.length-1].parentElement != null) {
-            path.push(path[path.length - 1].parentElement);
-        }
-        /** 只需要是HTMLElement的 */
-        const HTMLElementPath =<HTMLElement[]> path.filter(el => el instanceof HTMLElement)
-        return HTMLElementPath;
-    }
+
     /** 切换状态 */
     function switchState(mouse: (event: Event) => void, event: KeyboardEvent) {
         config.elemtEdit = !config.elemtEdit;
@@ -174,39 +162,6 @@ import { Message } from "./ui/message";
         console.log('加载修改完毕');
 
     })
-
-    /** 获取一个元素的选择器 */
-    function getSelectors(el:Element){
-        /** 通过path路径来确定元素 */
-        let pathSelectors = nodePath(el).reverse().map(el =>{
-            console.log(el);
-
-            return el.nodeName + `:nth-child(${getIndex(el)})`
-        }).join('>')
-
-        /** 通过id以及class来确定元素 */
-        let id_className=""
-        const id=el.id
-        if(id)
-            id_className+=`#${id}`
-
-        el.classList.forEach(className=>{
-            id_className += `.${className}`
-        })
-
-        /** nth-child 选择 看它是第几个元素 */
-        const index =getIndex(el)
-
-        /** 最终构造出来的选择器 */
-        return `${pathSelectors}${id_className}:nth-child(${index})`
-    }
-
-    /** 获取元素它在第几位 */
-    function getIndex(el: Element){
-        if(el.nodeName==='HTML')
-            return 1
-        return 1 + Array.from(el.parentElement.children).findIndex(child => child === el)
-    }
 })();
 
 /*

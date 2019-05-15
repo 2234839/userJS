@@ -123,6 +123,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getSelectors = getSelectors;
+exports.getIndex = getIndex;
+exports.nodePath = nodePath;
 exports.default = void 0;
 
 /** 用于复制文本的input */
@@ -145,7 +148,58 @@ var _default = {
     document.execCommand('copy');
   }
 };
+/** 获取一个元素的选择器 */
+
 exports.default = _default;
+
+function getSelectors(el) {
+  /** 通过path路径来确定元素 */
+  var pathSelectors = nodePath(el).reverse().map(function (el) {
+    return el.nodeName + ":nth-child(".concat(getIndex(el), ")");
+  }).join('>');
+  /** 通过id以及class来确定元素 */
+
+  var id_className = "";
+  var id = el.id;
+  if (id) id_className += "#".concat(id);
+  el.classList.forEach(function (className) {
+    id_className += ".".concat(className);
+  });
+  /** nth-child 选择 看它是第几个元素 */
+
+  var index = getIndex(el);
+  /** 最终构造出来的选择器 */
+
+  return "".concat(pathSelectors).concat(id_className, ":nth-child(").concat(index, ")");
+}
+/** 获取元素它在第几位 */
+
+
+function getIndex(el) {
+  if (el.nodeName === 'HTML') return 1;
+  return 1 + Array.from(el.parentElement.children).findIndex(function (child) {
+    return child === el;
+  });
+}
+/** 获取一个元素的所有父节点到html为止  */
+
+
+function nodePath() {
+  for (var _len = arguments.length, path = new Array(_len), _key = 0; _key < _len; _key++) {
+    path[_key] = arguments[_key];
+  }
+
+  while (path[path.length - 1].parentElement != null) {
+    path.push(path[path.length - 1].parentElement);
+  }
+  /** 只需要是HTMLElement的 */
+
+
+  var HTMLElementPath = path.filter(function (el) {
+    return el instanceof HTMLElement;
+  });
+  return HTMLElementPath;
+}
 },{}],"config.ts":[function(require,module,exports) {
 "use strict";
 
@@ -338,22 +392,92 @@ var _message = require("./ui/message");
 
 var _note = require("./ui/note");
 
+var _util = require("./util");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-/** 删除一个元素 */
-var deleteSelect =
+/** 每一个命令都应该实现的东西 */
+var Command =
 /*#__PURE__*/
 function () {
-  function deleteSelect(
+  function Command(
   /** 要被删除的元素 */
   select) {
-    _classCallCheck(this, deleteSelect);
+    _classCallCheck(this, Command);
 
     this.selectEL = select;
+  }
+  /** 执行这个命令 */
+
+
+  _createClass(Command, [{
+    key: "do",
+    value: function _do() {
+      return this;
+    }
+    /** 撤销这个命令 */
+
+  }, {
+    key: "undo",
+    value: function undo() {
+      return this;
+    }
+    /** 重新执行命令 */
+
+  }, {
+    key: "redo",
+    value: function redo() {
+      return this.do();
+    }
+    /** 将命令变成可以转化为json字符串的对象 */
+
+  }, {
+    key: "toCommandJSON",
+    value: function toCommandJSON() {
+      return {
+        selectEL: (0, _util.getSelectors)(this.selectEL),
+        constructor: this.__proto__.constructor.name
+      };
+    }
+    /** 加载commandJSON转变为命令,通过泛型来构造对象的方式 */
+
+  }], [{
+    key: "load",
+    value: function load(obj, CLASS) {
+      return new CLASS(document.querySelector(obj.selectEL));
+    }
+  }]);
+
+  return Command;
+}();
+/** 删除一个元素 */
+
+
+var deleteSelect =
+/*#__PURE__*/
+function (_Command) {
+  _inherits(deleteSelect, _Command);
+
+  function deleteSelect() {
+    _classCallCheck(this, deleteSelect);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(deleteSelect).apply(this, arguments));
   }
 
   _createClass(deleteSelect, [{
@@ -369,15 +493,10 @@ function () {
       this.selectEL.style.display = this.selectEL_display;
       return this;
     }
-  }, {
-    key: "redo",
-    value: function redo() {
-      return this.do();
-    }
   }]);
 
   return deleteSelect;
-}();
+}(Command);
 /** 使元素可编辑 */
 
 
@@ -385,13 +504,13 @@ exports.deleteSelect = deleteSelect;
 
 var editSelect =
 /*#__PURE__*/
-function () {
-  function editSelect(
-  /** 要操作的元素 */
-  select) {
+function (_Command2) {
+  _inherits(editSelect, _Command2);
+
+  function editSelect() {
     _classCallCheck(this, editSelect);
 
-    this.selectEL = select;
+    return _possibleConstructorReturn(this, _getPrototypeOf(editSelect).apply(this, arguments));
   }
 
   _createClass(editSelect, [{
@@ -407,15 +526,10 @@ function () {
       this.selectEL.contentEditable = this.selectEL_contentEditable;
       return this;
     }
-  }, {
-    key: "redo",
-    value: function redo() {
-      return this.do();
-    }
   }]);
 
   return editSelect;
-}();
+}(Command);
 /** 使元素不可编辑 */
 
 
@@ -423,13 +537,13 @@ exports.editSelect = editSelect;
 
 var closeEditSelect =
 /*#__PURE__*/
-function () {
-  function closeEditSelect(
-  /** 要操作的元素 */
-  select) {
+function (_Command3) {
+  _inherits(closeEditSelect, _Command3);
+
+  function closeEditSelect() {
     _classCallCheck(this, closeEditSelect);
 
-    this.selectEL = select;
+    return _possibleConstructorReturn(this, _getPrototypeOf(closeEditSelect).apply(this, arguments));
   }
 
   _createClass(closeEditSelect, [{
@@ -445,15 +559,10 @@ function () {
       this.selectEL.contentEditable = this.selectEL_contentEditable;
       return this;
     }
-  }, {
-    key: "redo",
-    value: function redo() {
-      return this.do();
-    }
   }]);
 
   return closeEditSelect;
-}();
+}(Command);
 /** 新增一个笔记 */
 
 
@@ -461,13 +570,13 @@ exports.closeEditSelect = closeEditSelect;
 
 var addNote =
 /*#__PURE__*/
-function () {
-  function addNote(
-  /** 要操作的元素 */
-  select) {
+function (_Command4) {
+  _inherits(addNote, _Command4);
+
+  function addNote() {
     _classCallCheck(this, addNote);
 
-    this.selectEL = select;
+    return _possibleConstructorReturn(this, _getPrototypeOf(addNote).apply(this, arguments));
   }
 
   _createClass(addNote, [{
@@ -493,7 +602,7 @@ function () {
   }]);
 
   return addNote;
-}();
+}(Command);
 /** 命令控制器 */
 
 
@@ -535,10 +644,30 @@ var CommandControl = {
 
     var command = this.backoutStack.pop();
     return this.commandStack.push(command.redo());
+  },
+  loadCommandJSON: function loadCommandJSON(obj) {
+    if (obj.constructor === "deleteSelect") return Command.load(obj, deleteSelect);
+    if (obj.constructor === "editSelect") return Command.load(obj, editSelect);
+    if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
+    if (obj.constructor === "addNote") return Command.load(obj, addNote);
+  },
+  getCommandStackJSON: function getCommandStackJSON() {
+    return JSON.stringify(this.commandStack.map(function (a) {
+      return a.toCommandJSON();
+    }));
+  },
+  loadCommandJsonAndRun: function loadCommandJsonAndRun(str) {
+    var _this = this;
+
+    var commandJSON = JSON.parse(str);
+    commandJSON.map(this.loadCommandJSON).forEach(function (command) {
+      return _this.run(command);
+    });
+    return true;
   }
 };
 exports.CommandControl = CommandControl;
-},{"./ui/message":"ui/message.ts","./ui/note":"ui/note.ts"}],"ui/warning.ts":[function(require,module,exports) {
+},{"./ui/message":"ui/message.ts","./ui/note":"ui/note.ts","./util":"util.ts"}],"ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -587,7 +716,7 @@ exports.Warning = Warning;
 },{"./message":"ui/message.ts","./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
-var _util = _interopRequireDefault(require("./util"));
+var _util = _interopRequireWildcard(require("./util"));
 
 var _config = _interopRequireDefault(require("./config"));
 
@@ -598,6 +727,8 @@ var _warning = require("./ui/warning");
 var _message = require("./ui/message");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -621,11 +752,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 ;
 
 (function () {
-  //尝试解决无效的脚本头部的问题
-
   /** 调试用 */
-  // (<any>window).CommandControl = CommandControl
-  //为了在非油猴环境下存储依旧能起一部分的作用
+  window.CommandControl = _Command.CommandControl;
+  console.log(); //为了在非油猴环境下存储依旧能起一部分的作用
+
   if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
     localStorage.getItem = window.GM_getValue;
     localStorage.setItem = window.GM_setValue;
@@ -641,7 +771,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   function mouse(event) {
     if (event.target instanceof HTMLElement) {
-      path = nodePath(event.target);
+      path = (0, _util.nodePath)(event.target);
       outline(event.target);
     }
   }
@@ -749,25 +879,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       elemt.style.outline = "";
     }, 400);
   }
-  /** 获取一个元素的所有父节点到html为止  */
-
-
-  function nodePath() {
-    for (var _len = arguments.length, path = new Array(_len), _key = 0; _key < _len; _key++) {
-      path[_key] = arguments[_key];
-    }
-
-    while (path[path.length - 1].parentElement != null) {
-      path.push(path[path.length - 1].parentElement);
-    }
-    /** 只需要是HTMLElement的 */
-
-
-    var HTMLElementPath = path.filter(function (el) {
-      return el instanceof HTMLElement;
-    });
-    return HTMLElementPath;
-  }
   /** 切换状态 */
 
 
@@ -790,7 +901,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
     var saveSet = new Set(saveList);
     editElement.forEach(function (el) {
-      var selectors = getSelectors(el);
+      var selectors = (0, _util.getSelectors)(el);
       console.log(selectors);
       saveSet.add(selectors);
       localStorage.setItem(selectors, el.innerHTML);
@@ -821,38 +932,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     loadChanges();
     console.log('加载修改完毕');
   });
-  /** 获取一个元素的选择器 */
-
-  function getSelectors(el) {
-    /** 通过path路径来确定元素 */
-    var pathSelectors = nodePath(el).reverse().map(function (el) {
-      console.log(el);
-      return el.nodeName + ":nth-child(".concat(getIndex(el), ")");
-    }).join('>');
-    /** 通过id以及class来确定元素 */
-
-    var id_className = "";
-    var id = el.id;
-    if (id) id_className += "#".concat(id);
-    el.classList.forEach(function (className) {
-      id_className += ".".concat(className);
-    });
-    /** nth-child 选择 看它是第几个元素 */
-
-    var index = getIndex(el);
-    /** 最终构造出来的选择器 */
-
-    return "".concat(pathSelectors).concat(id_className, ":nth-child(").concat(index, ")");
-  }
-  /** 获取元素它在第几位 */
-
-
-  function getIndex(el) {
-    if (el.nodeName === 'HTML') return 1;
-    return 1 + Array.from(el.parentElement.children).findIndex(function (child) {
-      return child === el;
-    });
-  }
 })();
 /*
 # 使网页可编辑
@@ -913,7 +992,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49815" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56537" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
