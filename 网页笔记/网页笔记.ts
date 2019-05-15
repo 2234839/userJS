@@ -4,8 +4,7 @@ import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } fr
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 
-/** 调试用 */
-// (<any>window).CommandControl = CommandControl
+
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -19,6 +18,10 @@ import { Message } from "./ui/message";
 // @grant        GM_setValue
 // ==/UserScript==
 ;(function () {
+    //尝试解决无效的脚本头部的问题
+
+    /** 调试用 */
+    // (<any>window).CommandControl = CommandControl
 
     //为了在非油猴环境下存储依旧能起一部分的作用
     if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {

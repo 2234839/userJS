@@ -607,8 +607,6 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-/** 调试用 */
-// (<any>window).CommandControl = CommandControl
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -623,6 +621,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 ;
 
 (function () {
+  //尝试解决无效的脚本头部的问题
+
+  /** 调试用 */
+  // (<any>window).CommandControl = CommandControl
   //为了在非油猴环境下存储依旧能起一部分的作用
   if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
     localStorage.getItem = window.GM_getValue;
