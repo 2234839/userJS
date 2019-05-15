@@ -9,7 +9,7 @@ import { Message } from "./ui/message";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.20
+// @version      1.32
 // @description  所见即所得！
 // @author       You
 // @match        *

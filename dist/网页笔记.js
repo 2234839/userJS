@@ -610,7 +610,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.20
+// @version      1.32
 // @description  所见即所得！
 // @author       You
 // @match        *
