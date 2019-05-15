@@ -824,7 +824,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   function getSelectors(el) {
     /** 通过path路径来确定元素 */
     var pathSelectors = nodePath(el).reverse().map(function (el) {
-      return el.nodeName;
+      console.log(el);
+      return el.nodeName + ":nth-child(".concat(getIndex(el), ")");
     }).join('>');
     /** 通过id以及class来确定元素 */
 
@@ -836,12 +837,19 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
     /** nth-child 选择 看它是第几个元素 */
 
-    var index = 1 + Array.from(el.parentElement.children).findIndex(function (child) {
-      return child === el;
-    });
+    var index = getIndex(el);
     /** 最终构造出来的选择器 */
 
     return "".concat(pathSelectors).concat(id_className, ":nth-child(").concat(index, ")");
+  }
+  /** 获取元素它在第几位 */
+
+
+  function getIndex(el) {
+    if (el.nodeName === 'HTML') return 1;
+    return 1 + Array.from(el.parentElement.children).findIndex(function (child) {
+      return child === el;
+    });
   }
 })();
 /*

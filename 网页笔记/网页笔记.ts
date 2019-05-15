@@ -173,7 +173,11 @@ import { Message } from "./ui/message";
     /** 获取一个元素的选择器 */
     function getSelectors(el:Element){
         /** 通过path路径来确定元素 */
-        let pathSelectors = nodePath(el).reverse().map(el => el.nodeName).join('>')
+        let pathSelectors = nodePath(el).reverse().map(el =>{
+            console.log(el);
+
+            return el.nodeName + `:nth-child(${getIndex(el)})`
+        }).join('>')
 
         /** 通过id以及class来确定元素 */
         let id_className=""
@@ -186,10 +190,17 @@ import { Message } from "./ui/message";
         })
 
         /** nth-child 选择 看它是第几个元素 */
-        const index=1+ Array.from(el.parentElement.children).findIndex(child=>child===el)
+        const index =getIndex(el)
 
         /** 最终构造出来的选择器 */
         return `${pathSelectors}${id_className}:nth-child(${index})`
+    }
+
+    /** 获取元素它在第几位 */
+    function getIndex(el: Element){
+        if(el.nodeName==='HTML')
+            return 1
+        return 1 + Array.from(el.parentElement.children).findIndex(child => child === el)
     }
 })();
 
