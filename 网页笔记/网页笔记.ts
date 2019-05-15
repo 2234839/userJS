@@ -112,9 +112,15 @@ import { Message } from "./ui/message";
     }
 })();
 
-new Message({ msg: '你好' }).autoHide()
-const a= Message.getMessage({msg:'hello'})
-a.autoHide()
+const b = new Message({ msg: '你好' }).autoHide()
+
+setTimeout(() => {
+    const a = Message.getMessage({ msg: 'hello' })
+    console.log(a,b,a===b);
+
+    a.show()
+
+},4000);
 
 
 /*

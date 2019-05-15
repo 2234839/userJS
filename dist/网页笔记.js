@@ -280,6 +280,23 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
+},{}],"ui/style.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Style = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Style = function Style() {
+  _classCallCheck(this, Style);
+};
+
+exports.Style = Style;
+Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
 },{}],"ui/message.ts":[function(require,module,exports) {
 "use strict";
 
@@ -287,6 +304,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Message = void 0;
+
+var _style = require("./style");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -314,7 +333,8 @@ function () {
   _createClass(Message, [{
     key: "setThis",
     value: function setThis(_ref) {
-      var style = _ref.style,
+      var _ref$style = _ref.style,
+          style = _ref$style === void 0 ? _style.Style.message : _ref$style,
           msg = _ref.msg;
       this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
     }
@@ -346,6 +366,7 @@ function () {
       setTimeout(function () {
         _this.hide();
       }, this.autoHideTime);
+      return this;
     }
     /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
 
@@ -360,6 +381,7 @@ function () {
       var msg = old_message.pop();
       msg.setThis(par);
       new_message.push(msg);
+      return msg;
     }
   }]);
 
@@ -367,7 +389,7 @@ function () {
 }();
 
 exports.Message = Message;
-},{}],"网页笔记.ts":[function(require,module,exports) {
+},{"./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -501,15 +523,17 @@ window.CommandControl = _Command.CommandControl;
   }
 })();
 
-new _message.Message({
+var b = new _message.Message({
   msg: '你好'
 }).autoHide();
+setTimeout(function () {
+  var a = _message.Message.getMessage({
+    msg: 'hello'
+  });
 
-var a = _message.Message.getMessage({
-  msg: 'hello'
-});
-
-a.autoHide();
+  console.log(a, b, a === b);
+  a.show();
+}, 4000);
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭

@@ -11,7 +11,7 @@ export class Message{
         new_message.push(this)
     }
     /** 进行一些赋值工作 */
-    private setThis({ style,msg}:Message_Data) {
+    private setThis({ style=Style.message,msg}:Message_Data) {
         this.el.innerHTML = `
         <div style="${style}">${msg}</div>
         `;
@@ -34,6 +34,7 @@ export class Message{
         setTimeout(() => {
             this.hide()
         }, this.autoHideTime);
+        return this
     }
     /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
     static getMessage(par:Message_Data){
@@ -43,6 +44,7 @@ export class Message{
         const msg=old_message.pop()
         msg.setThis(par)
         new_message.push(msg)
+        return msg
     }
 }
 
