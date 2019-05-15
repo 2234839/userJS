@@ -1,6 +1,6 @@
 import $ from "./util";
 import config from "./config";
-import { deleteSelect, CommandControl, editSelect, closeEditSelect } from "./Command";
+import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Message } from "./ui/message";
 
 /** 调试用 */
@@ -49,13 +49,13 @@ import { Message } from "./ui/message";
             return;
         }
         switch (code) {
-            case 'KeyQ':
+            case 'KeyQ':/** 使元素可编辑 */
                 CommandControl.run(new editSelect(path[0]))
                 break;
-            case 'KeyD':
+            case 'KeyD':/** 删除元素 */
                 CommandControl.run(new deleteSelect(path[0]))
                 break;
-            case 'KeyC':
+            case 'KeyC':/** 赋值titile */
                 $.copyTitle(path[0])
                 if(event.ctrlKey===false)//因为ctrl+c不应该被阻止
                     break
@@ -69,7 +69,7 @@ import { Message } from "./ui/message";
                 CommandControl.reform()
                 break;
             case "KeyN":/** 新增笔记 */
-                CommandControl.reform()
+                CommandControl.run(new addNote(path[0]))
                 break;
             default:
                 return true;

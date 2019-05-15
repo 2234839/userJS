@@ -175,6 +175,7 @@ var Style = function Style() {
 exports.Style = Style;
 Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    ";
 Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n    position: sticky;\n    top: 20px;\n    left: 30px;\n    width: auto;\n    height: auto;\n    ";
 /** 注入动画 */
 
 var keyframes = document.createElement('style');
@@ -190,15 +191,15 @@ exports.Message = void 0;
 
 var _style = require("./style");
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var old_message = [];
-var new_message = [];
-
+/** 消息的基类 扩展类记得重写 thatMessage 以免公用出现bug */
 var Message =
 /*#__PURE__*/
 function () {
@@ -206,9 +207,10 @@ function () {
     _classCallCheck(this, Message);
 
     this.el = document.createElement('msg-llej');
+    /** 用来指向不同的类，以便扩展这个类的类的old_message不被公用 */
+
     this.autoHideTime = 1000 * 3;
     this.setThis(par);
-    new_message.push(this);
   }
   /** 进行一些赋值工作 */
 
@@ -235,7 +237,6 @@ function () {
     key: "hide",
     value: function hide() {
       this.el.remove();
-      old_message.push(this);
       return this;
     }
     /** 展示el  autoHideTime 毫秒后隐藏*/
@@ -256,15 +257,7 @@ function () {
   }], [{
     key: "getMessage",
     value: function getMessage(par) {
-      if (old_message.length === 0) {
-        /** 没有旧的对象 */
-        return new Message(par);
-      }
-
-      var msg = old_message.pop();
-      msg.setThis(par);
-      new_message.push(msg);
-      return msg;
+      return new Message(par);
     }
   }]);
 
@@ -272,15 +265,81 @@ function () {
 }();
 
 exports.Message = Message;
-},{"./style":"ui/style.ts"}],"Command.ts":[function(require,module,exports) {
+console.log(_typeof(Message));
+},{"./style":"ui/style.ts"}],"ui/note.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CommandControl = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = void 0;
+exports.note = void 0;
+
+var _message = require("./message");
+
+var _style = require("./style");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/** 笔记的 */
+var note =
+/*#__PURE__*/
+function (_Message) {
+  _inherits(note, _Message);
+
+  function note(_ref) {
+    var _this;
+
+    var el = _ref.el;
+
+    _classCallCheck(this, note);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(note).call(this, {
+      msg: '111111111111111111111',
+      style: _style.Style.note
+    }));
+    _this.selectEl = el;
+    return _this;
+  }
+
+  _createClass(note, [{
+    key: "show",
+    value: function show() {
+      this.selectEl.appendChild(this.el);
+      return this;
+    }
+  }]);
+
+  return note;
+}(_message.Message);
+
+exports.note = note;
+},{"./message":"ui/message.ts","./style":"ui/style.ts"}],"Command.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommandControl = exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = void 0;
 
 var _message = require("./ui/message");
+
+var _note = require("./ui/note");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -316,8 +375,7 @@ function () {
   }, {
     key: "redo",
     value: function redo() {
-      this.do();
-      return this;
+      return this.do();
     }
   }]);
 
@@ -355,8 +413,7 @@ function () {
   }, {
     key: "redo",
     value: function redo() {
-      this.do();
-      return this;
+      return this.do();
     }
   }]);
 
@@ -394,17 +451,56 @@ function () {
   }, {
     key: "redo",
     value: function redo() {
-      this.do();
-      return this;
+      return this.do();
     }
   }]);
 
   return closeEditSelect;
 }();
-/** 命令控制器 */
+/** 新增一个笔记 */
 
 
 exports.closeEditSelect = closeEditSelect;
+
+var addNote =
+/*#__PURE__*/
+function () {
+  function addNote(
+  /** 要操作的元素 */
+  select) {
+    _classCallCheck(this, addNote);
+
+    this.selectEL = select;
+  }
+
+  _createClass(addNote, [{
+    key: "do",
+    value: function _do() {
+      this.note = new _note.note({
+        el: this.selectEL
+      }).show();
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.note.hide();
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.note.show();
+      return this;
+    }
+  }]);
+
+  return addNote;
+}();
+/** 命令控制器 */
+
+
+exports.addNote = addNote;
 var CommandControl = {
   commandStack: [],
   backoutStack: [],
@@ -445,7 +541,7 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{"./ui/message":"ui/message.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"./ui/message":"ui/message.ts","./ui/note":"ui/note.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -497,16 +593,19 @@ window.CommandControl = _Command.CommandControl;
 
     switch (code) {
       case 'KeyQ':
+        /** 使元素可编辑 */
         _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
         break;
 
       case 'KeyD':
+        /** 删除元素 */
         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
         break;
 
       case 'KeyC':
+        /** 赋值titile */
         _util.default.copyTitle(path[0]);
 
         if (event.ctrlKey === false) //因为ctrl+c不应该被阻止
@@ -532,7 +631,7 @@ window.CommandControl = _Command.CommandControl;
 
       case "KeyN":
         /** 新增笔记 */
-        _Command.CommandControl.reform();
+        _Command.CommandControl.run(new _Command.addNote(path[0]));
 
         break;
 

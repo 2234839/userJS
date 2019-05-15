@@ -1,14 +1,13 @@
 import { Style } from "./style";
 
-const old_message:Message[]=[]
-const new_message: Message[] = []
-
+/** 消息的基类 扩展类记得重写 thatMessage 以免公用出现bug */
 export class Message{
     el=document.createElement('msg-llej')
+    /** 用来指向不同的类，以便扩展这个类的类的old_message不被公用 */
+
     private autoHideTime=1000*3
     constructor(par: Message_Data){
         this.setThis(par);
-        new_message.push(this)
     }
     /** 进行一些赋值工作 */
     private setThis({ style=Style.message,msg}:Message_Data) {
@@ -25,7 +24,6 @@ export class Message{
     /** 隐藏el */
     hide() {
         this.el.remove()
-        old_message.push(this)
         return this
     }
     /** 展示el  autoHideTime 毫秒后隐藏*/
@@ -38,13 +36,7 @@ export class Message{
     }
     /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
     static getMessage(par:Message_Data){
-        if(old_message.length===0){/** 没有旧的对象 */
-            return new Message(par)
-        }
-        const msg=old_message.pop()
-        msg.setThis(par)
-        new_message.push(msg)
-        return msg
+        return new Message(par)
     }
 }
 
@@ -53,3 +45,5 @@ export interface Message_Data{
     msg: string
     style?:string
 }
+
+console.log(typeof Message);

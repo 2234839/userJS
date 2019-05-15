@@ -14,6 +14,15 @@ export class Style {
     top: 20px;
     left: 30px;
     `
+    static note = `
+    border: 1px solid black;
+    background-color: #c6c5ba;
+    position: sticky;
+    top: 20px;
+    left: 30px;
+    width: auto;
+    height: auto;
+    `
 }
 
 

@@ -1,4 +1,5 @@
 import { Message } from "./ui/message";
+import { note } from "./ui/note";
 
 /** 每一个命令都应该实现的东西 */
 interface Command {
@@ -27,8 +28,7 @@ export class deleteSelect implements Command {
         return this
     }
     redo() {
-        this.do()
-        return this
+        return this.do()
     }
 }
 
@@ -49,8 +49,7 @@ export class editSelect implements Command {
         return this
     }
     redo() {
-        this.do()
-        return this
+        return this.do()
     }
 }
 
@@ -71,7 +70,27 @@ export class closeEditSelect implements Command {
         return this
     }
     redo() {
-        this.do()
+        return this.do()
+    }
+}
+
+/** 新增一个笔记 */
+export class addNote implements Command {
+    selectEL: HTMLElement
+    note:note
+    constructor(/** 要操作的元素 */ select: HTMLElement) {
+        this.selectEL = select
+    }
+    do() {
+        this.note = new note({el:this.selectEL}).show()
+        return this
+    }
+    undo() {
+        this.note.hide()
+        return this
+    }
+    redo() {
+        this.note.show()
         return this
     }
 }
