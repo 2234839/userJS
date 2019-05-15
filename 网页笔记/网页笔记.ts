@@ -5,7 +5,7 @@ import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 
 /** 调试用 */
-(<any>window).CommandControl = CommandControl
+// (<any>window).CommandControl = CommandControl
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择

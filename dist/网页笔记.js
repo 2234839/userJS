@@ -608,7 +608,19 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 /** 调试用 */
-window.CommandControl = _Command.CommandControl;
+// (<any>window).CommandControl = CommandControl
+// ==UserScript==
+// @name         网页文本编辑,做笔记的好选择
+// @namespace    http://tampermonkey.net/
+// @version      0.2
+// @description  所见即所得！
+// @author       You
+// @match        *
+// @include      *
+// @grant        GM_getValue    //油猴的存储接口
+// @grant        GM_setValue
+// ==/UserScript==
+;
 
 (function () {
   //为了在非油猴环境下存储依旧能起一部分的作用
