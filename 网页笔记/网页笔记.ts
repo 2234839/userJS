@@ -10,7 +10,7 @@ import { Message } from "./ui/message";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      0.19
+// @version      0.2
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -133,16 +133,19 @@ import { Message } from "./ui/message";
         return false;
     }
 
+    /** 保存的路径是页面的路径 */
+    const localStorageSaveList = location.origin+location.pathname+'__saveList__llej__'
+
     /** 保存修改 */
     function saveChanges(editElement: Set<HTMLElement>) {
-        const saveList:string[] = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) :[]
+        const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) :[]
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
             saveSet.add(selectors)
             localStorage.setItem(selectors,el.innerHTML)
         })
-        localStorage.setItem('saveList',JSON.stringify([...saveSet]))
+        localStorage.setItem(localStorageSaveList,JSON.stringify([...saveSet]))
     }
     /** 自动保存 */
     setInterval(function(){
@@ -152,7 +155,7 @@ import { Message } from "./ui/message";
 
     /** 加载修改 */
     function loadChanges(){
-        const saveList: string[] = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : []
+        const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : []
         saveList.forEach(selectors=>{
             document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
         })
@@ -190,8 +193,8 @@ import { Message } from "./ui/message";
 *      按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
-*      按下 n 将添加一个便签笔记
-*      按下 s 保存你的所有修改
+*      按下 n 将添加一个便签笔记,此命令处于实验期，无法正常使用
+*      按下 s 保存你的所有修改  每60秒会自动保存一次
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 

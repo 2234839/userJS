@@ -766,18 +766,21 @@ window.CommandControl = _Command.CommandControl;
     event.returnValue = false;
     return false;
   }
+  /** 保存的路径是页面的路径 */
+
+
+  var localStorageSaveList = location.origin + location.pathname + '__saveList__llej__';
   /** 保存修改 */
 
-
   function saveChanges(editElement) {
-    var saveList = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : [];
+    var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
     var saveSet = new Set(saveList);
     editElement.forEach(function (el) {
       var selectors = getSelectors(el);
       saveSet.add(selectors);
       localStorage.setItem(selectors, el.innerHTML);
     });
-    localStorage.setItem('saveList', JSON.stringify(_toConsumableArray(saveSet)));
+    localStorage.setItem(localStorageSaveList, JSON.stringify(_toConsumableArray(saveSet)));
   }
   /** 自动保存 */
 
@@ -791,7 +794,7 @@ window.CommandControl = _Command.CommandControl;
   /** 加载修改 */
 
   function loadChanges() {
-    var saveList = localStorage.getItem('saveList') ? JSON.parse(localStorage.getItem('saveList')) : [];
+    var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
     saveList.forEach(function (selectors) {
       document.querySelector(selectors).innerHTML = localStorage.getItem(selectors);
     });
@@ -834,8 +837,8 @@ window.CommandControl = _Command.CommandControl;
 *      按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
-*      按下 n 将添加一个便签笔记
-*      按下 s 保存你的所有修改
+*      按下 n 将添加一个便签笔记,此命令处于实验期，无法正常使用
+*      按下 s 保存你的所有修改  每60秒会自动保存一次
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 
