@@ -789,6 +789,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var saveSet = new Set(saveList);
     editElement.forEach(function (el) {
       var selectors = getSelectors(el);
+      console.log(selectors);
       saveSet.add(selectors);
       localStorage.setItem(selectors, el.innerHTML);
     });
@@ -808,12 +809,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   function loadChanges() {
     var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
     saveList.forEach(function (selectors) {
+      console.log(document.querySelector(selectors));
       document.querySelector(selectors).innerHTML = localStorage.getItem(selectors);
     });
   }
 
   ;
-  loadChanges();
+  window.addEventListener('load', function () {
+    loadChanges();
+    console.log('加载修改完毕');
+  });
   /** 获取一个元素的选择器 */
 
   function getSelectors(el) {

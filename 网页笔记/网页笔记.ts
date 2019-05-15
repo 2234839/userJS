@@ -142,6 +142,8 @@ import { Message } from "./ui/message";
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
+            console.log(selectors);
+
             saveSet.add(selectors)
             localStorage.setItem(selectors,el.innerHTML)
         })
@@ -157,9 +159,17 @@ import { Message } from "./ui/message";
     function loadChanges(){
         const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : []
         saveList.forEach(selectors=>{
+            console.log(document.querySelector(selectors));
+
             document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
         })
-    }; loadChanges()
+    };
+    window.addEventListener('load',function(){
+        loadChanges()
+        console.log('加载修改完毕');
+
+    })
+
     /** 获取一个元素的选择器 */
     function getSelectors(el:Element){
         /** 通过path路径来确定元素 */
