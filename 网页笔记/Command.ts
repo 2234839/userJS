@@ -1,3 +1,4 @@
+import { Message } from "./ui/message";
 
 /** 每一个命令都应该实现的东西 */
 interface Command {
@@ -53,6 +54,28 @@ export class editSelect implements Command {
     }
 }
 
+/** 使元素不可编辑 */
+export class closeEditSelect implements Command {
+    selectEL: HTMLElement
+    selectEL_contentEditable: string
+    constructor(/** 要操作的元素 */ select: HTMLElement) {
+        this.selectEL = select
+    }
+    do() {
+        this.selectEL_contentEditable = this.selectEL.contentEditable
+        this.selectEL.contentEditable = 'false';
+        return this
+    }
+    undo() {
+        this.selectEL.contentEditable = this.selectEL_contentEditable
+        return this
+    }
+    redo() {
+        this.do()
+        return this
+    }
+}
+
 /** 命令控制器 */
 export const CommandControl: CommandControl = {
     commandStack: [],
@@ -67,6 +90,7 @@ export const CommandControl: CommandControl = {
     backout() {
         if (this.commandStack.length===0){
             console.warn('命令栈已空，无法进行撤销');
+            Message.getMessage({ msg: '命令栈已空，无法进行撤销'}).autoHide()
             return
         }
         const command=this.commandStack.pop()
@@ -75,6 +99,7 @@ export const CommandControl: CommandControl = {
     reform(){
         if (this.backoutStack.length === 0) {
             console.warn('撤销栈已空，无法进行重做');
+            Message.getMessage({ msg: '撤销栈已空，无法进行重做' }).autoHide()
             return
         }
         const command = this.backoutStack.pop()

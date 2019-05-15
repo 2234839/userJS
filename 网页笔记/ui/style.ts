@@ -5,6 +5,7 @@ export class Style {
     position: fixed;
     top: 20px;
     left: 30px;
+    animation: llej_myfirst 5s;
     `
     static warning = `
     border: 1px solid black;
@@ -14,3 +15,15 @@ export class Style {
     left: 30px;
     `
 }
+
+
+/** 注入动画 */
+const keyframes= document.createElement('style')
+keyframes.innerHTML=`
+@keyframes llej_myfirst
+{
+    from { background: red; }
+    to { background: yellow; }
+}
+`
+document.head.appendChild(keyframes)

@@ -158,128 +158,6 @@ var _default = {
   elemtEdit: location.href.includes('127.0.0.1')
 };
 exports.default = _default;
-},{}],"Command.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CommandControl = exports.editSelect = exports.deleteSelect = void 0;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-/** 删除一个元素 */
-var deleteSelect =
-/*#__PURE__*/
-function () {
-  function deleteSelect(
-  /** 要被删除的元素 */
-  select) {
-    _classCallCheck(this, deleteSelect);
-
-    this.selectEL = select;
-  }
-
-  _createClass(deleteSelect, [{
-    key: "do",
-    value: function _do() {
-      this.selectEL_display = this.selectEL.style.display;
-      this.selectEL.style.display = "none";
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.selectEL.style.display = this.selectEL_display;
-      return this;
-    }
-  }, {
-    key: "redo",
-    value: function redo() {
-      this.do();
-      return this;
-    }
-  }]);
-
-  return deleteSelect;
-}();
-/** 使元素可编辑 */
-
-
-exports.deleteSelect = deleteSelect;
-
-var editSelect =
-/*#__PURE__*/
-function () {
-  function editSelect(
-  /** 要操作的元素 */
-  select) {
-    _classCallCheck(this, editSelect);
-
-    this.selectEL = select;
-  }
-
-  _createClass(editSelect, [{
-    key: "do",
-    value: function _do() {
-      this.selectEL_contentEditable = this.selectEL.contentEditable;
-      this.selectEL.contentEditable = 'true';
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.selectEL.contentEditable = this.selectEL_contentEditable;
-      return this;
-    }
-  }, {
-    key: "redo",
-    value: function redo() {
-      this.do();
-      return this;
-    }
-  }]);
-
-  return editSelect;
-}();
-/** 命令控制器 */
-
-
-exports.editSelect = editSelect;
-var CommandControl = {
-  commandStack: [],
-  backoutStack: [],
-  pushCommand: function pushCommand(command) {
-    return this.commandStack.push(command);
-  },
-  run: function run(command) {
-    this.backoutStack.splice(0, this.backoutStack.length);
-    return this.pushCommand(command.do());
-  },
-  backout: function backout() {
-    if (this.commandStack.length === 0) {
-      console.warn('命令栈已空，无法进行撤销');
-      return;
-    }
-
-    var command = this.commandStack.pop();
-    return this.backoutStack.push(command.undo());
-  },
-  reform: function reform() {
-    if (this.backoutStack.length === 0) {
-      console.warn('撤销栈已空，无法进行重做');
-      return;
-    }
-
-    var command = this.backoutStack.pop();
-    return this.commandStack.push(command.redo());
-  }
-};
-exports.CommandControl = CommandControl;
 },{}],"ui/style.ts":[function(require,module,exports) {
 "use strict";
 
@@ -295,8 +173,13 @@ var Style = function Style() {
 };
 
 exports.Style = Style;
-Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    ";
 Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
+/** 注入动画 */
+
+var keyframes = document.createElement('style');
+keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red; }\n    to { background: yellow; }\n}\n";
+document.head.appendChild(keyframes);
 },{}],"ui/message.ts":[function(require,module,exports) {
 "use strict";
 
@@ -389,7 +272,180 @@ function () {
 }();
 
 exports.Message = Message;
-},{"./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"./style":"ui/style.ts"}],"Command.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommandControl = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = void 0;
+
+var _message = require("./ui/message");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/** 删除一个元素 */
+var deleteSelect =
+/*#__PURE__*/
+function () {
+  function deleteSelect(
+  /** 要被删除的元素 */
+  select) {
+    _classCallCheck(this, deleteSelect);
+
+    this.selectEL = select;
+  }
+
+  _createClass(deleteSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_display = this.selectEL.style.display;
+      this.selectEL.style.display = "none";
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.style.display = this.selectEL_display;
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.do();
+      return this;
+    }
+  }]);
+
+  return deleteSelect;
+}();
+/** 使元素可编辑 */
+
+
+exports.deleteSelect = deleteSelect;
+
+var editSelect =
+/*#__PURE__*/
+function () {
+  function editSelect(
+  /** 要操作的元素 */
+  select) {
+    _classCallCheck(this, editSelect);
+
+    this.selectEL = select;
+  }
+
+  _createClass(editSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_contentEditable = this.selectEL.contentEditable;
+      this.selectEL.contentEditable = 'true';
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.contentEditable = this.selectEL_contentEditable;
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.do();
+      return this;
+    }
+  }]);
+
+  return editSelect;
+}();
+/** 使元素不可编辑 */
+
+
+exports.editSelect = editSelect;
+
+var closeEditSelect =
+/*#__PURE__*/
+function () {
+  function closeEditSelect(
+  /** 要操作的元素 */
+  select) {
+    _classCallCheck(this, closeEditSelect);
+
+    this.selectEL = select;
+  }
+
+  _createClass(closeEditSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_contentEditable = this.selectEL.contentEditable;
+      this.selectEL.contentEditable = 'false';
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.contentEditable = this.selectEL_contentEditable;
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.do();
+      return this;
+    }
+  }]);
+
+  return closeEditSelect;
+}();
+/** 命令控制器 */
+
+
+exports.closeEditSelect = closeEditSelect;
+var CommandControl = {
+  commandStack: [],
+  backoutStack: [],
+  pushCommand: function pushCommand(command) {
+    return this.commandStack.push(command);
+  },
+  run: function run(command) {
+    this.backoutStack.splice(0, this.backoutStack.length);
+    return this.pushCommand(command.do());
+  },
+  backout: function backout() {
+    if (this.commandStack.length === 0) {
+      console.warn('命令栈已空，无法进行撤销');
+
+      _message.Message.getMessage({
+        msg: '命令栈已空，无法进行撤销'
+      }).autoHide();
+
+      return;
+    }
+
+    var command = this.commandStack.pop();
+    return this.backoutStack.push(command.undo());
+  },
+  reform: function reform() {
+    if (this.backoutStack.length === 0) {
+      console.warn('撤销栈已空，无法进行重做');
+
+      _message.Message.getMessage({
+        msg: '撤销栈已空，无法进行重做'
+      }).autoHide();
+
+      return;
+    }
+
+    var command = this.backoutStack.pop();
+    return this.commandStack.push(command.redo());
+  }
+};
+exports.CommandControl = CommandControl;
+},{"./ui/message":"ui/message.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -397,8 +453,6 @@ var _util = _interopRequireDefault(require("./util"));
 var _config = _interopRequireDefault(require("./config"));
 
 var _Command = require("./Command");
-
-var _message = require("./ui/message");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -459,15 +513,25 @@ window.CommandControl = _Command.CommandControl;
           break;
 
       case "KeyW":
-        path[0].contentEditable = 'false';
+        /** 关闭可编辑 */
+        _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
+
         break;
 
       case 'KeyZ':
+        /** 撤销 */
         _Command.CommandControl.backout();
 
         break;
 
       case "KeyY":
+        /** 重做 */
+        _Command.CommandControl.reform();
+
+        break;
+
+      case "KeyN":
+        /** 新增笔记 */
         _Command.CommandControl.reform();
 
         break;
@@ -522,18 +586,6 @@ window.CommandControl = _Command.CommandControl;
     return false;
   }
 })();
-
-var b = new _message.Message({
-  msg: '你好'
-}).autoHide();
-setTimeout(function () {
-  var a = _message.Message.getMessage({
-    msg: 'hello'
-  });
-
-  console.log(a, b, a === b);
-  a.show();
-}, 4000);
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
@@ -563,7 +615,7 @@ setTimeout(function () {
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/message":"ui/message.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

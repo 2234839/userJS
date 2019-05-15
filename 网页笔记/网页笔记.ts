@@ -1,6 +1,6 @@
 import $ from "./util";
 import config from "./config";
-import { deleteSelect, CommandControl, editSelect } from "./Command";
+import { deleteSelect, CommandControl, editSelect, closeEditSelect } from "./Command";
 import { Message } from "./ui/message";
 
 /** 调试用 */
@@ -59,13 +59,16 @@ import { Message } from "./ui/message";
                 $.copyTitle(path[0])
                 if(event.ctrlKey===false)//因为ctrl+c不应该被阻止
                     break
-            case "KeyW":
-                path[0].contentEditable = 'false';
+            case "KeyW":/** 关闭可编辑 */
+                CommandControl.run(new closeEditSelect(path[0]))
                 break;
-            case 'KeyZ':
+            case 'KeyZ':/** 撤销 */
                 CommandControl.backout()
                 break;
-            case "KeyY":
+            case "KeyY":/** 重做 */
+                CommandControl.reform()
+                break;
+            case "KeyN":/** 新增笔记 */
                 CommandControl.reform()
                 break;
             default:
@@ -111,18 +114,6 @@ import { Message } from "./ui/message";
         return false;
     }
 })();
-
-const b = new Message({ msg: '你好' }).autoHide()
-
-setTimeout(() => {
-    const a = Message.getMessage({ msg: 'hello' })
-    console.log(a,b,a===b);
-
-    a.show()
-
-},4000);
-
-
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
