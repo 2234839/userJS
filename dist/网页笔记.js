@@ -191,8 +191,6 @@ exports.Message = void 0;
 
 var _style = require("./style");
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -265,7 +263,6 @@ function () {
 }();
 
 exports.Message = Message;
-console.log(_typeof(Message));
 },{"./style":"ui/style.ts"}],"ui/note.ts":[function(require,module,exports) {
 "use strict";
 
@@ -541,7 +538,53 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{"./ui/message":"ui/message.ts","./ui/note":"ui/note.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"./ui/message":"ui/message.ts","./ui/note":"ui/note.ts"}],"ui/warning.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Warning = void 0;
+
+var _message = require("./message");
+
+var _style = require("./style");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Warning =
+/*#__PURE__*/
+function (_Message) {
+  _inherits(Warning, _Message);
+
+  function Warning(_ref) {
+    var msg = _ref.msg;
+
+    _classCallCheck(this, Warning);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Warning).call(this, {
+      msg: msg,
+      style: _style.Style.warning
+    }));
+  }
+
+  return Warning;
+}(_message.Message);
+
+exports.Warning = Warning;
+},{"./message":"ui/message.ts","./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("./util"));
@@ -549,6 +592,8 @@ var _util = _interopRequireDefault(require("./util"));
 var _config = _interopRequireDefault(require("./config"));
 
 var _Command = require("./Command");
+
+var _warning = require("./ui/warning");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -565,6 +610,9 @@ window.CommandControl = _Command.CommandControl;
 
 
   var path;
+  /** 被修改后的元素 */
+
+  var editElement = new Set();
   /** 监听鼠标移动 */
 
   function mouse(event) {
@@ -576,7 +624,8 @@ window.CommandControl = _Command.CommandControl;
 
   if (_config.default.elemtEdit) {
     document.addEventListener('mouseover', mouse);
-  } //监测按键事件
+  }
+  /** 监测按键事件 */
 
 
   document.addEventListener('keydown', function (event) {
@@ -635,6 +684,11 @@ window.CommandControl = _Command.CommandControl;
 
         break;
 
+      case "KeyS":
+        /** 保存所有的修改 */
+        saveEdit(editElement);
+        break;
+
       default:
         return true;
     }
@@ -642,7 +696,17 @@ window.CommandControl = _Command.CommandControl;
   /** 元素失去焦点 */
 
   document.addEventListener('focusout', function () {
-    console.log(event.target);
+    console.log('元素失去焦点', event.target);
+  });
+  /** 元素被编辑了 */
+
+  document.addEventListener('input', function (event) {
+    if (event.target instanceof HTMLElement) {
+      var el = event.target;
+      if (el.innerHTML.length > 10 * 1000) new _warning.Warning({
+        msg: '该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。'
+      }).autoHide();else editElement.add(el);
+    }
   });
   /** 轮廓线,用以显示当前元素 */
 
@@ -684,6 +748,37 @@ window.CommandControl = _Command.CommandControl;
     event.returnValue = false;
     return false;
   }
+  /** 保存修改 */
+
+
+  function saveEdit(editElement) {
+    editElement.forEach(getSelectors);
+  }
+  /** 获取一个元素的选择器 */
+
+
+  function getSelectors(el) {
+    /** 通过path路径来确定元素 */
+    var pathSelectors = nodePath(el).reverse().map(function (el) {
+      return el.nodeName;
+    }).join('>');
+    /** 通过id以及class来确定元素 */
+
+    var id_className = "";
+    var id = el.id;
+    if (id) id_className += "#".concat(id);
+    el.classList.forEach(function (className) {
+      id_className += ".".concat(className);
+    });
+    /** nth-child 选择 看它是第几个元素 */
+
+    var index = 1 + Array.from(el.parentElement.children).findIndex(function (child) {
+      return child === el;
+    });
+    /** 最终构造出来的选择器 */
+
+    return "".concat(pathSelectors).concat(id_className, ":nth-child(").concat(index, ")");
+  }
 })();
 /*
 # 使网页可编辑
@@ -714,7 +809,7 @@ window.CommandControl = _Command.CommandControl;
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

@@ -45,5 +45,3 @@ export interface Message_Data{
     msg: string
     style?:string
 }
-
-console.log(typeof Message);

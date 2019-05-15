@@ -2,6 +2,7 @@ import $ from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Message } from "./ui/message";
+import { Warning } from "./ui/warning";
 
 /** 调试用 */
 (<any>window).CommandControl = CommandControl
@@ -27,6 +28,8 @@ import { Message } from "./ui/message";
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
+    /** 被修改后的元素 */
+    const editElement:Set<HTMLElement>=new Set()
     /** 监听鼠标移动 */
     function mouse(event:Event) {
         if (event.target instanceof HTMLElement) {
@@ -37,8 +40,7 @@ import { Message } from "./ui/message";
     if(config.elemtEdit){
         document.addEventListener('mouseover', mouse);
     }
-
-    //监测按键事件
+    /** 监测按键事件 */
     document.addEventListener('keydown', function (event) {
         var code = event.code;
         if (code === 'F2') {
@@ -71,6 +73,9 @@ import { Message } from "./ui/message";
             case "KeyN":/** 新增笔记 */
                 CommandControl.run(new addNote(path[0]))
                 break;
+            case "KeyS":/** 保存所有的修改 */
+                saveEdit(editElement);
+                break;
             default:
                 return true;
         }
@@ -78,7 +83,18 @@ import { Message } from "./ui/message";
 
     /** 元素失去焦点 */
     document.addEventListener('focusout',function(){
-        console.log(event.target );
+        console.log('元素失去焦点', event.target );
+    })
+
+    /** 元素被编辑了 */
+    document.addEventListener('input', function (event:Event) {
+        if (event.target instanceof HTMLElement) {
+            const el: HTMLElement = event.target
+            if (el.innerHTML.length>10*1000)
+                new Warning({msg:'该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。'}).autoHide()
+            else
+                editElement.add(el)
+        }
     })
 
     /** 轮廓线,用以显示当前元素 */
@@ -95,7 +111,7 @@ import { Message } from "./ui/message";
         }, 400);
     }
     /** 获取一个元素的所有父节点到html为止  */
-    function nodePath(...path:HTMLElement[]) {
+    function nodePath(...path:Element[]) {
         while (path[path.length-1].parentElement != null) {
             path.push(path[path.length - 1].parentElement);
         }
@@ -113,7 +129,36 @@ import { Message } from "./ui/message";
         event.returnValue = false;
         return false;
     }
+
+    /** 保存修改 */
+    function saveEdit(editElement: Set<HTMLElement>) {
+        editElement.forEach(getSelectors)
+    }
+
+    /** 获取一个元素的选择器 */
+    function getSelectors(el:Element){
+        /** 通过path路径来确定元素 */
+        let pathSelectors = nodePath(el).reverse().map(el => el.nodeName).join('>')
+
+        /** 通过id以及class来确定元素 */
+        let id_className=""
+        const id=el.id
+        if(id)
+            id_className+=`#${id}`
+
+        el.classList.forEach(className=>{
+            id_className += `.${className}`
+        })
+
+        /** nth-child 选择 看它是第几个元素 */
+        const index=1+ Array.from(el.parentElement.children).findIndex(child=>child===el)
+
+        /** 最终构造出来的选择器 */
+        return `${pathSelectors}${id_className}:nth-child(${index})`
+    }
 })();
+
+
 /*
 # 使网页可编辑
 * 按下F2启用元素编辑，再次按下可以关闭
