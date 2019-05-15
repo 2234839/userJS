@@ -142,13 +142,12 @@ export const CommandControl: CommandControl = {
         return JSON.stringify(this.commandStack.map(a => a.toCommandJSON()))
     },
     loadCommandJsonAndRun(str){
-        const commandJSON:commandJSON[]=JSON.parse(str)
+        const commandJSON:commandJSON[]=str?JSON.parse(str):[]
         commandJSON
             .map(this.loadCommandJSON)
             .forEach(command=>this.run(command))
         return true
     }
-
 }
 
 /** 命令控制器的接口 */

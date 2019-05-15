@@ -128,6 +128,8 @@ import { Message } from "./ui/message";
 
     /** 保存的路径是页面的路径 */
     const localStorageSaveList = location.origin+location.pathname+'__saveList__llej__'
+    /** commandJSON 命令栈 */
+    const localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__'
 
     /** 保存修改 */
     function saveChanges(editElement: Set<HTMLElement>) {
@@ -135,11 +137,10 @@ import { Message } from "./ui/message";
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
-            console.log(selectors);
-
             saveSet.add(selectors)
             localStorage.setItem(selectors,el.innerHTML)
         })
+        localStorage.setItem(localStorageSaveCommandStack,CommandControl.getCommandStackJSON())
         localStorage.setItem(localStorageSaveList,JSON.stringify([...saveSet]))
     }
     /** 自动保存 */
@@ -151,9 +152,8 @@ import { Message } from "./ui/message";
     /** 加载修改 */
     function loadChanges(){
         const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : []
+        CommandControl.loadCommandJsonAndRun(localStorage.getItem(localStorageSaveCommandStack))
         saveList.forEach(selectors=>{
-            console.log(document.querySelector(selectors));
-
             document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
         })
     };

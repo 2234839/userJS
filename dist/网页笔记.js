@@ -659,7 +659,7 @@ var CommandControl = {
   loadCommandJsonAndRun: function loadCommandJsonAndRun(str) {
     var _this = this;
 
-    var commandJSON = JSON.parse(str);
+    var commandJSON = str ? JSON.parse(str) : [];
     commandJSON.map(this.loadCommandJSON).forEach(function (command) {
       return _this.run(command);
     });
@@ -895,6 +895,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
   var localStorageSaveList = location.origin + location.pathname + '__saveList__llej__';
+  /** commandJSON 命令栈 */
+
+  var localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__';
   /** 保存修改 */
 
   function saveChanges(editElement) {
@@ -902,10 +905,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var saveSet = new Set(saveList);
     editElement.forEach(function (el) {
       var selectors = (0, _util.getSelectors)(el);
-      console.log(selectors);
       saveSet.add(selectors);
       localStorage.setItem(selectors, el.innerHTML);
     });
+    localStorage.setItem(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
     localStorage.setItem(localStorageSaveList, JSON.stringify(_toConsumableArray(saveSet)));
   }
   /** 自动保存 */
@@ -921,8 +924,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   function loadChanges() {
     var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
+
+    _Command.CommandControl.loadCommandJsonAndRun(localStorage.getItem(localStorageSaveCommandStack));
+
     saveList.forEach(function (selectors) {
-      console.log(document.querySelector(selectors));
       document.querySelector(selectors).innerHTML = localStorage.getItem(selectors);
     });
   }
