@@ -1,3 +1,5 @@
+import { async } from "q";
+
 /** 用于复制文本的input */
 const input_copy = document.createElement('input')
 input_copy.id = '__'
@@ -70,6 +72,10 @@ export function nodePath(...path: Element[]): HTMLElement[] {
     return HTMLElementPath;
 }
 
+export async function getJSon(url: string, data?: any){
+    const str= await ajax_get(url,data)
+    return JSON.parse(str)
+}
 
 /** 油猴的ajaxget */
 export function ajax_get(url:string,data?:any):Promise<string>{

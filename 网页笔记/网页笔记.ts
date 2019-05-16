@@ -5,6 +5,7 @@ import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 import { setLocalItem, getLocalItem } from "./store";
 import { async } from "q";
+import { login, remote_getStore, remote_setStore } from "./ajax";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -22,10 +23,18 @@ import { async } from "q";
 
 
 ;(async function () {
-    console.log(await ajax_get("https://shenzilong.cn"));
-
     /** 调试用 */
     (<any>window).CommandControl = CommandControl
+
+
+    console.log(await login({
+        user:'崮生',
+        secret_key:'1998'
+    }));
+
+    console.log(await remote_getStore({
+        url: '崮生'
+    }));
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
@@ -42,7 +51,7 @@ import { async } from "q";
         document.addEventListener('mouseover', mouse);
     }
     /** 监测按键事件 */
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown',async function (event) {
         var code = event.code;
         if (code === 'F2') {
             return switchState(mouse, event);
@@ -81,6 +90,28 @@ import { async } from "q";
             case "KeyS":/** 保存所有的修改 */
                 saveChanges(editElement);
                 new Message({ msg: '保存成功' }).autoHide()
+                break;
+            case "KeyO":/** 将修改上传到云端 */
+                remote_setStore({
+                    url: location.origin + location.pathname,
+                    store: JSON.stringify(await saveChanges(editElement))
+                }).then(r=>{
+                    new Message({ msg:"云端存储:"+r.message }).autoHide()
+                })
+                break;
+            case "KeyP":/** 从云端下载修改 */
+                remote_getStore({
+                    url: location.origin + location.pathname
+                }).then(r => {
+                    if(r.body.length===0)
+                        return new Message({ msg: "没有发现可用的云端存储"}).autoHide()
+                    const store = JSON.parse(r.body[0].store)
+                    console.log(store);
+                    setLocalItem(localStorageSaveCommandStack, store.commandStackStr)
+                    setLocalItem(localStorageSaveList, store.saveListStr)
+                    loadChanges()
+                    new Message({ msg: "云端存储:" + r.message }).autoHide()
+                })
                 break;
             default:
                 return true;
@@ -146,8 +177,14 @@ import { async } from "q";
             saveSet.add(selectors)
             setLocalItem(selectors,el.innerHTML)
         })
-        setLocalItem(localStorageSaveCommandStack,CommandControl.getCommandStackJSON())
-        setLocalItem(localStorageSaveList,JSON.stringify([...saveSet]))
+        const commandStackStr = CommandControl.getCommandStackJSON()
+        const saveListStr = JSON.stringify([...saveSet])
+        setLocalItem(localStorageSaveCommandStack, commandStackStr)
+        setLocalItem(localStorageSaveList, saveListStr)
+        return{
+            commandStackStr,
+            saveListStr
+        }
     }
     /** 自动保存 */
     setInterval(function(){
@@ -163,12 +200,16 @@ import { async } from "q";
         saveList.forEach(async selectors=>{
             document.querySelector(selectors).innerHTML = await getLocalItem(selectors)
         })
-    };
-    window.addEventListener('load',function(){
-        loadChanges()
         console.log('加载修改完毕');
+    };
 
-    })
+    if (document.readyState === "complete"){
+        loadChanges()
+    }else{
+        window.addEventListener('load', function () {
+            loadChanges()
+        })
+    }
 })();
 
 /*

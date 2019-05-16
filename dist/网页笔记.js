@@ -117,7 +117,43 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":[function(require,module,exports) {
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+module.exports = _arrayWithoutHoles;
+},{}],"../node_modules/@babel/runtime/helpers/iterableToArray.js":[function(require,module,exports) {
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+},{}],"../node_modules/@babel/runtime/helpers/nonIterableSpread.js":[function(require,module,exports) {
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+module.exports = _nonIterableSpread;
+},{}],"../node_modules/@babel/runtime/helpers/toConsumableArray.js":[function(require,module,exports) {
+var arrayWithoutHoles = require("./arrayWithoutHoles");
+
+var iterableToArray = require("./iterableToArray");
+
+var nonIterableSpread = require("./nonIterableSpread");
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+},{"./arrayWithoutHoles":"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js","./iterableToArray":"../node_modules/@babel/runtime/helpers/iterableToArray.js","./nonIterableSpread":"../node_modules/@babel/runtime/helpers/nonIterableSpread.js"}],"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -883,43 +919,7 @@ if (hadRuntime) {
 },{"./runtime":"../node_modules/regenerator-runtime/runtime.js"}],"../node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime-module.js"}],"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":[function(require,module,exports) {
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-},{}],"../node_modules/@babel/runtime/helpers/iterableToArray.js":[function(require,module,exports) {
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-},{}],"../node_modules/@babel/runtime/helpers/nonIterableSpread.js":[function(require,module,exports) {
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
-},{}],"../node_modules/@babel/runtime/helpers/toConsumableArray.js":[function(require,module,exports) {
-var arrayWithoutHoles = require("./arrayWithoutHoles");
-
-var iterableToArray = require("./iterableToArray");
-
-var nonIterableSpread = require("./nonIterableSpread");
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-},{"./arrayWithoutHoles":"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js","./iterableToArray":"../node_modules/@babel/runtime/helpers/iterableToArray.js","./nonIterableSpread":"../node_modules/@babel/runtime/helpers/nonIterableSpread.js"}],"util.ts":[function(require,module,exports) {
+},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime-module.js"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -928,10 +928,44 @@ Object.defineProperty(exports, "__esModule", {
 exports.getSelectors = getSelectors;
 exports.getIndex = getIndex;
 exports.nodePath = nodePath;
+exports.getJSon = getJSon;
 exports.ajax_get = ajax_get;
 exports.default = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
 /** 用于复制文本的input */
+
+
 var input_copy = document.createElement('input');
 input_copy.id = '__'; // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
 
@@ -1003,6 +1037,31 @@ function nodePath() {
   });
   return HTMLElementPath;
 }
+
+function getJSon(url, data) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee() {
+    var str;
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return ajax_get(url, data);
+
+          case 2:
+            str = _context.sent;
+            return _context.abrupt("return", JSON.parse(str));
+
+          case 4:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
 /** 油猴的ajaxget */
 
 
@@ -1035,7 +1094,7 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{}],"config.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1046,7 +1105,10 @@ var _default = {
   state: 0,
 
   /** 是否开启编辑 */
-  elemtEdit: location.href.includes('127.0.0.1')
+  elemtEdit: location.href.includes('127.0.0.1'),
+
+  /** 服务器地址 */
+  serverIp: 'https://127.0.0.1/note/'
 };
 exports.default = _default;
 },{}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
@@ -1762,12 +1824,160 @@ defaultValue) {
     }, _callee2);
   }));
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"网页笔记.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"ajax.ts":[function(require,module,exports) {
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.au_getJSON = au_getJSON;
+exports.login = login;
+exports.remote_getStore = remote_getStore;
+exports.remote_setStore = remote_setStore;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _util = require("./util");
+
+var _config = _interopRequireDefault(require("./config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+/** 用来识别身份的key */
+var key = '';
+/** 附带登录信息的ajax */
+
+function au_getJSON(url, data) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee() {
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            data.key = key;
+            return _context.abrupt("return", (0, _util.getJSon)(url, data));
+
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+/** 登录 */
+
+
+function login(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee2() {
+    var res;
+    return _regenerator.default.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return (0, _util.getJSon)(_config.default.serverIp + 'login', par);
+
+          case 2:
+            res = _context2.sent;
+            if (res.body && res.body.length > 0) key = res.body;
+            return _context2.abrupt("return", res);
+
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_getStore(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee3() {
+    return _regenerator.default.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.next = 2;
+            return au_getJSON(_config.default.serverIp + 'getStore', par);
+
+          case 2:
+            return _context3.abrupt("return", _context3.sent);
+
+          case 3:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_setStore(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee4() {
+    return _regenerator.default.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.next = 2;
+            return au_getJSON(_config.default.serverIp + 'setStore', par);
+
+          case 2:
+            return _context4.abrupt("return", _context4.sent);
+
+          case 3:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+}
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts"}],"网页笔记.ts":[function(require,module,exports) {
+"use strict";
+
 var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _util = _interopRequireWildcard(require("./util"));
 
@@ -1780,6 +1990,8 @@ var _warning = require("./ui/warning");
 var _message = require("./ui/message");
 
 var _store = require("./store");
+
+var _ajax = require("./ajax");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -1831,84 +2043,85 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 (function () {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
-  _regenerator.default.mark(function _callee4() {
+  _regenerator.default.mark(function _callee5() {
     var path, editElement, mouse, outline, switchState, localStorageSaveList, localStorageSaveCommandStack, saveChanges, loadChanges;
-    return _regenerator.default.wrap(function _callee4$(_context4) {
+    return _regenerator.default.wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
             loadChanges = function _ref5() {
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
-              _regenerator.default.mark(function _callee3() {
+              _regenerator.default.mark(function _callee4() {
                 var _this = this;
 
                 var localStorageSaveListStr, saveList;
-                return _regenerator.default.wrap(function _callee3$(_context3) {
+                return _regenerator.default.wrap(function _callee4$(_context4) {
                   while (1) {
-                    switch (_context3.prev = _context3.next) {
+                    switch (_context4.prev = _context4.next) {
                       case 0:
-                        _context3.next = 2;
+                        _context4.next = 2;
                         return (0, _store.getLocalItem)(localStorageSaveList, undefined);
 
                       case 2:
-                        localStorageSaveListStr = _context3.sent;
+                        localStorageSaveListStr = _context4.sent;
                         saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
-                        _context3.t0 = _Command.CommandControl;
-                        _context3.next = 7;
+                        _context4.t0 = _Command.CommandControl;
+                        _context4.next = 7;
                         return (0, _store.getLocalItem)(localStorageSaveCommandStack);
 
                       case 7:
-                        _context3.t1 = _context3.sent;
+                        _context4.t1 = _context4.sent;
 
-                        _context3.t0.loadCommandJsonAndRun.call(_context3.t0, _context3.t1);
+                        _context4.t0.loadCommandJsonAndRun.call(_context4.t0, _context4.t1);
 
                         saveList.forEach(function (selectors) {
                           return __awaiter(_this, void 0, void 0,
                           /*#__PURE__*/
-                          _regenerator.default.mark(function _callee2() {
-                            return _regenerator.default.wrap(function _callee2$(_context2) {
+                          _regenerator.default.mark(function _callee3() {
+                            return _regenerator.default.wrap(function _callee3$(_context3) {
                               while (1) {
-                                switch (_context2.prev = _context2.next) {
+                                switch (_context3.prev = _context3.next) {
                                   case 0:
-                                    _context2.next = 2;
+                                    _context3.next = 2;
                                     return (0, _store.getLocalItem)(selectors);
 
                                   case 2:
-                                    document.querySelector(selectors).innerHTML = _context2.sent;
+                                    document.querySelector(selectors).innerHTML = _context3.sent;
 
                                   case 3:
                                   case "end":
-                                    return _context2.stop();
+                                    return _context3.stop();
                                 }
                               }
-                            }, _callee2);
+                            }, _callee3);
                           }));
                         });
+                        console.log('加载修改完毕');
 
-                      case 10:
+                      case 11:
                       case "end":
-                        return _context3.stop();
+                        return _context4.stop();
                     }
                   }
-                }, _callee3);
+                }, _callee4);
               }));
             };
 
             saveChanges = function _ref4(editElement) {
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
-              _regenerator.default.mark(function _callee() {
-                var localStorageSaveListStr, saveList, saveSet;
-                return _regenerator.default.wrap(function _callee$(_context) {
+              _regenerator.default.mark(function _callee2() {
+                var localStorageSaveListStr, saveList, saveSet, commandStackStr, saveListStr;
+                return _regenerator.default.wrap(function _callee2$(_context2) {
                   while (1) {
-                    switch (_context.prev = _context.next) {
+                    switch (_context2.prev = _context2.next) {
                       case 0:
-                        _context.next = 2;
+                        _context2.next = 2;
                         return (0, _store.getLocalItem)(localStorageSaveList, undefined);
 
                       case 2:
-                        localStorageSaveListStr = _context.sent;
+                        localStorageSaveListStr = _context2.sent;
                         saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
                         saveSet = new Set(saveList);
                         editElement.forEach(function (el) {
@@ -1916,15 +2129,21 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           saveSet.add(selectors);
                           (0, _store.setLocalItem)(selectors, el.innerHTML);
                         });
-                        (0, _store.setLocalItem)(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
-                        (0, _store.setLocalItem)(localStorageSaveList, JSON.stringify((0, _toConsumableArray2.default)(saveSet)));
+                        commandStackStr = _Command.CommandControl.getCommandStackJSON();
+                        saveListStr = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
+                        (0, _store.setLocalItem)(localStorageSaveCommandStack, commandStackStr);
+                        (0, _store.setLocalItem)(localStorageSaveList, saveListStr);
+                        return _context2.abrupt("return", {
+                          commandStackStr: commandStackStr,
+                          saveListStr: saveListStr
+                        });
 
-                      case 8:
+                      case 11:
                       case "end":
-                        return _context.stop();
+                        return _context2.stop();
                     }
                   }
-                }, _callee);
+                }, _callee2);
               }));
             };
 
@@ -1958,18 +2177,30 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               }
             };
 
-            _context4.t0 = console;
-            _context4.next = 8;
-            return (0, _util.ajax_get)("https://shenzilong.cn");
-
-          case 8:
-            _context4.t1 = _context4.sent;
-
-            _context4.t0.log.call(_context4.t0, _context4.t1);
-
             /** 调试用 */
             window.CommandControl = _Command.CommandControl;
-            /** 存储鼠标所在位置的所有元素 */
+            _context5.t0 = console;
+            _context5.next = 9;
+            return (0, _ajax.login)({
+              user: '崮生',
+              secret_key: '1998'
+            });
+
+          case 9:
+            _context5.t1 = _context5.sent;
+
+            _context5.t0.log.call(_context5.t0, _context5.t1);
+
+            _context5.t2 = console;
+            _context5.next = 14;
+            return (0, _ajax.remote_getStore)({
+              url: '崮生'
+            });
+
+          case 14:
+            _context5.t3 = _context5.sent;
+
+            _context5.t2.log.call(_context5.t2, _context5.t3);
 
             /** 被修改后的元素 */
             editElement = new Set();
@@ -1982,78 +2213,152 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
 
             document.addEventListener('keydown', function (event) {
-              var code = event.code;
+              return __awaiter(this, void 0, void 0,
+              /*#__PURE__*/
+              _regenerator.default.mark(function _callee() {
+                var code;
+                return _regenerator.default.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        code = event.code;
 
-              if (code === 'F2') {
-                return switchState(mouse, event);
-              }
-              /** 没有开启编辑功能 */
+                        if (!(code === 'F2')) {
+                          _context.next = 3;
+                          break;
+                        }
 
+                        return _context.abrupt("return", switchState(mouse, event));
 
-              if (_config.default.elemtEdit === false) {
-                return;
-              } //有元素获得焦点，视为正在输入文本，不执行下面的功能
+                      case 3:
+                        if (!(_config.default.elemtEdit === false)) {
+                          _context.next = 5;
+                          break;
+                        }
 
+                        return _context.abrupt("return");
 
-              if (document.querySelectorAll(":focus").length > 0) {
-                return;
-              }
+                      case 5:
+                        if (!(document.querySelectorAll(":focus").length > 0)) {
+                          _context.next = 7;
+                          break;
+                        }
 
-              switch (code) {
-                case 'KeyQ':
-                  /** 使元素可编辑 */
-                  _Command.CommandControl.run(new _Command.editSelect(path[0]));
+                        return _context.abrupt("return");
 
-                  break;
+                      case 7:
+                        _context.t0 = code;
+                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 39 : 41;
+                        break;
 
-                case 'KeyD':
-                  /** 删除元素 */
-                  _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
+                      case 10:
+                        /** 使元素可编辑 */
+                        _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
-                  break;
+                        return _context.abrupt("break", 42);
 
-                case 'KeyC':
-                  /** 赋值titile */
-                  _util.default.copyTitle(path[0]);
+                      case 12:
+                        /** 删除元素 */
+                        _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                  if (event.ctrlKey === false) //因为ctrl+c不应该被阻止
-                    break;
+                        return _context.abrupt("break", 42);
 
-                case "KeyW":
-                  /** 关闭可编辑 */
-                  _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
+                      case 14:
+                        /** 赋值titile */
+                        _util.default.copyTitle(path[0]);
 
-                  break;
+                        if (!(event.ctrlKey === false)) {
+                          _context.next = 17;
+                          break;
+                        }
 
-                case 'KeyZ':
-                  /** 撤销 */
-                  _Command.CommandControl.backout();
+                        return _context.abrupt("break", 42);
 
-                  break;
+                      case 17:
+                        /** 关闭可编辑 */
+                        _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                case "KeyY":
-                  /** 重做 */
-                  _Command.CommandControl.reform();
+                        return _context.abrupt("break", 42);
 
-                  break;
+                      case 19:
+                        /** 撤销 */
+                        _Command.CommandControl.backout();
 
-                case "KeyN":
-                  /** 新增笔记 */
-                  _Command.CommandControl.run(new _Command.addNote(path[0]));
+                        return _context.abrupt("break", 42);
 
-                  break;
+                      case 21:
+                        /** 重做 */
+                        _Command.CommandControl.reform();
 
-                case "KeyS":
-                  /** 保存所有的修改 */
-                  saveChanges(editElement);
-                  new _message.Message({
-                    msg: '保存成功'
-                  }).autoHide();
-                  break;
+                        return _context.abrupt("break", 42);
 
-                default:
-                  return true;
-              }
+                      case 23:
+                        /** 新增笔记 */
+                        _Command.CommandControl.run(new _Command.addNote(path[0]));
+
+                        return _context.abrupt("break", 42);
+
+                      case 25:
+                        /** 保存所有的修改 */
+                        saveChanges(editElement);
+                        new _message.Message({
+                          msg: '保存成功'
+                        }).autoHide();
+                        return _context.abrupt("break", 42);
+
+                      case 28:
+                        _context.t1 = _ajax.remote_setStore;
+                        _context.t2 = location.origin + location.pathname;
+                        _context.t3 = JSON;
+                        _context.next = 33;
+                        return saveChanges(editElement);
+
+                      case 33:
+                        _context.t4 = _context.sent;
+                        _context.t5 = _context.t3.stringify.call(_context.t3, _context.t4);
+                        _context.t6 = {
+                          url: _context.t2,
+                          store: _context.t5
+                        };
+
+                        _context.t7 = function (r) {
+                          new _message.Message({
+                            msg: "云端存储:" + r.message
+                          }).autoHide();
+                        };
+
+                        (0, _context.t1)(_context.t6).then(_context.t7);
+                        return _context.abrupt("break", 42);
+
+                      case 39:
+                        /** 从云端下载修改 */
+                        (0, _ajax.remote_getStore)({
+                          url: location.origin + location.pathname
+                        }).then(function (r) {
+                          if (r.body.length === 0) return new _message.Message({
+                            msg: "没有发现可用的云端存储"
+                          }).autoHide();
+                          var store = JSON.parse(r.body[0].store);
+                          console.log(store);
+                          (0, _store.setLocalItem)(localStorageSaveCommandStack, store.commandStackStr);
+                          (0, _store.setLocalItem)(localStorageSaveList, store.saveListStr);
+                          loadChanges();
+                          new _message.Message({
+                            msg: "云端存储:" + r.message
+                          }).autoHide();
+                        });
+                        return _context.abrupt("break", 42);
+
+                      case 41:
+                        return _context.abrupt("return", true);
+
+                      case 42:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee);
+              }));
             });
             /** 元素失去焦点 */
 
@@ -2089,17 +2394,21 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             /** 加载修改 */
 
             ;
-            window.addEventListener('load', function () {
-              loadChanges();
-              console.log('加载修改完毕');
-            });
 
-          case 21:
+            if (document.readyState === "complete") {
+              loadChanges();
+            } else {
+              window.addEventListener('load', function () {
+                loadChanges();
+              });
+            }
+
+          case 26:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
       }
-    }, _callee4);
+    }, _callee5);
   }));
 })();
 /*
@@ -2133,7 +2442,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/toConsumableArray":"../node_modules/@babel/runtime/helpers/toConsumableArray.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/toConsumableArray":"../node_modules/@babel/runtime/helpers/toConsumableArray.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2161,7 +2470,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62852" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64059" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
