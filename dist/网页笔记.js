@@ -1007,15 +1007,24 @@ function nodePath() {
 
 
 function ajax_get(url, data) {
-  return new Promise(function (resolve, reject) {
+  if (data) url += '?' + jsonToURLpar(data);
+  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) return new Promise(function (resolve, reject) {
     GM.xmlHttpRequest({
       method: "GET",
-      url: "".concat(url, "?").concat(jsonToURLpar(data)),
+      url: url,
       onload: function onload(response) {
         resolve(response.responseText);
       },
       onerror: reject
     });
+  });else return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function () {
+      resolve(xhr.responseText);
+    });
+    xhr.addEventListener('error', reject);
+    xhr.open('get', url);
+    xhr.send();
   });
 }
 /** json 转 urlpar 只能转一层 */

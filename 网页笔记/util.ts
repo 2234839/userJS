@@ -73,16 +73,29 @@ export function nodePath(...path: Element[]): HTMLElement[] {
 
 /** 油猴的ajaxget */
 export function ajax_get(url:string,data?:any):Promise<string>{
-    return new Promise((resolve,reject)=>{
-        GM.xmlHttpRequest({
-            method: "GET",
-            url: `${url}?${jsonToURLpar(data)}`,
-            onload: function (response:any) {
-                resolve(response.responseText)
-            },
-            onerror:reject
-        });
-    })
+    if(data)
+        url+='?'+jsonToURLpar(data)
+    if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))
+        return new Promise((resolve,reject)=>{
+            GM.xmlHttpRequest({
+                method: "GET",
+                url,
+                onload: function (response:any) {
+                    resolve(response.responseText)
+                },
+                onerror:reject
+            });
+        })
+    else
+        return new Promise((resolve, reject) => {
+            const xhr=new XMLHttpRequest()
+            xhr.addEventListener('load',function(){
+                resolve(xhr.responseText)
+            })
+            xhr.addEventListener('error', reject)
+            xhr.open('get',url)
+            xhr.send()
+        })
 }
 
 /** json 转 urlpar 只能转一层 */
