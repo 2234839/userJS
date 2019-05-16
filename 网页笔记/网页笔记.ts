@@ -166,13 +166,13 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
     }
 
     /** 保存的路径是页面的路径 */
-    const localStorageSaveList = location.origin+location.pathname+'__saveList__llej__'
+    const element_List_storeName = '__saveList__llej__' + location.origin + location.pathname
     /** commandJSON 命令栈 */
-    const localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__'
+    const CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname
 
     /** 保存修改 */
     async function saveChanges(editElement: Set<HTMLElement>) {
-        const localStorageSaveListStr= await getLocalItem(localStorageSaveList,undefined)
+        const localStorageSaveListStr= await getLocalItem(element_List_storeName,undefined)
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) :[]
 
         let data:any = {
@@ -184,10 +184,10 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
             data[selectors] = el.innerHTML
             setLocalItem(selectors,el.innerHTML)
         })
-        data[localStorageSaveList] = JSON.stringify([...saveSet])
-        data[localStorageSaveCommandStack] = CommandControl.getCommandStackJSON()
-        setLocalItem(localStorageSaveList, data[localStorageSaveList] )
-        setLocalItem(localStorageSaveCommandStack, data[localStorageSaveCommandStack])
+        data[element_List_storeName] = JSON.stringify([...saveSet])
+        data[CommandStack_storeName] = CommandControl.getCommandStackJSON()
+        setLocalItem(element_List_storeName, data[element_List_storeName] )
+        setLocalItem(CommandStack_storeName, data[CommandStack_storeName])
         console.log(data);
 
         return data
@@ -200,9 +200,9 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 
     /** 加载修改 */
     async function loadChanges(){
-        const localStorageSaveListStr= await getLocalItem(localStorageSaveList,undefined)
+        const localStorageSaveListStr= await getLocalItem(element_List_storeName,undefined)
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : []
-        CommandControl.loadCommandJsonAndRun(await getLocalItem(localStorageSaveCommandStack))
+        CommandControl.loadCommandJsonAndRun(await getLocalItem(CommandStack_storeName))
         saveList.forEach(async selectors=>{
             console.log(selectors);
 

@@ -2044,7 +2044,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee5() {
-    var path, editElement, mouse, outline, switchState, localStorageSaveList, localStorageSaveCommandStack, saveChanges, loadChanges;
+    var path, editElement, mouse, outline, switchState, element_List_storeName, CommandStack_storeName, saveChanges, loadChanges;
     return _regenerator.default.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -2061,14 +2061,14 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                     switch (_context4.prev = _context4.next) {
                       case 0:
                         _context4.next = 2;
-                        return (0, _store.getLocalItem)(localStorageSaveList, undefined);
+                        return (0, _store.getLocalItem)(element_List_storeName, undefined);
 
                       case 2:
                         localStorageSaveListStr = _context4.sent;
                         saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
                         _context4.t0 = _Command.CommandControl;
                         _context4.next = 7;
-                        return (0, _store.getLocalItem)(localStorageSaveCommandStack);
+                        return (0, _store.getLocalItem)(CommandStack_storeName);
 
                       case 7:
                         _context4.t1 = _context4.sent;
@@ -2119,7 +2119,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                     switch (_context2.prev = _context2.next) {
                       case 0:
                         _context2.next = 2;
-                        return (0, _store.getLocalItem)(localStorageSaveList, undefined);
+                        return (0, _store.getLocalItem)(element_List_storeName, undefined);
 
                       case 2:
                         localStorageSaveListStr = _context2.sent;
@@ -2132,10 +2132,10 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           data[selectors] = el.innerHTML;
                           (0, _store.setLocalItem)(selectors, el.innerHTML);
                         });
-                        data[localStorageSaveList] = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
-                        data[localStorageSaveCommandStack] = _Command.CommandControl.getCommandStackJSON();
-                        (0, _store.setLocalItem)(localStorageSaveList, data[localStorageSaveList]);
-                        (0, _store.setLocalItem)(localStorageSaveCommandStack, data[localStorageSaveCommandStack]);
+                        data[element_List_storeName] = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
+                        data[CommandStack_storeName] = _Command.CommandControl.getCommandStackJSON();
+                        (0, _store.setLocalItem)(element_List_storeName, data[element_List_storeName]);
+                        (0, _store.setLocalItem)(CommandStack_storeName, data[CommandStack_storeName]);
                         console.log(data);
                         return _context2.abrupt("return", data);
 
@@ -2385,10 +2385,10 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             /** 轮廓线,用以显示当前元素 */
 
             /** 保存的路径是页面的路径 */
-            localStorageSaveList = location.origin + location.pathname + '__saveList__llej__';
+            element_List_storeName = '__saveList__llej__' + location.origin + location.pathname;
             /** commandJSON 命令栈 */
 
-            localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__';
+            CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname;
             /** 保存修改 */
 
             /** 自动保存 */
