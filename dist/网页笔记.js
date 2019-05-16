@@ -928,6 +928,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getSelectors = getSelectors;
 exports.getIndex = getIndex;
 exports.nodePath = nodePath;
+exports.ajax_get = ajax_get;
 exports.default = void 0;
 
 /** 用于复制文本的input */
@@ -1001,6 +1002,29 @@ function nodePath() {
     return el instanceof HTMLElement;
   });
   return HTMLElementPath;
+}
+/** 油猴的ajaxget */
+
+
+function ajax_get(url, data) {
+  return new Promise(function (resolve, reject) {
+    GM.xmlHttpRequest({
+      method: "GET",
+      url: "".concat(url, "?").concat(jsonToURLpar(data)),
+      onload: function onload(response) {
+        resolve(response.responseText);
+      },
+      onerror: reject
+    });
+  });
+}
+/** json 转 urlpar 只能转一层 */
+
+
+function jsonToURLpar(json) {
+  return Object.keys(json).map(function (key) {
+    return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+  }).join("&");
 }
 },{}],"config.ts":[function(require,module,exports) {
 "use strict";
@@ -1788,265 +1812,286 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @author       You
 // @match        *
 // @include      *
+// @connect      shenzilong.cn
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        GM.xmlHttpRequest
 // ==/UserScript==
 ;
 
 (function () {
-  /** 调试用 */
-  window.CommandControl = _Command.CommandControl;
-  /** 存储鼠标所在位置的所有元素 */
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee4() {
+    var path, editElement, mouse, outline, switchState, localStorageSaveList, localStorageSaveCommandStack, saveChanges, loadChanges;
+    return _regenerator.default.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            loadChanges = function _ref5() {
+              return __awaiter(this, void 0, void 0,
+              /*#__PURE__*/
+              _regenerator.default.mark(function _callee3() {
+                var _this = this;
 
-  var path;
-  /** 被修改后的元素 */
+                var localStorageSaveListStr, saveList;
+                return _regenerator.default.wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        _context3.next = 2;
+                        return (0, _store.getLocalItem)(localStorageSaveList, undefined);
 
-  var editElement = new Set();
-  /** 监听鼠标移动 */
+                      case 2:
+                        localStorageSaveListStr = _context3.sent;
+                        saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
+                        _context3.t0 = _Command.CommandControl;
+                        _context3.next = 7;
+                        return (0, _store.getLocalItem)(localStorageSaveCommandStack);
 
-  function mouse(event) {
-    if (event.target instanceof HTMLElement) {
-      path = (0, _util.nodePath)(event.target);
-      outline(event.target);
-    }
-  }
+                      case 7:
+                        _context3.t1 = _context3.sent;
 
-  if (_config.default.elemtEdit) {
-    document.addEventListener('mouseover', mouse);
-  }
-  /** 监测按键事件 */
+                        _context3.t0.loadCommandJsonAndRun.call(_context3.t0, _context3.t1);
 
+                        saveList.forEach(function (selectors) {
+                          return __awaiter(_this, void 0, void 0,
+                          /*#__PURE__*/
+                          _regenerator.default.mark(function _callee2() {
+                            return _regenerator.default.wrap(function _callee2$(_context2) {
+                              while (1) {
+                                switch (_context2.prev = _context2.next) {
+                                  case 0:
+                                    _context2.next = 2;
+                                    return (0, _store.getLocalItem)(selectors);
 
-  document.addEventListener('keydown', function (event) {
-    var code = event.code;
+                                  case 2:
+                                    document.querySelector(selectors).innerHTML = _context2.sent;
 
-    if (code === 'F2') {
-      return switchState(mouse, event);
-    }
-    /** 没有开启编辑功能 */
+                                  case 3:
+                                  case "end":
+                                    return _context2.stop();
+                                }
+                              }
+                            }, _callee2);
+                          }));
+                        });
 
-
-    if (_config.default.elemtEdit === false) {
-      return;
-    } //有元素获得焦点，视为正在输入文本，不执行下面的功能
-
-
-    if (document.querySelectorAll(":focus").length > 0) {
-      return;
-    }
-
-    switch (code) {
-      case 'KeyQ':
-        /** 使元素可编辑 */
-        _Command.CommandControl.run(new _Command.editSelect(path[0]));
-
-        break;
-
-      case 'KeyD':
-        /** 删除元素 */
-        _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
-
-        break;
-
-      case 'KeyC':
-        /** 赋值titile */
-        _util.default.copyTitle(path[0]);
-
-        if (event.ctrlKey === false) //因为ctrl+c不应该被阻止
-          break;
-
-      case "KeyW":
-        /** 关闭可编辑 */
-        _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
-
-        break;
-
-      case 'KeyZ':
-        /** 撤销 */
-        _Command.CommandControl.backout();
-
-        break;
-
-      case "KeyY":
-        /** 重做 */
-        _Command.CommandControl.reform();
-
-        break;
-
-      case "KeyN":
-        /** 新增笔记 */
-        _Command.CommandControl.run(new _Command.addNote(path[0]));
-
-        break;
-
-      case "KeyS":
-        /** 保存所有的修改 */
-        saveChanges(editElement);
-        new _message.Message({
-          msg: '保存成功'
-        }).autoHide();
-        break;
-
-      default:
-        return true;
-    }
-  });
-  /** 元素失去焦点 */
-
-  document.addEventListener('focusout', function () {
-    console.log('元素失去焦点', event.target);
-  });
-  /** 元素被编辑了 */
-
-  document.addEventListener('input', function (event) {
-    if (event.target instanceof HTMLElement) {
-      var el = event.target;
-      if (el.innerHTML.length > 10 * 1000) new _warning.Warning({
-        msg: '该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。'
-      }).autoHide();else editElement.add(el);
-    }
-  });
-  /** 轮廓线,用以显示当前元素 */
-
-  function outline(elemt) {
-    if (elemt.style.outline == "2px solid red") return;
-    elemt.style.outline = "2px solid red";
-    setTimeout(function () {
-      if (elemt == path[0]) {
-        outline(elemt);
-        return;
-      }
-
-      elemt.style.outline = "";
-    }, 400);
-  }
-  /** 切换状态 */
-
-
-  function switchState(mouse, event) {
-    _config.default.elemtEdit = !_config.default.elemtEdit;
-    console.log('切换编辑状态', _config.default.elemtEdit);
-    if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
-      document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
-    event.preventDefault();
-    event.returnValue = false;
-    return false;
-  }
-  /** 保存的路径是页面的路径 */
-
-
-  var localStorageSaveList = location.origin + location.pathname + '__saveList__llej__';
-  /** commandJSON 命令栈 */
-
-  var localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__';
-  /** 保存修改 */
-
-  function saveChanges(editElement) {
-    return __awaiter(this, void 0, void 0,
-    /*#__PURE__*/
-    _regenerator.default.mark(function _callee() {
-      var localStorageSaveListStr, saveList, saveSet;
-      return _regenerator.default.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return (0, _store.getLocalItem)(localStorageSaveList, undefined);
-
-            case 2:
-              localStorageSaveListStr = _context.sent;
-              saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
-              saveSet = new Set(saveList);
-              editElement.forEach(function (el) {
-                var selectors = (0, _util.getSelectors)(el);
-                saveSet.add(selectors);
-                (0, _store.setLocalItem)(selectors, el.innerHTML);
-              });
-              (0, _store.setLocalItem)(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
-              (0, _store.setLocalItem)(localStorageSaveList, JSON.stringify((0, _toConsumableArray2.default)(saveSet)));
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-  }
-  /** 自动保存 */
-
-
-  setInterval(function () {
-    saveChanges(editElement);
-    new _message.Message({
-      msg: '自动保存成功...'
-    }).autoHide();
-  }, 1000 * 60);
-  /** 加载修改 */
-
-  function loadChanges() {
-    return __awaiter(this, void 0, void 0,
-    /*#__PURE__*/
-    _regenerator.default.mark(function _callee3() {
-      var _this = this;
-
-      var localStorageSaveListStr, saveList;
-      return _regenerator.default.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return (0, _store.getLocalItem)(localStorageSaveList, undefined);
-
-            case 2:
-              localStorageSaveListStr = _context3.sent;
-              saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
-              _context3.t0 = _Command.CommandControl;
-              _context3.next = 7;
-              return (0, _store.getLocalItem)(localStorageSaveCommandStack);
-
-            case 7:
-              _context3.t1 = _context3.sent;
-
-              _context3.t0.loadCommandJsonAndRun.call(_context3.t0, _context3.t1);
-
-              saveList.forEach(function (selectors) {
-                return __awaiter(_this, void 0, void 0,
-                /*#__PURE__*/
-                _regenerator.default.mark(function _callee2() {
-                  return _regenerator.default.wrap(function _callee2$(_context2) {
-                    while (1) {
-                      switch (_context2.prev = _context2.next) {
-                        case 0:
-                          _context2.next = 2;
-                          return (0, _store.getLocalItem)(selectors);
-
-                        case 2:
-                          document.querySelector(selectors).innerHTML = _context2.sent;
-
-                        case 3:
-                        case "end":
-                          return _context2.stop();
-                      }
+                      case 10:
+                      case "end":
+                        return _context3.stop();
                     }
-                  }, _callee2);
-                }));
-              });
+                  }
+                }, _callee3);
+              }));
+            };
 
-            case 10:
-            case "end":
-              return _context3.stop();
-          }
+            saveChanges = function _ref4(editElement) {
+              return __awaiter(this, void 0, void 0,
+              /*#__PURE__*/
+              _regenerator.default.mark(function _callee() {
+                var localStorageSaveListStr, saveList, saveSet;
+                return _regenerator.default.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        _context.next = 2;
+                        return (0, _store.getLocalItem)(localStorageSaveList, undefined);
+
+                      case 2:
+                        localStorageSaveListStr = _context.sent;
+                        saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
+                        saveSet = new Set(saveList);
+                        editElement.forEach(function (el) {
+                          var selectors = (0, _util.getSelectors)(el);
+                          saveSet.add(selectors);
+                          (0, _store.setLocalItem)(selectors, el.innerHTML);
+                        });
+                        (0, _store.setLocalItem)(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
+                        (0, _store.setLocalItem)(localStorageSaveList, JSON.stringify((0, _toConsumableArray2.default)(saveSet)));
+
+                      case 8:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee);
+              }));
+            };
+
+            switchState = function _ref3(mouse, event) {
+              _config.default.elemtEdit = !_config.default.elemtEdit;
+              console.log('切换编辑状态', _config.default.elemtEdit);
+              if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+                document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
+              event.preventDefault();
+              event.returnValue = false;
+              return false;
+            };
+
+            outline = function _ref2(elemt) {
+              if (elemt.style.outline == "2px solid red") return;
+              elemt.style.outline = "2px solid red";
+              setTimeout(function () {
+                if (elemt == path[0]) {
+                  outline(elemt);
+                  return;
+                }
+
+                elemt.style.outline = "";
+              }, 400);
+            };
+
+            mouse = function _ref(event) {
+              if (event.target instanceof HTMLElement) {
+                path = (0, _util.nodePath)(event.target);
+                outline(event.target);
+              }
+            };
+
+            _context4.t0 = console;
+            _context4.next = 8;
+            return (0, _util.ajax_get)("https://shenzilong.cn");
+
+          case 8:
+            _context4.t1 = _context4.sent;
+
+            _context4.t0.log.call(_context4.t0, _context4.t1);
+
+            /** 调试用 */
+            window.CommandControl = _Command.CommandControl;
+            /** 存储鼠标所在位置的所有元素 */
+
+            /** 被修改后的元素 */
+            editElement = new Set();
+            /** 监听鼠标移动 */
+
+            if (_config.default.elemtEdit) {
+              document.addEventListener('mouseover', mouse);
+            }
+            /** 监测按键事件 */
+
+
+            document.addEventListener('keydown', function (event) {
+              var code = event.code;
+
+              if (code === 'F2') {
+                return switchState(mouse, event);
+              }
+              /** 没有开启编辑功能 */
+
+
+              if (_config.default.elemtEdit === false) {
+                return;
+              } //有元素获得焦点，视为正在输入文本，不执行下面的功能
+
+
+              if (document.querySelectorAll(":focus").length > 0) {
+                return;
+              }
+
+              switch (code) {
+                case 'KeyQ':
+                  /** 使元素可编辑 */
+                  _Command.CommandControl.run(new _Command.editSelect(path[0]));
+
+                  break;
+
+                case 'KeyD':
+                  /** 删除元素 */
+                  _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
+
+                  break;
+
+                case 'KeyC':
+                  /** 赋值titile */
+                  _util.default.copyTitle(path[0]);
+
+                  if (event.ctrlKey === false) //因为ctrl+c不应该被阻止
+                    break;
+
+                case "KeyW":
+                  /** 关闭可编辑 */
+                  _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
+
+                  break;
+
+                case 'KeyZ':
+                  /** 撤销 */
+                  _Command.CommandControl.backout();
+
+                  break;
+
+                case "KeyY":
+                  /** 重做 */
+                  _Command.CommandControl.reform();
+
+                  break;
+
+                case "KeyN":
+                  /** 新增笔记 */
+                  _Command.CommandControl.run(new _Command.addNote(path[0]));
+
+                  break;
+
+                case "KeyS":
+                  /** 保存所有的修改 */
+                  saveChanges(editElement);
+                  new _message.Message({
+                    msg: '保存成功'
+                  }).autoHide();
+                  break;
+
+                default:
+                  return true;
+              }
+            });
+            /** 元素失去焦点 */
+
+            document.addEventListener('focusout', function () {
+              console.log('元素失去焦点', event.target);
+            });
+            /** 元素被编辑了 */
+
+            document.addEventListener('input', function (event) {
+              if (event.target instanceof HTMLElement) {
+                var el = event.target;
+                if (el.innerHTML.length > 10 * 1000) new _warning.Warning({
+                  msg: '该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。'
+                }).autoHide();else editElement.add(el);
+              }
+            });
+            /** 轮廓线,用以显示当前元素 */
+
+            /** 保存的路径是页面的路径 */
+            localStorageSaveList = location.origin + location.pathname + '__saveList__llej__';
+            /** commandJSON 命令栈 */
+
+            localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__';
+            /** 保存修改 */
+
+            /** 自动保存 */
+            setInterval(function () {
+              saveChanges(editElement);
+              new _message.Message({
+                msg: '自动保存成功...'
+              }).autoHide();
+            }, 1000 * 60);
+            /** 加载修改 */
+
+            ;
+            window.addEventListener('load', function () {
+              loadChanges();
+              console.log('加载修改完毕');
+            });
+
+          case 21:
+          case "end":
+            return _context4.stop();
         }
-      }, _callee3);
-    }));
-  }
-
-  ;
-  window.addEventListener('load', function () {
-    loadChanges();
-    console.log('加载修改完毕');
-  });
+      }
+    }, _callee4);
+  }));
 })();
 /*
 # 使网页可编辑

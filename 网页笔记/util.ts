@@ -69,3 +69,25 @@ export function nodePath(...path: Element[]): HTMLElement[] {
     const HTMLElementPath = <HTMLElement[]>path.filter(el => el instanceof HTMLElement)
     return HTMLElementPath;
 }
+
+
+/** 油猴的ajaxget */
+export function ajax_get(url:string,data?:any):Promise<string>{
+    return new Promise((resolve,reject)=>{
+        GM.xmlHttpRequest({
+            method: "GET",
+            url: `${url}?${jsonToURLpar(data)}`,
+            onload: function (response:any) {
+                resolve(response.responseText)
+            },
+            onerror:reject
+        });
+    })
+}
+
+/** json 转 urlpar 只能转一层 */
+function jsonToURLpar(json:any){
+    return Object.keys(json).map(function (key) {
+        return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+    }).join("&");
+}

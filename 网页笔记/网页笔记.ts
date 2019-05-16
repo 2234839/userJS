@@ -1,9 +1,10 @@
-import $, { nodePath, getSelectors } from "./util";
+import $, { nodePath, getSelectors, ajax_get } from "./util";
 import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 import { setLocalItem, getLocalItem } from "./store";
+import { async } from "q";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -13,12 +14,15 @@ import { setLocalItem, getLocalItem } from "./store";
 // @author       You
 // @match        *
 // @include      *
+// @connect      shenzilong.cn
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        GM.xmlHttpRequest
 // ==/UserScript==
 
 
-;(function () {
+;(async function () {
+    console.log(await ajax_get("https://shenzilong.cn"));
 
     /** 调试用 */
     (<any>window).CommandControl = CommandControl
