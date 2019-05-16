@@ -103,12 +103,16 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
                 remote_getStore({
                     url: location.origin + location.pathname
                 }).then(r => {
-                    if(r.body.length===0)
+                    if (r.body===undefined || r.body.length===0)
                         return new Message({ msg: "没有发现可用的云端存储"}).autoHide()
                     const store = JSON.parse(r.body[0].store)
                     console.log(store);
-                    setLocalItem(localStorageSaveCommandStack, store.commandStackStr)
-                    setLocalItem(localStorageSaveList, store.saveListStr)
+                    for (const key in store) {
+                        if (store.hasOwnProperty(key)) {
+                            const element = store[key];
+                            setLocalItem(key, element)
+                        }
+                    }
                     loadChanges()
                     new Message({ msg: "云端存储:" + r.message }).autoHide()
                 })
@@ -171,20 +175,22 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         const localStorageSaveListStr= await getLocalItem(localStorageSaveList,undefined)
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) :[]
 
+        let data:any = {
+        }
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
             saveSet.add(selectors)
+            data[selectors] = el.innerHTML
             setLocalItem(selectors,el.innerHTML)
         })
-        const commandStackStr = CommandControl.getCommandStackJSON()
-        const saveListStr = JSON.stringify([...saveSet])
-        setLocalItem(localStorageSaveCommandStack, commandStackStr)
-        setLocalItem(localStorageSaveList, saveListStr)
-        return{
-            commandStackStr,
-            saveListStr
-        }
+        data[localStorageSaveList] = JSON.stringify([...saveSet])
+        data[localStorageSaveCommandStack] = CommandControl.getCommandStackJSON()
+        setLocalItem(localStorageSaveList, data[localStorageSaveList] )
+        setLocalItem(localStorageSaveCommandStack, data[localStorageSaveCommandStack])
+        console.log(data);
+
+        return data
     }
     /** 自动保存 */
     setInterval(function(){
@@ -198,6 +204,8 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : []
         CommandControl.loadCommandJsonAndRun(await getLocalItem(localStorageSaveCommandStack))
         saveList.forEach(async selectors=>{
+            console.log(selectors);
+
             document.querySelector(selectors).innerHTML = await getLocalItem(selectors)
         })
         console.log('加载修改完毕');

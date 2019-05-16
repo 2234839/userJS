@@ -2083,13 +2083,14 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                               while (1) {
                                 switch (_context3.prev = _context3.next) {
                                   case 0:
-                                    _context3.next = 2;
+                                    console.log(selectors);
+                                    _context3.next = 3;
                                     return (0, _store.getLocalItem)(selectors);
 
-                                  case 2:
+                                  case 3:
                                     document.querySelector(selectors).innerHTML = _context3.sent;
 
-                                  case 3:
+                                  case 4:
                                   case "end":
                                     return _context3.stop();
                                 }
@@ -2112,7 +2113,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee2() {
-                var localStorageSaveListStr, saveList, saveSet, commandStackStr, saveListStr;
+                var localStorageSaveListStr, saveList, data, saveSet;
                 return _regenerator.default.wrap(function _callee2$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
@@ -2123,22 +2124,22 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                       case 2:
                         localStorageSaveListStr = _context2.sent;
                         saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
+                        data = {};
                         saveSet = new Set(saveList);
                         editElement.forEach(function (el) {
                           var selectors = (0, _util.getSelectors)(el);
                           saveSet.add(selectors);
+                          data[selectors] = el.innerHTML;
                           (0, _store.setLocalItem)(selectors, el.innerHTML);
                         });
-                        commandStackStr = _Command.CommandControl.getCommandStackJSON();
-                        saveListStr = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
-                        (0, _store.setLocalItem)(localStorageSaveCommandStack, commandStackStr);
-                        (0, _store.setLocalItem)(localStorageSaveList, saveListStr);
-                        return _context2.abrupt("return", {
-                          commandStackStr: commandStackStr,
-                          saveListStr: saveListStr
-                        });
+                        data[localStorageSaveList] = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
+                        data[localStorageSaveCommandStack] = _Command.CommandControl.getCommandStackJSON();
+                        (0, _store.setLocalItem)(localStorageSaveList, data[localStorageSaveList]);
+                        (0, _store.setLocalItem)(localStorageSaveCommandStack, data[localStorageSaveCommandStack]);
+                        console.log(data);
+                        return _context2.abrupt("return", data);
 
-                      case 11:
+                      case 13:
                       case "end":
                         return _context2.stop();
                     }
@@ -2335,13 +2336,19 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         (0, _ajax.remote_getStore)({
                           url: location.origin + location.pathname
                         }).then(function (r) {
-                          if (r.body.length === 0) return new _message.Message({
+                          if (r.body === undefined || r.body.length === 0) return new _message.Message({
                             msg: "没有发现可用的云端存储"
                           }).autoHide();
                           var store = JSON.parse(r.body[0].store);
                           console.log(store);
-                          (0, _store.setLocalItem)(localStorageSaveCommandStack, store.commandStackStr);
-                          (0, _store.setLocalItem)(localStorageSaveList, store.saveListStr);
+
+                          for (var key in store) {
+                            if (store.hasOwnProperty(key)) {
+                              var element = store[key];
+                              (0, _store.setLocalItem)(key, element);
+                            }
+                          }
+
                           loadChanges();
                           new _message.Message({
                             msg: "云端存储:" + r.message
