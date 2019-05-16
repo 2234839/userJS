@@ -13,7 +13,7 @@ import { setLocalItem, getLocalItem } from "./store";
 // @author       You
 // @match        *
 // @include      *
-// @grant        GM.setValue    //油猴的存储接口
+// @grant        GM.setValue
 // @grant        GM.getValue
 // ==/UserScript==
 
@@ -42,6 +42,10 @@ import { setLocalItem, getLocalItem } from "./store";
         var code = event.code;
         if (code === 'F2') {
             return switchState(mouse, event);
+        }
+        /** 没有开启编辑功能 */
+        if(config.elemtEdit===false){
+            return;
         }
         //有元素获得焦点，视为正在输入文本，不执行下面的功能
         if (document.querySelectorAll(":focus").length > 0) {
@@ -129,7 +133,9 @@ import { setLocalItem, getLocalItem } from "./store";
 
     /** 保存修改 */
     async function saveChanges(editElement: Set<HTMLElement>) {
-        const saveList: string[] = getLocalItem(localStorageSaveList,[]) ? JSON.parse(await getLocalItem(localStorageSaveList)) :[]
+        const localStorageSaveListStr= await getLocalItem(localStorageSaveList,undefined)
+        const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) :[]
+
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
@@ -147,7 +153,8 @@ import { setLocalItem, getLocalItem } from "./store";
 
     /** 加载修改 */
     async function loadChanges(){
-        const saveList: string[] = getLocalItem(localStorageSaveList) ? JSON.parse(await getLocalItem(localStorageSaveList)) : []
+        const localStorageSaveListStr= await getLocalItem(localStorageSaveList,undefined)
+        const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : []
         CommandControl.loadCommandJsonAndRun(await getLocalItem(localStorageSaveCommandStack))
         saveList.forEach(async selectors=>{
             document.querySelector(selectors).innerHTML = await getLocalItem(selectors)

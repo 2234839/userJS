@@ -142,6 +142,8 @@ export const CommandControl: CommandControl = {
         return JSON.stringify(this.commandStack.map(a => a.toCommandJSON()))
     },
     loadCommandJsonAndRun(str){
+        if(str===undefined)
+            return false
         const commandJSON:commandJSON[]=str?JSON.parse(str):[]
         commandJSON
             .map(this.loadCommandJSON)

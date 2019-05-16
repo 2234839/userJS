@@ -1011,6 +1011,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = {
   state: 0,
+
+  /** 是否开启编辑 */
   elemtEdit: location.href.includes('127.0.0.1')
 };
 exports.default = _default;
@@ -1543,6 +1545,7 @@ var CommandControl = {
   loadCommandJsonAndRun: function loadCommandJsonAndRun(str) {
     var _this = this;
 
+    if (str === undefined) return false;
     var commandJSON = str ? JSON.parse(str) : [];
     commandJSON.map(this.loadCommandJSON).forEach(function (command) {
       return _this.run(command);
@@ -1631,6 +1634,8 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
+/** 设置一条本地存储 */
+
 
 function setLocalItem(name, value) {
   return __awaiter(this, void 0, void 0,
@@ -1666,6 +1671,8 @@ function setLocalItem(name, value) {
     }, _callee);
   }));
 }
+/** 读取一条本地存储 */
+
 
 function getLocalItem(
 /** 键名 */
@@ -1675,13 +1682,13 @@ defaultValue) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee2() {
-    var value;
+    var res, value;
     return _regenerator.default.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
-              _context2.next = 6;
+              _context2.next = 8;
               break;
             }
 
@@ -1689,30 +1696,32 @@ defaultValue) {
             return GM.getValue(name, defaultValue);
 
           case 3:
-            return _context2.abrupt("return", _context2.sent);
+            res = _context2.sent;
+            console.log(res);
+            return _context2.abrupt("return", res);
 
-          case 6:
+          case 8:
             value = localStorage.getItem(name);
 
             if (!(value === null)) {
-              _context2.next = 11;
+              _context2.next = 13;
               break;
             }
 
-            _context2.next = 10;
+            _context2.next = 12;
             return defaultValue;
 
-          case 10:
+          case 12:
             return _context2.abrupt("return", _context2.sent);
-
-          case 11:
-            _context2.next = 13;
-            return value;
 
           case 13:
+            _context2.next = 15;
+            return value;
+
+          case 15:
             return _context2.abrupt("return", _context2.sent);
 
-          case 14:
+          case 16:
           case "end":
             return _context2.stop();
         }
@@ -1779,7 +1788,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @author       You
 // @match        *
 // @include      *
-// @grant        GM.setValue    //油猴的存储接口
+// @grant        GM.setValue
 // @grant        GM.getValue
 // ==/UserScript==
 ;
@@ -1813,6 +1822,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
     if (code === 'F2') {
       return switchState(mouse, event);
+    }
+    /** 没有开启编辑功能 */
+
+
+    if (_config.default.elemtEdit === false) {
+      return;
     } //有元素获得焦点，视为正在输入文本，不执行下面的功能
 
 
@@ -1930,31 +1945,17 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     return __awaiter(this, void 0, void 0,
     /*#__PURE__*/
     _regenerator.default.mark(function _callee() {
-      var saveList, saveSet;
+      var localStorageSaveListStr, saveList, saveSet;
       return _regenerator.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (!(0, _store.getLocalItem)(localStorageSaveList, [])) {
-                _context.next = 8;
-                break;
-              }
+              _context.next = 2;
+              return (0, _store.getLocalItem)(localStorageSaveList, undefined);
 
-              _context.t1 = JSON;
-              _context.next = 4;
-              return (0, _store.getLocalItem)(localStorageSaveList);
-
-            case 4:
-              _context.t2 = _context.sent;
-              _context.t0 = _context.t1.parse.call(_context.t1, _context.t2);
-              _context.next = 9;
-              break;
-
-            case 8:
-              _context.t0 = [];
-
-            case 9:
-              saveList = _context.t0;
+            case 2:
+              localStorageSaveListStr = _context.sent;
+              saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
               saveSet = new Set(saveList);
               editElement.forEach(function (el) {
                 var selectors = (0, _util.getSelectors)(el);
@@ -1964,7 +1965,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               (0, _store.setLocalItem)(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
               (0, _store.setLocalItem)(localStorageSaveList, JSON.stringify((0, _toConsumableArray2.default)(saveSet)));
 
-            case 14:
+            case 8:
             case "end":
               return _context.stop();
           }
@@ -1989,39 +1990,25 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     _regenerator.default.mark(function _callee3() {
       var _this = this;
 
-      var saveList;
+      var localStorageSaveListStr, saveList;
       return _regenerator.default.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              if (!(0, _store.getLocalItem)(localStorageSaveList)) {
-                _context3.next = 8;
-                break;
-              }
+              _context3.next = 2;
+              return (0, _store.getLocalItem)(localStorageSaveList, undefined);
 
-              _context3.t1 = JSON;
-              _context3.next = 4;
-              return (0, _store.getLocalItem)(localStorageSaveList);
-
-            case 4:
-              _context3.t2 = _context3.sent;
-              _context3.t0 = _context3.t1.parse.call(_context3.t1, _context3.t2);
-              _context3.next = 9;
-              break;
-
-            case 8:
-              _context3.t0 = [];
-
-            case 9:
-              saveList = _context3.t0;
-              _context3.t3 = _Command.CommandControl;
-              _context3.next = 13;
+            case 2:
+              localStorageSaveListStr = _context3.sent;
+              saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
+              _context3.t0 = _Command.CommandControl;
+              _context3.next = 7;
               return (0, _store.getLocalItem)(localStorageSaveCommandStack);
 
-            case 13:
-              _context3.t4 = _context3.sent;
+            case 7:
+              _context3.t1 = _context3.sent;
 
-              _context3.t3.loadCommandJsonAndRun.call(_context3.t3, _context3.t4);
+              _context3.t0.loadCommandJsonAndRun.call(_context3.t0, _context3.t1);
 
               saveList.forEach(function (selectors) {
                 return __awaiter(_this, void 0, void 0,
@@ -2046,7 +2033,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                 }));
               });
 
-            case 16:
+            case 10:
             case "end":
               return _context3.stop();
           }
