@@ -3,6 +3,7 @@ import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
+import { setLocalItem, getLocalItem } from "./store";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -12,20 +13,15 @@ import { Message } from "./ui/message";
 // @author       You
 // @match        *
 // @include      *
-// @grant        GM_getValue    //油猴的存储接口
-// @grant        GM_setValue
+// @grant        GM.setValue    //油猴的存储接口
+// @grant        GM.getValue
 // ==/UserScript==
 
+
 ;(function () {
+
     /** 调试用 */
     (<any>window).CommandControl = CommandControl
-    console.log();
-
-    //为了在非油猴环境下存储依旧能起一部分的作用
-    if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
-        localStorage.getItem = (<any>window).GM_getValue;
-        localStorage.setItem = (<any>window).GM_setValue;
-    }
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
@@ -132,16 +128,16 @@ import { Message } from "./ui/message";
     const localStorageSaveCommandStack = location.origin + location.pathname + '__CommandStack__llej__'
 
     /** 保存修改 */
-    function saveChanges(editElement: Set<HTMLElement>) {
-        const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) :[]
+    async function saveChanges(editElement: Set<HTMLElement>) {
+        const saveList: string[] = getLocalItem(localStorageSaveList,[]) ? JSON.parse(await getLocalItem(localStorageSaveList)) :[]
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
             saveSet.add(selectors)
-            localStorage.setItem(selectors,el.innerHTML)
+            setLocalItem(selectors,el.innerHTML)
         })
-        localStorage.setItem(localStorageSaveCommandStack,CommandControl.getCommandStackJSON())
-        localStorage.setItem(localStorageSaveList,JSON.stringify([...saveSet]))
+        setLocalItem(localStorageSaveCommandStack,CommandControl.getCommandStackJSON())
+        setLocalItem(localStorageSaveList,JSON.stringify([...saveSet]))
     }
     /** 自动保存 */
     setInterval(function(){
@@ -150,11 +146,11 @@ import { Message } from "./ui/message";
     },1000*60)
 
     /** 加载修改 */
-    function loadChanges(){
-        const saveList: string[] = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : []
-        CommandControl.loadCommandJsonAndRun(localStorage.getItem(localStorageSaveCommandStack))
-        saveList.forEach(selectors=>{
-            document.querySelector(selectors).innerHTML=localStorage.getItem(selectors)
+    async function loadChanges(){
+        const saveList: string[] = getLocalItem(localStorageSaveList) ? JSON.parse(await getLocalItem(localStorageSaveList)) : []
+        CommandControl.loadCommandJsonAndRun(await getLocalItem(localStorageSaveCommandStack))
+        saveList.forEach(async selectors=>{
+            document.querySelector(selectors).innerHTML = await getLocalItem(selectors)
         })
     };
     window.addEventListener('load',function(){

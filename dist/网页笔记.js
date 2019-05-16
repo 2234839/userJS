@@ -713,7 +713,132 @@ function (_Message) {
 }(_message.Message);
 
 exports.Warning = Warning;
-},{"./message":"ui/message.ts","./style":"ui/style.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"./message":"ui/message.ts","./style":"ui/style.ts"}],"store.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setLocalItem = setLocalItem;
+exports.getLocalItem = getLocalItem;
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+function setLocalItem(name, value) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee() {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
+              _context.next = 6;
+              break;
+            }
+
+            _context.next = 3;
+            return GM.setValue(name, value);
+
+          case 3:
+            return _context.abrupt("return", _context.sent);
+
+          case 6:
+            _context.next = 8;
+            return localStorage.setItem(name, String(value));
+
+          case 8:
+            return _context.abrupt("return", _context.sent);
+
+          case 9:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+
+function getLocalItem(
+/** 键名 */
+name,
+/** 没有的时候的默认值 */
+defaultValue) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2() {
+    var value;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
+              _context2.next = 6;
+              break;
+            }
+
+            _context2.next = 3;
+            return GM.getValue(name, defaultValue);
+
+          case 3:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 6:
+            value = localStorage.getItem(name);
+
+            if (!(value === null)) {
+              _context2.next = 11;
+              break;
+            }
+
+            _context2.next = 10;
+            return defaultValue;
+
+          case 10:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 11:
+            _context2.next = 13;
+            return value;
+
+          case 13:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 14:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+}
+},{}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireWildcard(require("./util"));
@@ -725,6 +850,8 @@ var _Command = require("./Command");
 var _warning = require("./ui/warning");
 
 var _message = require("./ui/message");
+
+var _store = require("./store");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -738,6 +865,34 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -746,22 +901,15 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 // @author       You
 // @match        *
 // @include      *
-// @grant        GM_getValue    //油猴的存储接口
-// @grant        GM_setValue
+// @grant        GM.setValue    //油猴的存储接口
+// @grant        GM.getValue
 // ==/UserScript==
 ;
 
 (function () {
   /** 调试用 */
   window.CommandControl = _Command.CommandControl;
-  console.log(); //为了在非油猴环境下存储依旧能起一部分的作用
-
-  if (window.hasOwnProperty("GM_getValue") && window.hasOwnProperty("GM_setValue")) {
-    localStorage.getItem = window.GM_getValue;
-    localStorage.setItem = window.GM_setValue;
-  }
   /** 存储鼠标所在位置的所有元素 */
-
 
   var path;
   /** 被修改后的元素 */
@@ -901,15 +1049,50 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   /** 保存修改 */
 
   function saveChanges(editElement) {
-    var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
-    var saveSet = new Set(saveList);
-    editElement.forEach(function (el) {
-      var selectors = (0, _util.getSelectors)(el);
-      saveSet.add(selectors);
-      localStorage.setItem(selectors, el.innerHTML);
-    });
-    localStorage.setItem(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
-    localStorage.setItem(localStorageSaveList, JSON.stringify(_toConsumableArray(saveSet)));
+    return __awaiter(this, void 0, void 0,
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var saveList, saveSet;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!(0, _store.getLocalItem)(localStorageSaveList, [])) {
+                _context.next = 8;
+                break;
+              }
+
+              _context.t1 = JSON;
+              _context.next = 4;
+              return (0, _store.getLocalItem)(localStorageSaveList);
+
+            case 4:
+              _context.t2 = _context.sent;
+              _context.t0 = _context.t1.parse.call(_context.t1, _context.t2);
+              _context.next = 9;
+              break;
+
+            case 8:
+              _context.t0 = [];
+
+            case 9:
+              saveList = _context.t0;
+              saveSet = new Set(saveList);
+              editElement.forEach(function (el) {
+                var selectors = (0, _util.getSelectors)(el);
+                saveSet.add(selectors);
+                (0, _store.setLocalItem)(selectors, el.innerHTML);
+              });
+              (0, _store.setLocalItem)(localStorageSaveCommandStack, _Command.CommandControl.getCommandStackJSON());
+              (0, _store.setLocalItem)(localStorageSaveList, JSON.stringify(_toConsumableArray(saveSet)));
+
+            case 14:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
   }
   /** 自动保存 */
 
@@ -923,13 +1106,75 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   /** 加载修改 */
 
   function loadChanges() {
-    var saveList = localStorage.getItem(localStorageSaveList) ? JSON.parse(localStorage.getItem(localStorageSaveList)) : [];
+    return __awaiter(this, void 0, void 0,
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3() {
+      var _this = this;
 
-    _Command.CommandControl.loadCommandJsonAndRun(localStorage.getItem(localStorageSaveCommandStack));
+      var saveList;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (!(0, _store.getLocalItem)(localStorageSaveList)) {
+                _context3.next = 8;
+                break;
+              }
 
-    saveList.forEach(function (selectors) {
-      document.querySelector(selectors).innerHTML = localStorage.getItem(selectors);
-    });
+              _context3.t1 = JSON;
+              _context3.next = 4;
+              return (0, _store.getLocalItem)(localStorageSaveList);
+
+            case 4:
+              _context3.t2 = _context3.sent;
+              _context3.t0 = _context3.t1.parse.call(_context3.t1, _context3.t2);
+              _context3.next = 9;
+              break;
+
+            case 8:
+              _context3.t0 = [];
+
+            case 9:
+              saveList = _context3.t0;
+              _context3.t3 = _Command.CommandControl;
+              _context3.next = 13;
+              return (0, _store.getLocalItem)(localStorageSaveCommandStack);
+
+            case 13:
+              _context3.t4 = _context3.sent;
+
+              _context3.t3.loadCommandJsonAndRun.call(_context3.t3, _context3.t4);
+
+              saveList.forEach(function (selectors) {
+                return __awaiter(_this, void 0, void 0,
+                /*#__PURE__*/
+                regeneratorRuntime.mark(function _callee2() {
+                  return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          _context2.next = 2;
+                          return (0, _store.getLocalItem)(selectors);
+
+                        case 2:
+                          document.querySelector(selectors).innerHTML = _context2.sent;
+
+                        case 3:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _callee2);
+                }));
+              });
+
+            case 16:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
   }
 
   ;
@@ -969,7 +1214,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -997,7 +1242,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56537" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60262" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
