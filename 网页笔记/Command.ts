@@ -2,7 +2,7 @@ import { Message } from "./ui/message";
 import { note } from "./ui/note";
 import { getSelectors } from "./util";
 
-interface commandJSON{
+export interface commandJSON{
     /** 选择器 */
     selectEL: string,
     /** 构造函数的名字，一般就是类名 */
@@ -149,10 +149,7 @@ export const CommandControl: CommandControl = {
     getCommandStackJSON(){
         return JSON.stringify(this.getCommandStackJsonObj())
     },
-    loadCommandJsonAndRun(str){
-        if(str===undefined)
-            return false
-        const commandJSON:commandJSON[]=str?JSON.parse(str):[]
+    loadCommandJsonAndRun(commandJSON){
         commandJSON
             .map(this.loadCommandJSON)
             .forEach(command=>this.run(command))
@@ -186,5 +183,5 @@ interface CommandControl {
     getCommandStackJSON():string
 
     /** 加载命令栈的JSON字符串并且执行 */
-    loadCommandJsonAndRun(str:string): boolean
+    loadCommandJsonAndRun(commandJSON:commandJSON[]): boolean
 }

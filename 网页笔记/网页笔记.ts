@@ -3,7 +3,7 @@ import config from "./config";
 import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
-import { setLocalItem, getLocalItem } from "./store";
+import { setLocalItem, getLocalItem, AllStore } from "./store";
 import { async } from "q";
 import { login, remote_getStore, remote_setStore } from "./ajax";
 
@@ -169,30 +169,23 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
     const element_List_storeName = '__saveList__llej__' + location.origin + location.pathname
     /** commandJSON 命令栈 */
     const CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname
+    /** commandJSON 命令栈 */
+    const AllStoreName = '_storeName_llej_' + location.origin + location.pathname
+
 
     /** 保存修改 */
     async function saveChanges(editElement: Set<HTMLElement>) {
-        const localStorageSaveListStr= await getLocalItem(element_List_storeName,undefined)
-        const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) :[]
-
-        let data:any = {
-            a:{
-                sss:11111
-            }
+        let data:AllStore = {
+            element_List:{},
+            CommandStack: CommandControl.getCommandStackJsonObj()
         }
-        const saveSet=new Set(saveList)
         editElement.forEach(el=>{
             const selectors= getSelectors(el)
-            saveSet.add(selectors)
-            data[selectors] = el.innerHTML
-            setLocalItem(selectors,el.innerHTML)
+            data.element_List[selectors] = el.innerHTML
         })
-        const element_List_Str = JSON.stringify([...saveSet])
-        const CommandStack_str = CommandControl.getCommandStackJSON()
-        setLocalItem(element_List_storeName, element_List_Str )
-        setLocalItem(CommandStack_storeName, CommandStack_str)
-        data.element_List = [...saveSet]
-        data.CommandStack = CommandControl.getCommandStackJsonObj()
+        // data.element_List = [...saveSet]
+        console.log(data);
+        await setLocalItem(AllStoreName,JSON.stringify(data))
         return data
     }
     /** 自动保存 */
@@ -203,15 +196,23 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 
     /** 加载修改 */
     async function loadChanges(){
-        const localStorageSaveListStr= await getLocalItem(element_List_storeName,undefined)
-        const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : []
-        CommandControl.loadCommandJsonAndRun(await getLocalItem(CommandStack_storeName))
-        saveList.forEach(async selectors=>{
-            const el = document.querySelector(selectors)
-            if(el===null)
-                return console.error(`${selectors} 的元素无法找到，赋值失败`);
-            el.innerHTML = await getLocalItem(selectors)
-        })
+        const AllStoreStr=await getLocalItem(AllStoreName,undefined)
+        if(AllStoreStr===undefined)
+            return console.warn('没有可用的存储库');
+        const allStroe =<AllStore> JSON.parse(AllStoreStr)
+
+        for (const selectors in allStroe.element_List) {
+            if (allStroe.element_List.hasOwnProperty(selectors)) {
+                const html = allStroe.element_List[selectors];
+                const el = document.querySelector(selectors)
+                if (el === null)
+                    return console.error(`${selectors} 的元素无法找到，赋值失败`);
+                editElement.add(<HTMLElement>el)
+                el.innerHTML = html
+            }
+        }
+        CommandControl.loadCommandJsonAndRun(allStroe.CommandStack)
+
         console.log('加载修改完毕');
     };
 

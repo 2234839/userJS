@@ -117,43 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":[function(require,module,exports) {
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-},{}],"../node_modules/@babel/runtime/helpers/iterableToArray.js":[function(require,module,exports) {
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-},{}],"../node_modules/@babel/runtime/helpers/nonIterableSpread.js":[function(require,module,exports) {
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
-},{}],"../node_modules/@babel/runtime/helpers/toConsumableArray.js":[function(require,module,exports) {
-var arrayWithoutHoles = require("./arrayWithoutHoles");
-
-var iterableToArray = require("./iterableToArray");
-
-var nonIterableSpread = require("./nonIterableSpread");
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-},{"./arrayWithoutHoles":"../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js","./iterableToArray":"../node_modules/@babel/runtime/helpers/iterableToArray.js","./nonIterableSpread":"../node_modules/@babel/runtime/helpers/nonIterableSpread.js"}],"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -1646,11 +1610,9 @@ var CommandControl = {
   getCommandStackJSON: function getCommandStackJSON() {
     return JSON.stringify(this.getCommandStackJsonObj());
   },
-  loadCommandJsonAndRun: function loadCommandJsonAndRun(str) {
+  loadCommandJsonAndRun: function loadCommandJsonAndRun(commandJSON) {
     var _this = this;
 
-    if (str === undefined) return false;
-    var commandJSON = str ? JSON.parse(str) : [];
     commandJSON.map(this.loadCommandJSON).forEach(function (command) {
       return _this.run(command);
     });
@@ -1984,8 +1946,6 @@ function remote_setStore(par) {
 },{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
-var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
-
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _util = _interopRequireWildcard(require("./util"));
@@ -2052,79 +2012,80 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 (function () {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
-  _regenerator.default.mark(function _callee5() {
-    var path, editElement, mouse, outline, switchState, element_List_storeName, CommandStack_storeName, saveChanges, loadChanges;
-    return _regenerator.default.wrap(function _callee5$(_context5) {
+  _regenerator.default.mark(function _callee4() {
+    var path, editElement, mouse, outline, switchState, element_List_storeName, CommandStack_storeName, AllStoreName, saveChanges, loadChanges;
+    return _regenerator.default.wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
             loadChanges = function _ref5() {
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
-              _regenerator.default.mark(function _callee4() {
-                var _this = this;
-
-                var localStorageSaveListStr, saveList;
-                return _regenerator.default.wrap(function _callee4$(_context4) {
+              _regenerator.default.mark(function _callee3() {
+                var AllStoreStr, allStroe, selectors, html, el;
+                return _regenerator.default.wrap(function _callee3$(_context3) {
                   while (1) {
-                    switch (_context4.prev = _context4.next) {
+                    switch (_context3.prev = _context3.next) {
                       case 0:
-                        _context4.next = 2;
-                        return (0, _store.getLocalItem)(element_List_storeName, undefined);
+                        _context3.next = 2;
+                        return (0, _store.getLocalItem)(AllStoreName, undefined);
 
                       case 2:
-                        localStorageSaveListStr = _context4.sent;
-                        saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
-                        _context4.t0 = _Command.CommandControl;
-                        _context4.next = 7;
-                        return (0, _store.getLocalItem)(CommandStack_storeName);
+                        AllStoreStr = _context3.sent;
+
+                        if (!(AllStoreStr === undefined)) {
+                          _context3.next = 5;
+                          break;
+                        }
+
+                        return _context3.abrupt("return", console.warn('没有可用的存储库'));
+
+                      case 5:
+                        allStroe = JSON.parse(AllStoreStr);
+                        _context3.t0 = _regenerator.default.keys(allStroe.element_List);
 
                       case 7:
-                        _context4.t1 = _context4.sent;
+                        if ((_context3.t1 = _context3.t0()).done) {
+                          _context3.next = 18;
+                          break;
+                        }
 
-                        _context4.t0.loadCommandJsonAndRun.call(_context4.t0, _context4.t1);
+                        selectors = _context3.t1.value;
 
-                        saveList.forEach(function (selectors) {
-                          return __awaiter(_this, void 0, void 0,
-                          /*#__PURE__*/
-                          _regenerator.default.mark(function _callee3() {
-                            var el;
-                            return _regenerator.default.wrap(function _callee3$(_context3) {
-                              while (1) {
-                                switch (_context3.prev = _context3.next) {
-                                  case 0:
-                                    el = document.querySelector(selectors);
+                        if (!allStroe.element_List.hasOwnProperty(selectors)) {
+                          _context3.next = 16;
+                          break;
+                        }
 
-                                    if (!(el === null)) {
-                                      _context3.next = 3;
-                                      break;
-                                    }
+                        html = allStroe.element_List[selectors];
+                        el = document.querySelector(selectors);
 
-                                    return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
+                        if (!(el === null)) {
+                          _context3.next = 14;
+                          break;
+                        }
 
-                                  case 3:
-                                    _context3.next = 5;
-                                    return (0, _store.getLocalItem)(selectors);
+                        return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
 
-                                  case 5:
-                                    el.innerHTML = _context3.sent;
+                      case 14:
+                        editElement.add(el);
+                        el.innerHTML = html;
 
-                                  case 6:
-                                  case "end":
-                                    return _context3.stop();
-                                }
-                              }
-                            }, _callee3);
-                          }));
-                        });
+                      case 16:
+                        _context3.next = 7;
+                        break;
+
+                      case 18:
+                        _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
+
                         console.log('加载修改完毕');
 
-                      case 11:
+                      case 20:
                       case "end":
-                        return _context4.stop();
+                        return _context3.stop();
                     }
                   }
-                }, _callee4);
+                }, _callee3);
               }));
             };
 
@@ -2132,38 +2093,28 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee2() {
-                var localStorageSaveListStr, saveList, data, saveSet, element_List_Str, CommandStack_str;
+                var data;
                 return _regenerator.default.wrap(function _callee2$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
                       case 0:
-                        _context2.next = 2;
-                        return (0, _store.getLocalItem)(element_List_storeName, undefined);
-
-                      case 2:
-                        localStorageSaveListStr = _context2.sent;
-                        saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
                         data = {
-                          a: {
-                            sss: 11111
-                          }
+                          element_List: {},
+                          CommandStack: _Command.CommandControl.getCommandStackJsonObj()
                         };
-                        saveSet = new Set(saveList);
                         editElement.forEach(function (el) {
                           var selectors = (0, _util.getSelectors)(el);
-                          saveSet.add(selectors);
-                          data[selectors] = el.innerHTML;
-                          (0, _store.setLocalItem)(selectors, el.innerHTML);
-                        });
-                        element_List_Str = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
-                        CommandStack_str = _Command.CommandControl.getCommandStackJSON();
-                        (0, _store.setLocalItem)(element_List_storeName, element_List_Str);
-                        (0, _store.setLocalItem)(CommandStack_storeName, CommandStack_str);
-                        data.element_List = (0, _toConsumableArray2.default)(saveSet);
-                        data.CommandStack = _Command.CommandControl.getCommandStackJsonObj();
+                          data.element_List[selectors] = el.innerHTML;
+                        }); // data.element_List = [...saveSet]
+
+                        console.log(data);
+                        _context2.next = 5;
+                        return (0, _store.setLocalItem)(AllStoreName, JSON.stringify(data));
+
+                      case 5:
                         return _context2.abrupt("return", data);
 
-                      case 14:
+                      case 6:
                       case "end":
                         return _context2.stop();
                     }
@@ -2399,6 +2350,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             /** commandJSON 命令栈 */
 
             CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname;
+            /** commandJSON 命令栈 */
+
+            AllStoreName = '_storeName_llej_' + location.origin + location.pathname;
             /** 保存修改 */
 
             /** 自动保存 */
@@ -2420,12 +2374,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               });
             }
 
-          case 16:
+          case 17:
           case "end":
-            return _context5.stop();
+            return _context4.stop();
         }
       }
-    }, _callee5);
+    }, _callee4);
   }));
 })();
 /*
@@ -2459,7 +2413,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 * 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端。
 * 希望各位能将你们想要的功能进行一个反馈
 */
-},{"@babel/runtime/helpers/toConsumableArray":"../node_modules/@babel/runtime/helpers/toConsumableArray.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
