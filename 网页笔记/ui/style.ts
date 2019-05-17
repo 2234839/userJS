@@ -6,6 +6,7 @@ export class Style {
     top: 20px;
     left: 30px;
     animation: llej_myfirst 5s;
+    z-index:800;
     `
     static warning = `
     border: 1px solid black;
@@ -13,6 +14,7 @@ export class Style {
     position: fixed;
     top: 20px;
     left: 30px;
+    z-index:800;
     `
     static note = `
     border: 1px solid black;
@@ -22,17 +24,17 @@ export class Style {
     left: 30px;
     width: auto;
     height: auto;
+    z-index:800;
     `
 }
-
 
 /** 注入动画 */
 const keyframes= document.createElement('style')
 keyframes.innerHTML=`
 @keyframes llej_myfirst
 {
-    from { background: red; }
-    to { background: yellow; }
+    from { background: red;color:white; }
+    to { background: yellow;color:black; }
 }
 `
 document.head.appendChild(keyframes)

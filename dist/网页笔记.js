@@ -1199,13 +1199,13 @@ var Style = function Style() {
 };
 
 exports.Style = Style;
-Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    ";
-Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    ";
-Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n    position: sticky;\n    top: 20px;\n    left: 30px;\n    width: auto;\n    height: auto;\n    ";
+Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    z-index:800;\n    ";
+Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    z-index:800;\n    ";
+Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n    position: sticky;\n    top: 20px;\n    left: 30px;\n    width: auto;\n    height: auto;\n    z-index:800;\n    ";
 /** 注入动画 */
 
 var keyframes = document.createElement('style');
-keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red; }\n    to { background: yellow; }\n}\n";
+keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red;color:white; }\n    to { background: yellow;color:black; }\n}\n";
 document.head.appendChild(keyframes);
 },{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js"}],"ui/message.ts":[function(require,module,exports) {
 "use strict";
@@ -2063,9 +2063,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                       case 12:
                         _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
 
-                        console.log('加载修改完毕');
-
-                      case 14:
+                      case 13:
                       case "end":
                         return _context3.stop();
                     }
@@ -2090,17 +2088,15 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         editElement.forEach(function (el) {
                           var selectors = (0, _util.getSelectors)(el);
                           data.element_List[selectors] = el.innerHTML;
-                        }); // data.element_List = [...saveSet]
-
-                        console.log(data);
+                        });
                         data_str = JSON.stringify(data);
-                        _context2.next = 6;
+                        _context2.next = 5;
                         return (0, _store.setLocalItem)(AllStoreName, JSON.stringify(data));
 
-                      case 6:
+                      case 5:
                         return _context2.abrupt("return", data_str);
 
-                      case 7:
+                      case 6:
                       case "end":
                         return _context2.stop();
                     }
@@ -2140,18 +2136,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             };
 
             /** 调试用 */
-            window.CommandControl = _Command.CommandControl;
-            _context4.t0 = console;
-            _context4.next = 9;
-            return (0, _ajax.login)({
-              user: '崮生',
-              secret_key: '1998'
-            });
+            window.CommandControl = _Command.CommandControl; // console.log(await login({
+            //     user:'崮生',
+            //     secret_key:'1998'
+            // }));
 
-          case 9:
-            _context4.t1 = _context4.sent;
-
-            _context4.t0.log.call(_context4.t0, _context4.t1);
+            /** 存储鼠标所在位置的所有元素 */
 
             /** 被修改后的元素 */
             editElement = new Set();
@@ -2202,20 +2192,20 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 7:
                         _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 37 : 39;
+                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 37 : 40;
                         break;
 
                       case 10:
                         /** 使元素可编辑 */
                         _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 12:
                         /** 删除元素 */
                         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 14:
                         /** 赋值titile */
@@ -2226,31 +2216,31 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           break;
                         }
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 17:
                         /** 关闭可编辑 */
                         _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 19:
                         /** 撤销 */
                         _Command.CommandControl.backout();
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 21:
                         /** 重做 */
                         _Command.CommandControl.reform();
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 23:
                         /** 新增笔记 */
                         _Command.CommandControl.run(new _Command.addNote(path[0]));
 
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 25:
                         /** 保存所有的修改 */
@@ -2258,7 +2248,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         new _message.Message({
                           msg: '保存成功'
                         }).autoHide();
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 28:
                         _context.t1 = _ajax.remote_setStore;
@@ -2280,15 +2270,18 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         };
 
                         (0, _context.t1)(_context.t4).then(_context.t5);
-                        return _context.abrupt("break", 40);
+                        return _context.abrupt("break", 41);
 
                       case 37:
                         /** 从云端下载修改 */
+                        new _message.Message({
+                          msg: "正在读取云端存储"
+                        }).autoHide();
                         (0, _ajax.remote_getStore)({
                           url: location.origin + location.pathname
                         }).then(function (r) {
                           if (r.body === undefined || r.body.length === 0) return new _message.Message({
-                            msg: "没有发现可用的云端存储"
+                            msg: "云端存储:" + r.message
                           }).autoHide();
                           var allStroe = JSON.parse(r.body[0].store);
                           loadChanges(allStroe);
@@ -2296,12 +2289,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         });
-                        return _context.abrupt("break", 40);
-
-                      case 39:
-                        return _context.abrupt("return", true);
+                        return _context.abrupt("break", 41);
 
                       case 40:
+                        return _context.abrupt("return", true);
+
+                      case 41:
                       case "end":
                         return _context.stop();
                     }
@@ -2326,32 +2319,31 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             });
             /** 轮廓线,用以显示当前元素 */
 
+            ;
             /** 自动保存 */
+
             setInterval(function () {
               saveChanges(editElement);
               new _message.Message({
                 msg: '自动保存成功...'
               }).autoHide();
             }, 1000 * 60);
-            /** 加载修改 */
-
-            ;
             /** 自动加载更改 */
 
-            _context4.next = 21;
+            _context4.next = 16;
             return (0, _store.getLocalItem)(AllStoreName, undefined);
 
-          case 21:
+          case 16:
             AllStoreStr = _context4.sent;
 
             if (!(AllStoreStr === undefined)) {
-              _context4.next = 24;
+              _context4.next = 19;
               break;
             }
 
             return _context4.abrupt("return", console.warn('没有可用的存储库'));
 
-          case 24:
+          case 19:
             allStroe = JSON.parse(AllStoreStr);
 
             if (document.readyState === "complete") {
@@ -2362,7 +2354,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               });
             }
 
-          case 26:
+          case 21:
           case "end":
             return _context4.stop();
         }
@@ -2370,37 +2362,6 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     }, _callee4);
   }));
 })();
-/*
-# 使网页可编辑
-* 按下F2启用元素编辑，再次按下可以关闭
-* 将鼠标移动到你要修改的文本上方
-*      按下 q 就会将该元素设为可编辑，对于链接可以按住alt键点击，这样就不会跳转
-*      按下 w 设置元素为不可编辑
-*      按下 d 就会删除该元素
-*      按下 c 会将元素的title（一般为该元素描述）复制到剪贴板（如果存在的话）,此命令不可被撤销和重做
-*      按下 z 将会撤销一次命令
-*      按下 y 将重做一次命令
-*      按下 n 将添加一个便签笔记,此命令处于实验期，无法正常使用
-*      按下 s 保存你的所有修改  每60秒会自动保存一次,实验性命令可能之后的不会兼容
-* 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
-* 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
-
-## 为什么要开发这样一个插件?
-* 这源于我一次在看mdn文档时,想要做笔记,正打算和以前一样将网页复制进word中添加笔记等等
-* 突然察觉我为什么要多此一举?
-* 直接在网页中写笔记不好吗
-* 所以有了这个插件,你可以利用这个插件来修改网页上的文本,然后按下ctrl+s将这些改动永久保存在本地
-* 建议允许插件在文件地址上运行
-* 正在想方法让笔记存在云端
-
-## v1.32 的更新介绍
-* 最近得空了，开始更新
-* 新增了撤销和重做功能，优化了代码
-* 因为（ctrl + 其他键）的模式 在一些浏览器上还是会出现冲突，故改为F2键来作为开关
-* 下一版本将实现便签功能.
-* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端。
-* 希望各位能将你们想要的功能进行一个反馈
-*/
 },{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
