@@ -62,6 +62,8 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         }
         switch (code) {
             case 'KeyQ':/** 使元素可编辑 */
+                if (path[0].innerHTML.length > 10 * 1000)
+                    return new Warning({ msg: '该元素内容过大，请选择更确定的文本元素。' }).autoHide()
                 CommandControl.run(new editSelect(path[0]))
                 break;
             case 'KeyD':/** 删除元素 */

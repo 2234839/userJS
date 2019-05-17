@@ -2192,71 +2192,80 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 7:
                         _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 37 : 40;
+                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 14 : _context.t0 === 'KeyC' ? 16 : _context.t0 === "KeyW" ? 19 : _context.t0 === 'KeyZ' ? 21 : _context.t0 === "KeyY" ? 23 : _context.t0 === "KeyN" ? 25 : _context.t0 === "KeyS" ? 27 : _context.t0 === "KeyO" ? 30 : _context.t0 === "KeyP" ? 39 : 42;
                         break;
 
                       case 10:
-                        /** 使元素可编辑 */
-                        _Command.CommandControl.run(new _Command.editSelect(path[0]));
+                        if (!(path[0].innerHTML.length > 10 * 1000)) {
+                          _context.next = 12;
+                          break;
+                        }
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("return", new _warning.Warning({
+                          msg: '该元素内容过大，请选择更确定的文本元素。'
+                        }).autoHide());
 
                       case 12:
+                        _Command.CommandControl.run(new _Command.editSelect(path[0]));
+
+                        return _context.abrupt("break", 43);
+
+                      case 14:
                         /** 删除元素 */
                         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 14:
+                      case 16:
                         /** 赋值titile */
                         _util.default.copyTitle(path[0]);
 
                         if (!(event.ctrlKey === false)) {
-                          _context.next = 17;
+                          _context.next = 19;
                           break;
                         }
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 17:
+                      case 19:
                         /** 关闭可编辑 */
                         _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 19:
+                      case 21:
                         /** 撤销 */
                         _Command.CommandControl.backout();
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 21:
+                      case 23:
                         /** 重做 */
                         _Command.CommandControl.reform();
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 23:
+                      case 25:
                         /** 新增笔记 */
                         _Command.CommandControl.run(new _Command.addNote(path[0]));
 
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 25:
+                      case 27:
                         /** 保存所有的修改 */
                         saveChanges(editElement);
                         new _message.Message({
                           msg: '保存成功'
                         }).autoHide();
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 28:
+                      case 30:
                         _context.t1 = _ajax.remote_setStore;
                         _context.t2 = location.origin + location.pathname;
-                        _context.next = 32;
+                        _context.next = 34;
                         return saveChanges(editElement);
 
-                      case 32:
+                      case 34:
                         _context.t3 = _context.sent;
                         _context.t4 = {
                           url: _context.t2,
@@ -2270,9 +2279,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         };
 
                         (0, _context.t1)(_context.t4).then(_context.t5);
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 37:
+                      case 39:
                         /** 从云端下载修改 */
                         new _message.Message({
                           msg: "正在读取云端存储"
@@ -2289,12 +2298,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         });
-                        return _context.abrupt("break", 41);
+                        return _context.abrupt("break", 43);
 
-                      case 40:
+                      case 42:
                         return _context.abrupt("return", true);
 
-                      case 41:
+                      case 43:
                       case "end":
                         return _context.stop();
                     }
