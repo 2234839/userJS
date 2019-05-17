@@ -10,7 +10,7 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.32
+// @version      1.33
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -27,14 +27,14 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
     (<any>window).CommandControl = CommandControl
 
 
-    console.log(await login({
-        user:'崮生',
-        secret_key:'1998'
-    }));
+    // console.log(await login({
+    //     user:'崮生',
+    //     secret_key:'1998'
+    // }));
 
-    console.log(await remote_getStore({
-        url: '崮生'
-    }));
+    // console.log(await remote_getStore({
+    //     url: '崮生'
+    // }));
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
@@ -176,6 +176,9 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) :[]
 
         let data:any = {
+            a:{
+                sss:11111
+            }
         }
         const saveSet=new Set(saveList)
         editElement.forEach(el=>{
@@ -184,12 +187,12 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
             data[selectors] = el.innerHTML
             setLocalItem(selectors,el.innerHTML)
         })
-        data[element_List_storeName] = JSON.stringify([...saveSet])
-        data[CommandStack_storeName] = CommandControl.getCommandStackJSON()
-        setLocalItem(element_List_storeName, data[element_List_storeName] )
-        setLocalItem(CommandStack_storeName, data[CommandStack_storeName])
-        console.log(data);
-
+        const element_List_Str = JSON.stringify([...saveSet])
+        const CommandStack_str = CommandControl.getCommandStackJSON()
+        setLocalItem(element_List_storeName, element_List_Str )
+        setLocalItem(CommandStack_storeName, CommandStack_str)
+        data.element_List = [...saveSet]
+        data.CommandStack = CommandControl.getCommandStackJsonObj()
         return data
     }
     /** 自动保存 */
@@ -231,7 +234,7 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
 *      按下 n 将添加一个便签笔记,此命令处于实验期，无法正常使用
-*      按下 s 保存你的所有修改  每60秒会自动保存一次
+*      按下 s 保存你的所有修改  每60秒会自动保存一次,实验性命令可能之后的不会兼容
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 

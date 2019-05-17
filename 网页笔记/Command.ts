@@ -138,8 +138,11 @@ export const CommandControl: CommandControl = {
         if (obj.constructor === "addNote")
             return Command.load(obj, addNote)
     },
+    getCommandStackJsonObj(){
+        return this.commandStack.map(a => a.toCommandJSON())
+    },
     getCommandStackJSON(){
-        return JSON.stringify(this.commandStack.map(a => a.toCommandJSON()))
+        return JSON.stringify(this.getCommandStackJsonObj())
     },
     loadCommandJsonAndRun(str){
         if(str===undefined)
@@ -170,8 +173,13 @@ interface CommandControl {
     loadCommandJSON(obj: commandJSON):Command
 
     /** 不是很关键的一些命令。用来提供方便的 */
+
+    /** 获取命令栈的JSON对象 */
+    getCommandStackJsonObj(): any[]
+
     /** 获取命令栈的JSON字符串 */
     getCommandStackJSON():string
+
     /** 加载命令栈的JSON字符串并且执行 */
     loadCommandJsonAndRun(str:string): boolean
 }

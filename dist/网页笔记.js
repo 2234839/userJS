@@ -1632,10 +1632,13 @@ var CommandControl = {
     if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
     if (obj.constructor === "addNote") return Command.load(obj, addNote);
   },
-  getCommandStackJSON: function getCommandStackJSON() {
-    return JSON.stringify(this.commandStack.map(function (a) {
+  getCommandStackJsonObj: function getCommandStackJsonObj() {
+    return this.commandStack.map(function (a) {
       return a.toCommandJSON();
-    }));
+    });
+  },
+  getCommandStackJSON: function getCommandStackJSON() {
+    return JSON.stringify(this.getCommandStackJsonObj());
   },
   loadCommandJsonAndRun: function loadCommandJsonAndRun(str) {
     var _this = this;
@@ -2028,7 +2031,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.32
+// @version      1.33
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -2113,7 +2116,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee2() {
-                var localStorageSaveListStr, saveList, data, saveSet;
+                var localStorageSaveListStr, saveList, data, saveSet, element_List_Str, CommandStack_str;
                 return _regenerator.default.wrap(function _callee2$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
@@ -2124,7 +2127,11 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                       case 2:
                         localStorageSaveListStr = _context2.sent;
                         saveList = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : [];
-                        data = {};
+                        data = {
+                          a: {
+                            sss: 11111
+                          }
+                        };
                         saveSet = new Set(saveList);
                         editElement.forEach(function (el) {
                           var selectors = (0, _util.getSelectors)(el);
@@ -2132,14 +2139,15 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           data[selectors] = el.innerHTML;
                           (0, _store.setLocalItem)(selectors, el.innerHTML);
                         });
-                        data[element_List_storeName] = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
-                        data[CommandStack_storeName] = _Command.CommandControl.getCommandStackJSON();
-                        (0, _store.setLocalItem)(element_List_storeName, data[element_List_storeName]);
-                        (0, _store.setLocalItem)(CommandStack_storeName, data[CommandStack_storeName]);
-                        console.log(data);
+                        element_List_Str = JSON.stringify((0, _toConsumableArray2.default)(saveSet));
+                        CommandStack_str = _Command.CommandControl.getCommandStackJSON();
+                        (0, _store.setLocalItem)(element_List_storeName, element_List_Str);
+                        (0, _store.setLocalItem)(CommandStack_storeName, CommandStack_str);
+                        data.element_List = (0, _toConsumableArray2.default)(saveSet);
+                        data.CommandStack = _Command.CommandControl.getCommandStackJsonObj();
                         return _context2.abrupt("return", data);
 
-                      case 13:
+                      case 14:
                       case "end":
                         return _context2.stop();
                     }
@@ -2179,29 +2187,15 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             };
 
             /** 调试用 */
-            window.CommandControl = _Command.CommandControl;
-            _context5.t0 = console;
-            _context5.next = 9;
-            return (0, _ajax.login)({
-              user: '崮生',
-              secret_key: '1998'
-            });
+            window.CommandControl = _Command.CommandControl; // console.log(await login({
+            //     user:'崮生',
+            //     secret_key:'1998'
+            // }));
+            // console.log(await remote_getStore({
+            //     url: '崮生'
+            // }));
 
-          case 9:
-            _context5.t1 = _context5.sent;
-
-            _context5.t0.log.call(_context5.t0, _context5.t1);
-
-            _context5.t2 = console;
-            _context5.next = 14;
-            return (0, _ajax.remote_getStore)({
-              url: '崮生'
-            });
-
-          case 14:
-            _context5.t3 = _context5.sent;
-
-            _context5.t2.log.call(_context5.t2, _context5.t3);
+            /** 存储鼠标所在位置的所有元素 */
 
             /** 被修改后的元素 */
             editElement = new Set();
@@ -2410,7 +2404,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               });
             }
 
-          case 26:
+          case 16:
           case "end":
             return _context5.stop();
         }
@@ -2429,7 +2423,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 *      按下 z 将会撤销一次命令
 *      按下 y 将重做一次命令
 *      按下 n 将添加一个便签笔记,此命令处于实验期，无法正常使用
-*      按下 s 保存你的所有修改  每60秒会自动保存一次
+*      按下 s 保存你的所有修改  每60秒会自动保存一次,实验性命令可能之后的不会兼容
 * 注意！在元素获得焦点（一般是你在输入文本的时候）的情况下，上面这些按键将进行正常的输入
 * 对本地打开的网页的修改 需要在浏览器中设置允许插件在文件地址上运行
 
@@ -2477,7 +2471,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64059" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51956" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
