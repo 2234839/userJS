@@ -107,8 +107,13 @@ export const CommandControl: CommandControl = {
         return this.commandStack.push(command)
     },
     run(command) {
-        this.backoutStack.splice(0, this.backoutStack.length)
-        return this.pushCommand(command.do())
+        try {
+            this.backoutStack.splice(0, this.backoutStack.length)
+            return this.pushCommand(command.do())
+        } catch (error) {
+            console.error('命令执行失败',command,error);
+        }
+        return -1
     },
     backout() {
         if (this.commandStack.length === 0) {

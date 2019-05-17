@@ -1595,8 +1595,14 @@ var CommandControl = {
     return this.commandStack.push(command);
   },
   run: function run(command) {
-    this.backoutStack.splice(0, this.backoutStack.length);
-    return this.pushCommand(command.do());
+    try {
+      this.backoutStack.splice(0, this.backoutStack.length);
+      return this.pushCommand(command.do());
+    } catch (error) {
+      console.error('命令执行失败', command, error);
+    }
+
+    return -1;
   },
   backout: function backout() {
     if (this.commandStack.length === 0) {
