@@ -7,6 +7,8 @@ let key=''
 
 /** 附带登录信息的ajax */
 export async function au_getJSON(url:string,data?:any){
+    if(data===undefined)
+        data={}
     data.key=key
     return getJSon(url,data)
 }
@@ -37,10 +39,15 @@ export async function remote_getStore(par: {
     return await au_getJSON(config.serverIp + 'getStore', par)
 }
 
-/** 获取存储库 */
+/** 设置存储库 */
 export async function remote_setStore(par: {
     url: string,
     store: string
 }) {
     return await au_getJSON(config.serverIp + 'setStore', par)
+}
+
+/** 获取存储库 */
+export async function remote_getAllStore() {
+    return await au_getJSON(config.serverIp + 'getAllStore')
 }

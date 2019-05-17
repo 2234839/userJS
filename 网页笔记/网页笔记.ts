@@ -28,7 +28,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
     /** 标记被修改后的元素，以便保存修改的内容 */
     const editElement:Set<HTMLElement>=new Set()
     /** 存储修改的地方 */
-    const AllStoreName = '_storeName_llej_' + location.origin + location.pathname
+    const AllStoreName = '_storeName_llej_' + config.locationUrl
     /** 监听鼠标移动 */
     function mouse(event:Event) {
         if (event.target instanceof HTMLElement) {
@@ -84,7 +84,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
                 break;
             case "KeyO":/** 将修改上传到云端 */
                 remote_setStore({
-                    url: location.origin + location.pathname,
+                    url: config.locationUrl,
                     store: await saveChanges(editElement)
                 }).then(r=>{
                     new Message({ msg:"云端存储:"+r.message }).autoHide()
@@ -93,7 +93,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
             case "KeyP":/** 从云端下载修改 */
                 new Message({ msg: "正在读取云端存储"}).autoHide()
                 remote_getStore({
-                    url: location.origin + location.pathname
+                    url: config.locationUrl
                 }).then(r => {
                     if (r.body===undefined || r.body.length===0)
                         return new Message({ msg: "云端存储:" + r.message}).autoHide()

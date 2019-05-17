@@ -1076,7 +1076,8 @@ var _default = {
   elemtEdit: isDev,
 
   /** 服务器地址 */
-  serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/'
+  serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
+  locationUrl: decodeURIComponent(location.origin + location.pathname)
 };
 exports.default = _default;
 },{}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
@@ -1810,6 +1811,7 @@ exports._login = _login;
 exports._regist = _regist;
 exports.remote_getStore = remote_getStore;
 exports.remote_setStore = remote_setStore;
+exports.remote_getAllStore = remote_getAllStore;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -1859,10 +1861,11 @@ function au_getJSON(url, data) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            if (data === undefined) data = {};
             data.key = key;
             return _context.abrupt("return", (0, _util.getJSon)(url, data));
 
-          case 2:
+          case 3:
           case "end":
             return _context.stop();
         }
@@ -1948,7 +1951,7 @@ function remote_getStore(par) {
     }, _callee4);
   }));
 }
-/** 获取存储库 */
+/** 设置存储库 */
 
 
 function remote_setStore(par) {
@@ -1971,6 +1974,31 @@ function remote_setStore(par) {
         }
       }
     }, _callee5);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_getAllStore() {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee6() {
+    return _regenerator.default.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.next = 2;
+            return au_getJSON(_config.default.serverIp + 'getAllStore');
+
+          case 2:
+            return _context6.abrupt("return", _context6.sent);
+
+          case 3:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6);
   }));
 }
 },{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts"}],"网页笔记.ts":[function(require,module,exports) {
@@ -2205,7 +2233,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             editElement = new Set();
             /** 存储修改的地方 */
 
-            AllStoreName = '_storeName_llej_' + location.origin + location.pathname;
+            AllStoreName = '_storeName_llej_' + _config.default.locationUrl;
             /** 监听鼠标移动 */
 
             if (_config.default.elemtEdit) {
@@ -2319,7 +2347,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 30:
                         _context.t1 = _ajax.remote_setStore;
-                        _context.t2 = location.origin + location.pathname;
+                        _context.t2 = _config.default.locationUrl;
                         _context.next = 34;
                         return saveChanges(editElement);
 
@@ -2345,7 +2373,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           msg: "正在读取云端存储"
                         }).autoHide();
                         (0, _ajax.remote_getStore)({
-                          url: location.origin + location.pathname
+                          url: _config.default.locationUrl
                         }).then(function (r) {
                           if (r.body === undefined || r.body.length === 0) return new _message.Message({
                             msg: "云端存储:" + r.message
@@ -2467,7 +2495,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51956" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62778" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

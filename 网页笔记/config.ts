@@ -7,4 +7,5 @@ export default {
     elemtEdit: isDev,
     /** 服务器地址 */
     serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
+    locationUrl: decodeURIComponent(location.origin + location.pathname)
 }
