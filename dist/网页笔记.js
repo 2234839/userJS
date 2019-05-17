@@ -1065,14 +1065,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+/** 是不是开发环境 */
+var isDev = location.href.includes('127.0.0.1');
 var _default = {
   state: 0,
 
   /** 是否开启编辑 */
-  elemtEdit: location.href.includes('127.0.0.1'),
+  //是开发环境自动开启
+  elemtEdit: isDev,
 
   /** 服务器地址 */
-  serverIp: 'https://127.0.0.1/note/'
+  serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/'
 };
 exports.default = _default;
 },{}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
@@ -1802,7 +1806,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.au_getJSON = au_getJSON;
-exports.login = login;
+exports._login = _login;
+exports._regist = _regist;
 exports.remote_getStore = remote_getStore;
 exports.remote_setStore = remote_setStore;
 
@@ -1868,7 +1873,7 @@ function au_getJSON(url, data) {
 /** 登录 */
 
 
-function login(par) {
+function _login(par) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee2() {
@@ -1893,10 +1898,10 @@ function login(par) {
     }, _callee2);
   }));
 }
-/** 获取存储库 */
+/** 登录 */
 
 
-function remote_getStore(par) {
+function _regist(par) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee3() {
@@ -1905,7 +1910,7 @@ function remote_getStore(par) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return au_getJSON(_config.default.serverIp + 'getStore', par);
+            return (0, _util.getJSon)(_config.default.serverIp + 'register', par);
 
           case 2:
             return _context3.abrupt("return", _context3.sent);
@@ -1921,7 +1926,7 @@ function remote_getStore(par) {
 /** 获取存储库 */
 
 
-function remote_setStore(par) {
+function remote_getStore(par) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee4() {
@@ -1930,7 +1935,7 @@ function remote_setStore(par) {
         switch (_context4.prev = _context4.next) {
           case 0:
             _context4.next = 2;
-            return au_getJSON(_config.default.serverIp + 'setStore', par);
+            return au_getJSON(_config.default.serverIp + 'getStore', par);
 
           case 2:
             return _context4.abrupt("return", _context4.sent);
@@ -1941,6 +1946,31 @@ function remote_setStore(par) {
         }
       }
     }, _callee4);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_setStore(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee5() {
+    return _regenerator.default.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return au_getJSON(_config.default.serverIp + 'setStore', par);
+
+          case 2:
+            return _context5.abrupt("return", _context5.sent);
+
+          case 3:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
   }));
 }
 },{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts"}],"网页笔记.ts":[function(require,module,exports) {
@@ -1997,7 +2027,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.33
+// @version      1.34
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -2013,11 +2043,43 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee4() {
-    var path, editElement, AllStoreName, mouse, outline, switchState, saveChanges, loadChanges, AllStoreStr, allStroe;
+    var path, editElement, AllStoreName, mouse, outline, switchState, saveChanges, loadChanges, login, regist, AllStoreStr, allStroe;
     return _regenerator.default.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
+            regist = function _ref7() {
+              var titile = '>>>网页笔记<<<\n';
+              var user = prompt(titile + '请输入用户名');
+              if (user === null) return;
+              var secret_key = prompt(titile + '请输入密钥。要记住哦，没有提供找回功能');
+              if (secret_key === null) return;
+              (0, _ajax._regist)({
+                user: user,
+                secret_key: secret_key
+              }).then(function (r) {
+                new _message.Message({
+                  msg: r.message
+                }).autoHide();
+              });
+            };
+
+            login = function _ref6() {
+              var titile = '>>>网页笔记<<<\n';
+              var user = prompt(titile + '请输入用户名');
+              if (user === null) return;
+              var secret_key = prompt(titile + '请输入密钥。');
+              if (secret_key === null) return;
+              (0, _ajax._login)({
+                user: user,
+                secret_key: secret_key
+              }).then(function (r) {
+                new _message.Message({
+                  msg: r.message
+                }).autoHide();
+              });
+            };
+
             loadChanges = function _ref5(allStroe) {
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
@@ -2136,14 +2198,10 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             };
 
             /** 调试用 */
-            window.CommandControl = _Command.CommandControl; // console.log(await login({
-            //     user:'崮生',
-            //     secret_key:'1998'
-            // }));
-
+            window.CommandControl = _Command.CommandControl;
             /** 存储鼠标所在位置的所有元素 */
 
-            /** 被修改后的元素 */
+            /** 标记被修改后的元素，以便保存修改的内容 */
             editElement = new Set();
             /** 存储修改的地方 */
 
@@ -2192,7 +2250,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 7:
                         _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 14 : _context.t0 === 'KeyC' ? 16 : _context.t0 === "KeyW" ? 19 : _context.t0 === 'KeyZ' ? 21 : _context.t0 === "KeyY" ? 23 : _context.t0 === "KeyN" ? 25 : _context.t0 === "KeyS" ? 27 : _context.t0 === "KeyO" ? 30 : _context.t0 === "KeyP" ? 39 : 42;
+                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 14 : _context.t0 === 'KeyC' ? 16 : _context.t0 === "KeyW" ? 19 : _context.t0 === 'KeyZ' ? 21 : _context.t0 === "KeyY" ? 23 : _context.t0 === "KeyN" ? 25 : _context.t0 === "KeyS" ? 27 : _context.t0 === "KeyO" ? 30 : _context.t0 === "KeyP" ? 39 : _context.t0 === "Keyk" ? 42 : _context.t0 === "KeyL" ? 44 : 46;
                         break;
 
                       case 10:
@@ -2208,13 +2266,13 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                       case 12:
                         _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 14:
                         /** 删除元素 */
                         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 16:
                         /** 赋值titile */
@@ -2225,31 +2283,31 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           break;
                         }
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 19:
                         /** 关闭可编辑 */
                         _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 21:
                         /** 撤销 */
                         _Command.CommandControl.backout();
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 23:
                         /** 重做 */
                         _Command.CommandControl.reform();
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 25:
                         /** 新增笔记 */
                         _Command.CommandControl.run(new _Command.addNote(path[0]));
 
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 27:
                         /** 保存所有的修改 */
@@ -2257,7 +2315,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         new _message.Message({
                           msg: '保存成功'
                         }).autoHide();
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 30:
                         _context.t1 = _ajax.remote_setStore;
@@ -2279,7 +2337,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         };
 
                         (0, _context.t1)(_context.t4).then(_context.t5);
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 39:
                         /** 从云端下载修改 */
@@ -2298,12 +2356,22 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         });
-                        return _context.abrupt("break", 43);
+                        return _context.abrupt("break", 47);
 
                       case 42:
+                        /** 注册 */
+                        regist();
+                        return _context.abrupt("break", 47);
+
+                      case 44:
+                        /** 登录 */
+                        login();
+                        return _context.abrupt("break", 47);
+
+                      case 46:
                         return _context.abrupt("return", true);
 
-                      case 43:
+                      case 47:
                       case "end":
                         return _context.stop();
                     }
@@ -2329,8 +2397,8 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             /** 轮廓线,用以显示当前元素 */
 
             ;
-            /** 自动保存 */
 
+            /** 自动保存 */
             setInterval(function () {
               saveChanges(editElement);
               new _message.Message({
@@ -2339,20 +2407,20 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             }, 1000 * 60);
             /** 自动加载更改 */
 
-            _context4.next = 16;
+            _context4.next = 18;
             return (0, _store.getLocalItem)(AllStoreName, undefined);
 
-          case 16:
+          case 18:
             AllStoreStr = _context4.sent;
 
             if (!(AllStoreStr === undefined)) {
-              _context4.next = 19;
+              _context4.next = 21;
               break;
             }
 
             return _context4.abrupt("return", console.warn('没有可用的存储库'));
 
-          case 19:
+          case 21:
             allStroe = JSON.parse(AllStoreStr);
 
             if (document.readyState === "complete") {
@@ -2363,7 +2431,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               });
             }
 
-          case 21:
+          case 23:
           case "end":
             return _context4.stop();
         }

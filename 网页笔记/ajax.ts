@@ -12,7 +12,7 @@ export async function au_getJSON(url:string,data?:any){
 }
 
 /** 登录 */
-export async function login(par:{
+export async function _login(par:{
     user: string,
     secret_key: string,
 }){
@@ -20,6 +20,14 @@ export async function login(par:{
     if(res.body && res.body.length>0)
         key=res.body
     return res
+}
+
+/** 登录 */
+export async function _regist(par: {
+    user: string,
+    secret_key: string,
+}) {
+    return await getJSon(config.serverIp + 'register', par)
 }
 
 /** 获取存储库 */

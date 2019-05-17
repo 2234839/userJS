@@ -5,12 +5,11 @@ import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 import { setLocalItem, getLocalItem, AllStore } from "./store";
 import { async } from "q";
-import { login, remote_getStore, remote_setStore } from "./ajax";
-
+import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.33
+// @version      1.34
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -20,19 +19,13 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 // @grant        GM.getValue
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
-
-
 ;(async function () {
     /** 调试用 */
     (<any>window).CommandControl = CommandControl
-    // console.log(await login({
-    //     user:'崮生',
-    //     secret_key:'1998'
-    // }));
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
-    /** 被修改后的元素 */
+    /** 标记被修改后的元素，以便保存修改的内容 */
     const editElement:Set<HTMLElement>=new Set()
     /** 存储修改的地方 */
     const AllStoreName = '_storeName_llej_' + location.origin + location.pathname
@@ -108,6 +101,12 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
                     loadChanges(allStroe)
                     new Message({ msg: "云端存储:" + r.message }).autoHide()
                 })
+                break;
+            case "Keyk":/** 注册 */
+                regist()
+                break;
+            case "KeyL":/** 登录 */
+                login()
                 break;
             default:
                 return true;
@@ -186,6 +185,35 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         }
         CommandControl.loadCommandJsonAndRun(allStroe.CommandStack)
     };
+
+    function login(){
+        const titile = '>>>网页笔记<<<\n'
+        const user = prompt(titile + '请输入用户名');
+        if (user === null)
+            return
+        const secret_key = prompt(titile + '请输入密钥。');
+        if (secret_key === null)
+            return
+        _login({
+            user, secret_key
+        }).then(r => {
+            new Message({ msg: r.message }).autoHide()
+        })
+    }
+    function regist() {
+        const titile ='>>>网页笔记<<<\n'
+        const user = prompt(titile+'请输入用户名');
+        if(user===null)
+            return
+        const secret_key = prompt(titile +'请输入密钥。要记住哦，没有提供找回功能');
+        if (secret_key === null)
+            return
+        _regist({
+            user,secret_key
+        }).then(r=>{
+            new Message({ msg: r.message}).autoHide()
+        })
+    }
 
     /** 自动保存 */
     setInterval(function () {
