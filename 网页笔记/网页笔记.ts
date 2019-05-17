@@ -27,19 +27,17 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
     (<any>window).CommandControl = CommandControl
 
 
-    // console.log(await login({
-    //     user:'崮生',
-    //     secret_key:'1998'
-    // }));
-
-    // console.log(await remote_getStore({
-    //     url: '崮生'
-    // }));
+    console.log(await login({
+        user:'崮生',
+        secret_key:'1998'
+    }));
 
     /** 存储鼠标所在位置的所有元素 */
     let path:HTMLElement[];
     /** 被修改后的元素 */
     const editElement:Set<HTMLElement>=new Set()
+    /** 存储修改的地方 */
+    const AllStoreName = '_storeName_llej_' + location.origin + location.pathname
     /** 监听鼠标移动 */
     function mouse(event:Event) {
         if (event.target instanceof HTMLElement) {
@@ -94,7 +92,7 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
             case "KeyO":/** 将修改上传到云端 */
                 remote_setStore({
                     url: location.origin + location.pathname,
-                    store: JSON.stringify(await saveChanges(editElement))
+                    store: await saveChanges(editElement)
                 }).then(r=>{
                     new Message({ msg:"云端存储:"+r.message }).autoHide()
                 })
@@ -105,15 +103,8 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
                 }).then(r => {
                     if (r.body===undefined || r.body.length===0)
                         return new Message({ msg: "没有发现可用的云端存储"}).autoHide()
-                    const store = JSON.parse(r.body[0].store)
-                    console.log(store);
-                    for (const key in store) {
-                        if (store.hasOwnProperty(key)) {
-                            const element = store[key];
-                            setLocalItem(key, element)
-                        }
-                    }
-                    loadChanges()
+                    const allStroe=<AllStore>JSON.parse(r.body[0].store)
+                    loadChanges(allStroe)
                     new Message({ msg: "云端存储:" + r.message }).autoHide()
                 })
                 break;
@@ -165,14 +156,6 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         return false;
     }
 
-    /** 保存的路径是页面的路径 */
-    const element_List_storeName = '__saveList__llej__' + location.origin + location.pathname
-    /** commandJSON 命令栈 */
-    const CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname
-    /** commandJSON 命令栈 */
-    const AllStoreName = '_storeName_llej_' + location.origin + location.pathname
-
-
     /** 保存修改 */
     async function saveChanges(editElement: Set<HTMLElement>) {
         let data:AllStore = {
@@ -185,8 +168,9 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         })
         // data.element_List = [...saveSet]
         console.log(data);
+        const data_str = JSON.stringify(data)
         await setLocalItem(AllStoreName,JSON.stringify(data))
-        return data
+        return data_str
     }
     /** 自动保存 */
     setInterval(function(){
@@ -195,12 +179,7 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
     },1000*60)
 
     /** 加载修改 */
-    async function loadChanges(){
-        const AllStoreStr=await getLocalItem(AllStoreName,undefined)
-        if(AllStoreStr===undefined)
-            return console.warn('没有可用的存储库');
-        const allStroe =<AllStore> JSON.parse(AllStoreStr)
-
+    async function loadChanges(allStroe:AllStore){
         for (const selectors in allStroe.element_List) {
             if (allStroe.element_List.hasOwnProperty(selectors)) {
                 const html = allStroe.element_List[selectors];
@@ -212,15 +191,20 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
             }
         }
         CommandControl.loadCommandJsonAndRun(allStroe.CommandStack)
-
         console.log('加载修改完毕');
     };
 
+
+    /** 自动加载更改 */
+    const AllStoreStr = await getLocalItem(AllStoreName, undefined)
+    if (AllStoreStr === undefined)
+        return console.warn('没有可用的存储库');
+    const allStroe = <AllStore>JSON.parse(AllStoreStr)
     if (document.readyState === "complete"){
-        loadChanges()
+        loadChanges(allStroe)
     }else{
         window.addEventListener('load', function () {
-            loadChanges()
+            loadChanges(allStroe)
         })
     }
 })();

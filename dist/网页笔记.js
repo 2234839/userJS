@@ -2013,47 +2013,32 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee4() {
-    var path, editElement, mouse, outline, switchState, element_List_storeName, CommandStack_storeName, AllStoreName, saveChanges, loadChanges;
+    var path, editElement, AllStoreName, mouse, outline, switchState, saveChanges, loadChanges, AllStoreStr, allStroe;
     return _regenerator.default.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            loadChanges = function _ref5() {
+            loadChanges = function _ref5(allStroe) {
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee3() {
-                var AllStoreStr, allStroe, selectors, html, el;
+                var selectors, html, el;
                 return _regenerator.default.wrap(function _callee3$(_context3) {
                   while (1) {
                     switch (_context3.prev = _context3.next) {
                       case 0:
-                        _context3.next = 2;
-                        return (0, _store.getLocalItem)(AllStoreName, undefined);
-
-                      case 2:
-                        AllStoreStr = _context3.sent;
-
-                        if (!(AllStoreStr === undefined)) {
-                          _context3.next = 5;
-                          break;
-                        }
-
-                        return _context3.abrupt("return", console.warn('没有可用的存储库'));
-
-                      case 5:
-                        allStroe = JSON.parse(AllStoreStr);
                         _context3.t0 = _regenerator.default.keys(allStroe.element_List);
 
-                      case 7:
+                      case 1:
                         if ((_context3.t1 = _context3.t0()).done) {
-                          _context3.next = 18;
+                          _context3.next = 12;
                           break;
                         }
 
                         selectors = _context3.t1.value;
 
                         if (!allStroe.element_List.hasOwnProperty(selectors)) {
-                          _context3.next = 16;
+                          _context3.next = 10;
                           break;
                         }
 
@@ -2061,26 +2046,26 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         el = document.querySelector(selectors);
 
                         if (!(el === null)) {
-                          _context3.next = 14;
+                          _context3.next = 8;
                           break;
                         }
 
                         return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
 
-                      case 14:
+                      case 8:
                         editElement.add(el);
                         el.innerHTML = html;
 
-                      case 16:
-                        _context3.next = 7;
+                      case 10:
+                        _context3.next = 1;
                         break;
 
-                      case 18:
+                      case 12:
                         _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
 
                         console.log('加载修改完毕');
 
-                      case 20:
+                      case 14:
                       case "end":
                         return _context3.stop();
                     }
@@ -2093,7 +2078,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee2() {
-                var data;
+                var data, data_str;
                 return _regenerator.default.wrap(function _callee2$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
@@ -2108,13 +2093,14 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         }); // data.element_List = [...saveSet]
 
                         console.log(data);
-                        _context2.next = 5;
+                        data_str = JSON.stringify(data);
+                        _context2.next = 6;
                         return (0, _store.setLocalItem)(AllStoreName, JSON.stringify(data));
 
-                      case 5:
-                        return _context2.abrupt("return", data);
-
                       case 6:
+                        return _context2.abrupt("return", data_str);
+
+                      case 7:
                       case "end":
                         return _context2.stop();
                     }
@@ -2154,18 +2140,24 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             };
 
             /** 调试用 */
-            window.CommandControl = _Command.CommandControl; // console.log(await login({
-            //     user:'崮生',
-            //     secret_key:'1998'
-            // }));
-            // console.log(await remote_getStore({
-            //     url: '崮生'
-            // }));
+            window.CommandControl = _Command.CommandControl;
+            _context4.t0 = console;
+            _context4.next = 9;
+            return (0, _ajax.login)({
+              user: '崮生',
+              secret_key: '1998'
+            });
 
-            /** 存储鼠标所在位置的所有元素 */
+          case 9:
+            _context4.t1 = _context4.sent;
+
+            _context4.t0.log.call(_context4.t0, _context4.t1);
 
             /** 被修改后的元素 */
             editElement = new Set();
+            /** 存储修改的地方 */
+
+            AllStoreName = '_storeName_llej_' + location.origin + location.pathname;
             /** 监听鼠标移动 */
 
             if (_config.default.elemtEdit) {
@@ -2210,20 +2202,20 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 7:
                         _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 39 : 41;
+                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 12 : _context.t0 === 'KeyC' ? 14 : _context.t0 === "KeyW" ? 17 : _context.t0 === 'KeyZ' ? 19 : _context.t0 === "KeyY" ? 21 : _context.t0 === "KeyN" ? 23 : _context.t0 === "KeyS" ? 25 : _context.t0 === "KeyO" ? 28 : _context.t0 === "KeyP" ? 37 : 39;
                         break;
 
                       case 10:
                         /** 使元素可编辑 */
                         _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 12:
                         /** 删除元素 */
                         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 14:
                         /** 赋值titile */
@@ -2234,31 +2226,31 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           break;
                         }
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 17:
                         /** 关闭可编辑 */
                         _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 19:
                         /** 撤销 */
                         _Command.CommandControl.backout();
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 21:
                         /** 重做 */
                         _Command.CommandControl.reform();
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 23:
                         /** 新增笔记 */
                         _Command.CommandControl.run(new _Command.addNote(path[0]));
 
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 25:
                         /** 保存所有的修改 */
@@ -2266,33 +2258,31 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         new _message.Message({
                           msg: '保存成功'
                         }).autoHide();
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
                       case 28:
                         _context.t1 = _ajax.remote_setStore;
                         _context.t2 = location.origin + location.pathname;
-                        _context.t3 = JSON;
-                        _context.next = 33;
+                        _context.next = 32;
                         return saveChanges(editElement);
 
-                      case 33:
-                        _context.t4 = _context.sent;
-                        _context.t5 = _context.t3.stringify.call(_context.t3, _context.t4);
-                        _context.t6 = {
+                      case 32:
+                        _context.t3 = _context.sent;
+                        _context.t4 = {
                           url: _context.t2,
-                          store: _context.t5
+                          store: _context.t3
                         };
 
-                        _context.t7 = function (r) {
+                        _context.t5 = function (r) {
                           new _message.Message({
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         };
 
-                        (0, _context.t1)(_context.t6).then(_context.t7);
-                        return _context.abrupt("break", 42);
+                        (0, _context.t1)(_context.t4).then(_context.t5);
+                        return _context.abrupt("break", 40);
 
-                      case 39:
+                      case 37:
                         /** 从云端下载修改 */
                         (0, _ajax.remote_getStore)({
                           url: location.origin + location.pathname
@@ -2300,27 +2290,18 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           if (r.body === undefined || r.body.length === 0) return new _message.Message({
                             msg: "没有发现可用的云端存储"
                           }).autoHide();
-                          var store = JSON.parse(r.body[0].store);
-                          console.log(store);
-
-                          for (var key in store) {
-                            if (store.hasOwnProperty(key)) {
-                              var element = store[key];
-                              (0, _store.setLocalItem)(key, element);
-                            }
-                          }
-
-                          loadChanges();
+                          var allStroe = JSON.parse(r.body[0].store);
+                          loadChanges(allStroe);
                           new _message.Message({
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         });
-                        return _context.abrupt("break", 42);
+                        return _context.abrupt("break", 40);
 
-                      case 41:
+                      case 39:
                         return _context.abrupt("return", true);
 
-                      case 42:
+                      case 40:
                       case "end":
                         return _context.stop();
                     }
@@ -2345,16 +2326,6 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             });
             /** 轮廓线,用以显示当前元素 */
 
-            /** 保存的路径是页面的路径 */
-            element_List_storeName = '__saveList__llej__' + location.origin + location.pathname;
-            /** commandJSON 命令栈 */
-
-            CommandStack_storeName = '__CommandStack__llej__' + location.origin + location.pathname;
-            /** commandJSON 命令栈 */
-
-            AllStoreName = '_storeName_llej_' + location.origin + location.pathname;
-            /** 保存修改 */
-
             /** 自动保存 */
             setInterval(function () {
               saveChanges(editElement);
@@ -2365,16 +2336,33 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             /** 加载修改 */
 
             ;
+            /** 自动加载更改 */
+
+            _context4.next = 21;
+            return (0, _store.getLocalItem)(AllStoreName, undefined);
+
+          case 21:
+            AllStoreStr = _context4.sent;
+
+            if (!(AllStoreStr === undefined)) {
+              _context4.next = 24;
+              break;
+            }
+
+            return _context4.abrupt("return", console.warn('没有可用的存储库'));
+
+          case 24:
+            allStroe = JSON.parse(AllStoreStr);
 
             if (document.readyState === "complete") {
-              loadChanges();
+              loadChanges(allStroe);
             } else {
               window.addEventListener('load', function () {
-                loadChanges();
+                loadChanges(allStroe);
               });
             }
 
-          case 17:
+          case 26:
           case "end":
             return _context4.stop();
         }
