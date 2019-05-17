@@ -2082,18 +2082,28 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           return __awaiter(_this, void 0, void 0,
                           /*#__PURE__*/
                           _regenerator.default.mark(function _callee3() {
+                            var el;
                             return _regenerator.default.wrap(function _callee3$(_context3) {
                               while (1) {
                                 switch (_context3.prev = _context3.next) {
                                   case 0:
-                                    console.log(selectors);
-                                    _context3.next = 3;
-                                    return (0, _store.getLocalItem)(selectors);
+                                    el = document.querySelector(selectors);
+
+                                    if (!(el === null)) {
+                                      _context3.next = 3;
+                                      break;
+                                    }
+
+                                    return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
 
                                   case 3:
-                                    document.querySelector(selectors).innerHTML = _context3.sent;
+                                    _context3.next = 5;
+                                    return (0, _store.getLocalItem)(selectors);
 
-                                  case 4:
+                                  case 5:
+                                    el.innerHTML = _context3.sent;
+
+                                  case 6:
                                   case "end":
                                     return _context3.stop();
                                 }
@@ -2435,12 +2445,12 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 * 建议允许插件在文件地址上运行
 * 正在想方法让笔记存在云端
 
-## v0.19 的更新介绍
+## v1.32 的更新介绍
 * 最近得空了，开始更新
 * 新增了撤销和重做功能，优化了代码
 * 因为（ctrl + 其他键）的模式 在一些浏览器上还是会出现冲突，故改为F2键来作为开关
-* 下一版本将实现便签功能，以及撤销功能
-* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
+* 下一版本将实现便签功能.
+* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端。
 * 希望各位能将你们想要的功能进行一个反馈
 */
 },{"@babel/runtime/helpers/toConsumableArray":"../node_modules/@babel/runtime/helpers/toConsumableArray.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {

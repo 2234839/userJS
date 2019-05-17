@@ -207,9 +207,10 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
         const saveList: string[] = localStorageSaveListStr ? JSON.parse(localStorageSaveListStr) : []
         CommandControl.loadCommandJsonAndRun(await getLocalItem(CommandStack_storeName))
         saveList.forEach(async selectors=>{
-            console.log(selectors);
-
-            document.querySelector(selectors).innerHTML = await getLocalItem(selectors)
+            const el = document.querySelector(selectors)
+            if(el===null)
+                return console.error(`${selectors} 的元素无法找到，赋值失败`);
+            el.innerHTML = await getLocalItem(selectors)
         })
         console.log('加载修改完毕');
     };
@@ -246,11 +247,11 @@ import { login, remote_getStore, remote_setStore } from "./ajax";
 * 建议允许插件在文件地址上运行
 * 正在想方法让笔记存在云端
 
-## v0.19 的更新介绍
+## v1.32 的更新介绍
 * 最近得空了，开始更新
 * 新增了撤销和重做功能，优化了代码
 * 因为（ctrl + 其他键）的模式 在一些浏览器上还是会出现冲突，故改为F2键来作为开关
-* 下一版本将实现便签功能，以及撤销功能
-* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端
+* 下一版本将实现便签功能.
+* 正在进行云端存储的后台工作。在不远的将来将实现笔记备份至云端。
 * 希望各位能将你们想要的功能进行一个反馈
 */
