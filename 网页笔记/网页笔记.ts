@@ -42,9 +42,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
     /** 监测按键事件 */
     document.addEventListener('keydown',async function (event) {
         var code = event.code;
-        if (code === 'F2' || code === 'KeyM') {
-            return switchState(mouse, event);
-        }
+
         /** 没有开启编辑功能 */
         if(config.elemtEdit===false){
             return;
@@ -53,6 +51,11 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
         if (document.querySelectorAll(":focus").length > 0) {
             return;
         }
+
+        if (code === 'F2' || code === 'KeyM') {
+            return switchState(mouse, event);
+        }
+
         switch (code) {
             case 'KeyQ':/** 使元素可编辑 */
                 if (path[0].innerHTML.length > 10 * 1000)
