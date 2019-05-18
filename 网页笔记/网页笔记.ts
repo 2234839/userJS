@@ -42,11 +42,6 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
     /** 监测按键事件 */
     document.addEventListener('keydown',async function (event) {
         var code = event.code;
-
-        /** 没有开启编辑功能 */
-        if(config.elemtEdit===false){
-            return;
-        }
         //有元素获得焦点，视为正在输入文本，不执行下面的功能
         if (document.querySelectorAll(":focus").length > 0) {
             return;
@@ -55,7 +50,10 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
         if (code === 'F2' || code === 'KeyM') {
             return switchState(mouse, event);
         }
-
+        /** 没有开启编辑功能 */
+        if (config.elemtEdit === false) {
+            return;
+        }
         switch (code) {
             case 'KeyQ':/** 使元素可编辑 */
                 if (path[0].innerHTML.length > 10 * 1000)

@@ -2253,10 +2253,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                   while (1) {
                     switch (_context.prev = _context.next) {
                       case 0:
-                        code = event.code;
-                        /** 没有开启编辑功能 */
+                        code = event.code; //有元素获得焦点，视为正在输入文本，不执行下面的功能
 
-                        if (!(_config.default.elemtEdit === false)) {
+                        if (!(document.querySelectorAll(":focus").length > 0)) {
                           _context.next = 3;
                           break;
                         }
@@ -2264,20 +2263,20 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         return _context.abrupt("return");
 
                       case 3:
-                        if (!(document.querySelectorAll(":focus").length > 0)) {
+                        if (!(code === 'F2' || code === 'KeyM')) {
                           _context.next = 5;
                           break;
                         }
 
-                        return _context.abrupt("return");
+                        return _context.abrupt("return", switchState(mouse, event));
 
                       case 5:
-                        if (!(code === 'F2' || code === 'KeyM')) {
+                        if (!(_config.default.elemtEdit === false)) {
                           _context.next = 7;
                           break;
                         }
 
-                        return _context.abrupt("return", switchState(mouse, event));
+                        return _context.abrupt("return");
 
                       case 7:
                         _context.t0 = code;
