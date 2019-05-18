@@ -24,7 +24,7 @@ export async function _login(par:{
     return res
 }
 
-/** 登录 */
+/** 注册 */
 export async function _regist(par: {
     user: string,
     secret_key: string,

@@ -9,7 +9,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.34
+// @version      1.35
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -42,7 +42,7 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
     /** 监测按键事件 */
     document.addEventListener('keydown',async function (event) {
         var code = event.code;
-        if (code === 'F2') {
+        if (code === 'F2' || code === 'KeyM') {
             return switchState(mouse, event);
         }
         /** 没有开启编辑功能 */
