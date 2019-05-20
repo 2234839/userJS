@@ -2279,13 +2279,14 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         return _context.abrupt("return");
 
                       case 7:
+                        console.log('keyCode', code);
                         _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 10 : _context.t0 === 'KeyD' ? 14 : _context.t0 === 'KeyC' ? 16 : _context.t0 === "KeyW" ? 19 : _context.t0 === 'KeyZ' ? 21 : _context.t0 === "KeyY" ? 23 : _context.t0 === "KeyN" ? 25 : _context.t0 === "KeyS" ? 27 : _context.t0 === "KeyO" ? 30 : _context.t0 === "KeyP" ? 39 : _context.t0 === "Keyk" ? 42 : _context.t0 === "KeyL" ? 44 : 46;
+                        _context.next = _context.t0 === 'KeyQ' ? 11 : _context.t0 === 'KeyD' ? 15 : _context.t0 === 'KeyC' ? 17 : _context.t0 === "KeyW" ? 20 : _context.t0 === 'KeyZ' ? 22 : _context.t0 === "KeyY" ? 24 : _context.t0 === "KeyN" ? 26 : _context.t0 === "KeyS" ? 28 : _context.t0 === "KeyO" ? 31 : _context.t0 === "KeyP" ? 40 : _context.t0 === "KeyK" ? 43 : _context.t0 === "KeyL" ? 46 : 48;
                         break;
 
-                      case 10:
+                      case 11:
                         if (!(path[0].innerHTML.length > 10 * 1000)) {
-                          _context.next = 12;
+                          _context.next = 13;
                           break;
                         }
 
@@ -2293,67 +2294,67 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                           msg: '该元素内容过大，请选择更确定的文本元素。'
                         }).autoHide());
 
-                      case 12:
+                      case 13:
                         _Command.CommandControl.run(new _Command.editSelect(path[0]));
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 14:
+                      case 15:
                         /** 删除元素 */
                         _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 16:
+                      case 17:
                         /** 赋值titile */
                         _util.default.copyTitle(path[0]);
 
                         if (!(event.ctrlKey === false)) {
-                          _context.next = 19;
+                          _context.next = 20;
                           break;
                         }
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 19:
+                      case 20:
                         /** 关闭可编辑 */
                         _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 21:
+                      case 22:
                         /** 撤销 */
                         _Command.CommandControl.backout();
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 23:
+                      case 24:
                         /** 重做 */
                         _Command.CommandControl.reform();
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 25:
+                      case 26:
                         /** 新增笔记 */
                         _Command.CommandControl.run(new _Command.addNote(path[0]));
 
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 27:
+                      case 28:
                         /** 保存所有的修改 */
                         saveChanges(editElement);
                         new _message.Message({
                           msg: '保存成功'
                         }).autoHide();
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 30:
+                      case 31:
                         _context.t1 = _ajax.remote_setStore;
                         _context.t2 = _config.default.locationUrl;
-                        _context.next = 34;
+                        _context.next = 35;
                         return saveChanges(editElement);
 
-                      case 34:
+                      case 35:
                         _context.t3 = _context.sent;
                         _context.t4 = {
                           url: _context.t2,
@@ -2367,9 +2368,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         };
 
                         (0, _context.t1)(_context.t4).then(_context.t5);
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 39:
+                      case 40:
                         /** 从云端下载修改 */
                         new _message.Message({
                           msg: "正在读取云端存储"
@@ -2386,22 +2387,23 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                             msg: "云端存储:" + r.message
                           }).autoHide();
                         });
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
-                      case 42:
+                      case 43:
                         /** 注册 */
+                        console.log(66666);
                         regist();
-                        return _context.abrupt("break", 47);
-
-                      case 44:
-                        /** 登录 */
-                        login();
-                        return _context.abrupt("break", 47);
+                        return _context.abrupt("break", 49);
 
                       case 46:
+                        /** 登录 */
+                        login();
+                        return _context.abrupt("break", 49);
+
+                      case 48:
                         return _context.abrupt("return", true);
 
-                      case 47:
+                      case 49:
                       case "end":
                         return _context.stop();
                     }
@@ -2497,7 +2499,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53231" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54746" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

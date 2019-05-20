@@ -54,6 +54,8 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
         if (config.elemtEdit === false) {
             return;
         }
+        console.log('keyCode',code);
+
         switch (code) {
             case 'KeyQ':/** 使元素可编辑 */
                 if (path[0].innerHTML.length > 10 * 1000)
@@ -103,7 +105,9 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
                     new Message({ msg: "云端存储:" + r.message }).autoHide()
                 })
                 break;
-            case "Keyk":/** 注册 */
+            case "KeyK":/** 注册 */
+                console.log(66666);
+
                 regist()
                 break;
             case "KeyL":/** 登录 */
