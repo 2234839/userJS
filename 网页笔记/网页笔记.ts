@@ -106,8 +106,6 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
                 })
                 break;
             case "KeyK":/** 注册 */
-                console.log(66666);
-
                 regist()
                 break;
             case "KeyL":/** 登录 */
