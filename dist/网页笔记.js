@@ -1079,7 +1079,10 @@ var _default = {
   serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
 
   /** 页面的url */
-  locationUrl: decodeURIComponent(location.origin + location.pathname)
+  locationUrl: decodeURIComponent(location.origin + location.pathname),
+
+  /** 存储登录凭证的 */
+  loginCredentials: 'loginCredentials'
 };
 exports.default = _default;
 },{}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
@@ -1817,9 +1820,11 @@ exports.remote_getAllStore = remote_getAllStore;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _util = require("./util");
-
 var _config = _interopRequireDefault(require("./config"));
+
+var _store = require("./store");
+
+var _util = require("./util");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1864,10 +1869,28 @@ function au_getJSON(url, data) {
         switch (_context.prev = _context.next) {
           case 0:
             if (data === undefined) data = {};
-            data.key = key;
+
+            if (!key) {
+              _context.next = 5;
+              break;
+            }
+
+            _context.t0 = key;
+            _context.next = 8;
+            break;
+
+          case 5:
+            _context.next = 7;
+            return (0, _store.getLocalItem)(_config.default.loginCredentials);
+
+          case 7:
+            _context.t0 = _context.sent;
+
+          case 8:
+            data.key = _context.t0;
             return _context.abrupt("return", (0, _util.getJSon)(url, data));
 
-          case 3:
+          case 10:
           case "end":
             return _context.stop();
         }
@@ -1893,9 +1916,10 @@ function _login(par) {
           case 2:
             res = _context2.sent;
             if (res.body && res.body.length > 0) key = res.body;
+            (0, _store.setLocalItem)(_config.default.loginCredentials, key);
             return _context2.abrupt("return", res);
 
-          case 5:
+          case 6:
           case "end":
             return _context2.stop();
         }
@@ -2003,7 +2027,7 @@ function remote_getAllStore() {
     }, _callee6);
   }));
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./config":"config.ts","./store":"store.ts","./util":"util.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
@@ -2498,7 +2522,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54746" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "13614" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

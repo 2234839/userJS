@@ -8,5 +8,7 @@ export default {
     /** 服务器地址 */
     serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
     /** 页面的url */
-    locationUrl: decodeURIComponent(location.origin + location.pathname)
+    locationUrl: decodeURIComponent(location.origin + location.pathname),
+    /** 存储登录凭证的 */
+    loginCredentials:'loginCredentials',
 }

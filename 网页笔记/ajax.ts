@@ -1,6 +1,6 @@
-import { ajax_get, getJSon } from "./util";
 import config from "./config";
-import { async } from "q";
+import { setLocalItem, getLocalItem } from "./store";
+import { getJSon } from "./util";
 
 /** 用来识别身份的key */
 let key=''
@@ -9,7 +9,7 @@ let key=''
 export async function au_getJSON(url:string,data?:any){
     if(data===undefined)
         data={}
-    data.key=key
+    data.key=key?key:await getLocalItem(config.loginCredentials)
     return getJSon(url,data)
 }
 
@@ -21,6 +21,7 @@ export async function _login(par:{
     const res = await getJSon(config.serverIp + 'login', par)
     if(res.body && res.body.length>0)
         key=res.body
+    setLocalItem(config.loginCredentials,key)
     return res
 }
 
