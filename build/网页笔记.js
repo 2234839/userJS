@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -841,7 +841,7 @@ var global = arguments[3];
   })() || Function("return this")()
 );
 
-},{}],"../node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
+},{}],"node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -880,10 +880,10 @@ if (hadRuntime) {
   }
 }
 
-},{"./runtime":"../node_modules/regenerator-runtime/runtime.js"}],"../node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
+},{"./runtime":"node_modules/regenerator-runtime/runtime.js"}],"node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime-module.js"}],"util.ts":[function(require,module,exports) {
+},{"regenerator-runtime":"node_modules/regenerator-runtime/runtime-module.js"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -930,8 +930,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 /** 用于复制文本的input */
 
 
-var input_copy = document.createElement('input');
-input_copy.id = '__'; // input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
+var input_copy = document.createElement('textarea');
+input_copy.id = '__';
+input_copy.style.display = 'none'; //不能设置为none因为会导致没有可访问性
 
 input_copy.setAttribute('style', "\n        position: absolute;\n        top: -9999px;\n        left: -9999px;");
 document.body.appendChild(input_copy);
@@ -944,6 +945,7 @@ var _default = {
     if (typeof el === 'string') title = el;else title = el.getAttribute("title");
     input_copy.setAttribute('readonly', 'readonly');
     input_copy.setAttribute('value', title);
+    input_copy.value = title;
     input_copy.select();
     input_copy.setSelectionRange(0, 9999);
     document.execCommand('copy');
@@ -1058,7 +1060,7 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"config.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js"}],"网页笔记/config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1085,7 +1087,7 @@ var _default = {
   loginCredentials: 'loginCredentials'
 };
 exports.default = _default;
-},{}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
 function _typeof(obj) {
@@ -1103,7 +1105,7 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof;
-},{}],"../node_modules/@babel/runtime/helpers/assertThisInitialized.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/assertThisInitialized.js":[function(require,module,exports) {
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -1113,7 +1115,7 @@ function _assertThisInitialized(self) {
 }
 
 module.exports = _assertThisInitialized;
-},{}],"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":[function(require,module,exports) {
 var _typeof = require("../helpers/typeof");
 
 var assertThisInitialized = require("./assertThisInitialized");
@@ -1127,7 +1129,7 @@ function _possibleConstructorReturn(self, call) {
 }
 
 module.exports = _possibleConstructorReturn;
-},{"../helpers/typeof":"../node_modules/@babel/runtime/helpers/typeof.js","./assertThisInitialized":"../node_modules/@babel/runtime/helpers/assertThisInitialized.js"}],"../node_modules/@babel/runtime/helpers/getPrototypeOf.js":[function(require,module,exports) {
+},{"../helpers/typeof":"node_modules/@babel/runtime/helpers/typeof.js","./assertThisInitialized":"node_modules/@babel/runtime/helpers/assertThisInitialized.js"}],"node_modules/@babel/runtime/helpers/getPrototypeOf.js":[function(require,module,exports) {
 function _getPrototypeOf(o) {
   module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
@@ -1136,7 +1138,7 @@ function _getPrototypeOf(o) {
 }
 
 module.exports = _getPrototypeOf;
-},{}],"../node_modules/@babel/runtime/helpers/setPrototypeOf.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/setPrototypeOf.js":[function(require,module,exports) {
 function _setPrototypeOf(o, p) {
   module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
     o.__proto__ = p;
@@ -1147,7 +1149,7 @@ function _setPrototypeOf(o, p) {
 }
 
 module.exports = _setPrototypeOf;
-},{}],"../node_modules/@babel/runtime/helpers/inherits.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/inherits.js":[function(require,module,exports) {
 var setPrototypeOf = require("./setPrototypeOf");
 
 function _inherits(subClass, superClass) {
@@ -1166,7 +1168,7 @@ function _inherits(subClass, superClass) {
 }
 
 module.exports = _inherits;
-},{"./setPrototypeOf":"../node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"../node_modules/@babel/runtime/helpers/classCallCheck.js":[function(require,module,exports) {
+},{"./setPrototypeOf":"node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"node_modules/@babel/runtime/helpers/classCallCheck.js":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -1174,7 +1176,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck;
-},{}],"../node_modules/@babel/runtime/helpers/createClass.js":[function(require,module,exports) {
+},{}],"node_modules/@babel/runtime/helpers/createClass.js":[function(require,module,exports) {
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
@@ -1192,7 +1194,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
-},{}],"ui/style.ts":[function(require,module,exports) {
+},{}],"网页笔记/ui/style.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1217,7 +1219,7 @@ Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n  
 var keyframes = document.createElement('style');
 keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red;color:white; }\n    to { background: yellow;color:black; }\n}\n";
 document.head.appendChild(keyframes);
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js"}],"ui/message.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js"}],"网页笔记/ui/message.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1297,7 +1299,7 @@ function () {
 }();
 
 exports.Message = Message;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","./style":"ui/style.ts"}],"ui/note.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","./style":"网页笔记/ui/style.ts"}],"网页笔记/ui/note.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1351,7 +1353,7 @@ function (_Message) {
 }(_message.Message);
 
 exports.note = note;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"Command.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","./message":"网页笔记/ui/message.ts","./style":"网页笔记/ui/style.ts"}],"网页笔记/Command.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1630,7 +1632,7 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{"@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","./ui/message":"ui/message.ts","./ui/note":"ui/note.ts","./util":"util.ts"}],"ui/warning.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","./ui/message":"网页笔记/ui/message.ts","./ui/note":"网页笔记/ui/note.ts","./util":"util.ts"}],"网页笔记/ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1670,7 +1672,7 @@ function (_Message) {
 }(_message.Message);
 
 exports.Warning = Warning;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"store.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","./message":"网页笔记/ui/message.ts","./style":"网页笔记/ui/style.ts"}],"网页笔记/store.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1805,7 +1807,7 @@ defaultValue) {
     }, _callee2);
   }));
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"ajax.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js"}],"网页笔记/ajax.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2027,7 +2029,7 @@ function remote_getAllStore() {
     }, _callee6);
   }));
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./config":"config.ts","./store":"store.ts","./util":"util.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js","./config":"网页笔记/config.ts","./store":"网页笔记/store.ts","./util":"util.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
@@ -2494,7 +2496,11 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     }, _callee4);
   }));
 })();
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"config.ts","./Command":"Command.ts","./ui/warning":"ui/warning.ts","./ui/message":"ui/message.ts","./store":"store.ts","./ajax":"ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+setTimeout(function () {
+  _util.default.copyTitle(Math.random().toString(36).substr(2));
+}, 1000);
+},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"网页笔记/config.ts","./Command":"网页笔记/Command.ts","./ui/warning":"网页笔记/ui/warning.ts","./ui/message":"网页笔记/ui/message.ts","./store":"网页笔记/store.ts","./ajax":"网页笔记/ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2522,7 +2528,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "13614" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "26876" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

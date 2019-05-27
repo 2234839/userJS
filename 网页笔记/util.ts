@@ -1,9 +1,9 @@
 import { async } from "q";
 
 /** 用于复制文本的input */
-const input_copy = document.createElement('input')
+const input_copy = document.createElement('textarea')
 input_copy.id = '__'
-// input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
+input_copy.style.display='none'//不能设置为none因为会导致没有可访问性
 input_copy.setAttribute('style', `
         position: absolute;
         top: -9999px;
@@ -22,6 +22,7 @@ export default {
 
         input_copy.setAttribute('readonly', 'readonly');
         input_copy.setAttribute('value', title);
+        input_copy.value = title
         input_copy.select();
         input_copy.setSelectionRange(0, 9999);
         document.execCommand('copy')

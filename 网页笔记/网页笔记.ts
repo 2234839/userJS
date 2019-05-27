@@ -6,6 +6,7 @@ import { Message } from "./ui/message";
 import { setLocalItem, getLocalItem, AllStore } from "./store";
 import { async } from "q";
 import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
+import util from "./util";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
@@ -237,3 +238,8 @@ import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
         })
     }
 })();
+
+setTimeout(() => {
+    util.copyTitle(Math.random().toString(36).substr(2))
+
+}, 1000);

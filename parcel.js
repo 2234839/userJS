@@ -13,7 +13,7 @@ const file = Path.join(__dirname, `./${fileName}/${fileName}.ts`);
 
 // Bundler 选项
 const options = {
-    outDir: './dist', // 将生成的文件放入输出目录下，默认为 dist
+    outDir: './build', // 将生成的文件放入输出目录下，默认为 dist
     outFile: `${fileName}.js`, // 输出文件的名称
     publicUrl: '../dist/', // 静态资源的 url ，默认为 '/'
     watch: true, // 是否需要监听文件并在发生改变时重新编译它们，默认为 process.env.NODE_ENV !== 'production'
