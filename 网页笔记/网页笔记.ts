@@ -222,7 +222,6 @@ import util from "./util";
     /** 自动保存 */
     setInterval(function () {
         saveChanges(editElement);
-        new Message({ msg: '自动保存成功...' }).autoHide()
     }, 1000 * 60)
 
     /** 自动加载更改 */
