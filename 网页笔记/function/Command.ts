@@ -1,6 +1,6 @@
-import { Message } from "./ui/message";
-import { note } from "./ui/note";
-import { getSelectors } from "./util";
+import { Message } from "../ui/message";
+import { note } from "../ui/note";
+import { getSelectors } from "../util";
 
 export interface commandJSON{
     /** 选择器 */

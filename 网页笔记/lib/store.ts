@@ -1,4 +1,4 @@
-import { commandJSON } from "./Command";
+import { commandJSON } from "../function/Command";
 
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {

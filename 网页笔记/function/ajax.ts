@@ -1,6 +1,6 @@
-import config from "./config";
-import { setLocalItem, getLocalItem } from "./store";
-import { getJSon } from "./util";
+import config from "../config";
+import { setLocalItem, getLocalItem } from "../lib/store";
+import { getJSon } from "../util";
 
 /** 用来识别身份的key */
 let key=''

@@ -1,11 +1,11 @@
 import $, { nodePath, getSelectors, ajax_get } from "./util";
 import config from "./config";
-import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./Command";
+import { deleteSelect, CommandControl, editSelect, closeEditSelect, addNote } from "./function/Command";
 import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
-import { setLocalItem, getLocalItem, AllStore } from "./store";
+import { setLocalItem, getLocalItem, AllStore } from "./lib/store";
 import { async } from "q";
-import { _login, remote_getStore, remote_setStore, remote_register } from "./ajax";
+import { _login, remote_getStore, remote_setStore, remote_register } from "./function/ajax";
 import util from "./util";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -107,7 +107,7 @@ import util from "./util";
                 })
                 break;
             case "KeyK":/** 注册 */
-                regist()
+                register()
                 break;
             case "KeyL":/** 登录 */
                 login()
@@ -204,7 +204,7 @@ import util from "./util";
             new Message({ msg: r.message }).autoHide()
         })
     }
-    function regist() {
+    function register() {
         const titile ='>>>网页笔记<<<\n'
         const user = prompt(titile+'请输入用户名');
         if(user===null)
