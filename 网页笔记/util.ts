@@ -55,7 +55,6 @@ export function getSelectors(el: Element) {
 }
 
 /** 获取元素它在第几位 */
-
 export function getIndex(el: Element) {
     if (el.nodeName === 'HTML')
         return 1

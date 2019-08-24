@@ -26,7 +26,6 @@ export async function getLocalItem<T>(/** 键名 */ name: string,/** 没有的�
     }
 }
 
-
 /** 存储所有的东西 */
 export interface AllStore {
     CommandStack: commandJSON[]

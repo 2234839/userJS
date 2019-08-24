@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -841,7 +841,7 @@ var global = arguments[3];
   })() || Function("return this")()
 );
 
-},{}],"node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
+},{}],"../node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -880,10 +880,293 @@ if (hadRuntime) {
   }
 }
 
-},{"./runtime":"node_modules/regenerator-runtime/runtime.js"}],"node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
+},{"./runtime":"../node_modules/regenerator-runtime/runtime.js"}],"../node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":"node_modules/regenerator-runtime/runtime-module.js"}],"util.ts":[function(require,module,exports) {
+},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime-module.js"}],"../node_modules/@babel/runtime/helpers/defineProperty.js":[function(require,module,exports) {
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+},{}],"lib/store.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setLocalItem = setLocalItem;
+exports.getLocalItem = getLocalItem;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+/** 设置一条本地存储 */
+
+
+function setLocalItem(name, value) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee() {
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
+              _context.next = 6;
+              break;
+            }
+
+            _context.next = 3;
+            return GM.setValue(name, value);
+
+          case 3:
+            return _context.abrupt("return", _context.sent);
+
+          case 6:
+            _context.next = 8;
+            return localStorage.setItem(name, String(value));
+
+          case 8:
+            return _context.abrupt("return", _context.sent);
+
+          case 9:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+/** 读取一条本地存储 */
+
+
+function getLocalItem(
+/** 键名 */
+name,
+/** 没有的时候的默认值 */
+defaultValue) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee2() {
+    var res, value;
+    return _regenerator.default.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
+              _context2.next = 8;
+              break;
+            }
+
+            _context2.next = 3;
+            return GM.getValue(name, defaultValue);
+
+          case 3:
+            res = _context2.sent;
+            console.log(res);
+            return _context2.abrupt("return", res);
+
+          case 8:
+            value = localStorage.getItem(name);
+
+            if (!(value === null)) {
+              _context2.next = 13;
+              break;
+            }
+
+            _context2.next = 12;
+            return defaultValue;
+
+          case 12:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 13:
+            _context2.next = 15;
+            return value;
+
+          case 15:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 16:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+}
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"../node_modules/@babel/runtime/helpers/classCallCheck.js":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck;
+},{}],"../node_modules/@babel/runtime/helpers/createClass.js":[function(require,module,exports) {
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+module.exports = _createClass;
+},{}],"ui/style.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Style = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Style = function Style() {
+  (0, _classCallCheck2.default)(this, Style);
+};
+
+exports.Style = Style;
+Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    z-index:800;\n    ";
+Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    z-index:800;\n    ";
+Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n    position: sticky;\n    top: 20px;\n    left: 30px;\n    width: auto;\n    height: auto;\n    z-index:800;\n    ";
+/** 注入动画 */
+
+var keyframes = document.createElement('style');
+keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red;color:white; }\n    to { background: yellow;color:black; }\n}\n";
+document.head.appendChild(keyframes);
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js"}],"ui/message.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Message = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _style = require("./style");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/** 消息的基类 扩展类记得重写 thatMessage 以免公用出现bug */
+var Message =
+/*#__PURE__*/
+function () {
+  function Message(par) {
+    (0, _classCallCheck2.default)(this, Message);
+    this.el = document.createElement('msg-llej');
+    /** 用来指向不同的类，以便扩展这个类的类的old_message不被公用 */
+
+    this.autoHideTime = 1000 * 3;
+    this.setThis(par);
+  }
+  /** 进行一些赋值工作 */
+
+
+  (0, _createClass2.default)(Message, [{
+    key: "setThis",
+    value: function setThis(_ref) {
+      var _ref$style = _ref.style,
+          style = _ref$style === void 0 ? _style.Style.message : _ref$style,
+          msg = _ref.msg;
+      this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
+    }
+    /** 展示el */
+
+  }, {
+    key: "show",
+    value: function show() {
+      document.body.appendChild(this.el);
+      return this;
+    }
+    /** 隐藏el */
+
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.el.remove();
+      return this;
+    }
+    /** 展示el  autoHideTime 毫秒后隐藏*/
+
+  }, {
+    key: "autoHide",
+    value: function autoHide() {
+      var _this = this;
+
+      this.show();
+      setTimeout(function () {
+        _this.hide();
+      }, this.autoHideTime);
+      return this;
+    }
+    /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
+
+  }], [{
+    key: "getMessage",
+    value: function getMessage(par) {
+      return new Message(par);
+    }
+  }]);
+  return Message;
+}();
+
+exports.Message = Message;
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","./style":"ui/style.ts"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1060,34 +1343,229 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js"}],"网页笔记/config.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"function/ajax.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.au_getJSON = au_getJSON;
+exports._login = _login;
+exports.remote_register = remote_register;
+exports.remote_getStore = remote_getStore;
+exports.remote_setStore = remote_setStore;
+exports.remote_getAllStore = remote_getAllStore;
 
-/** 是不是开发环境 */
-var isDev = location.href.includes('127.0.0.1');
-var _default = {
-  state: 0,
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-  /** 是否开启编辑 */
-  //是开发环境自动开启
-  elemtEdit: isDev,
+var _config = _interopRequireDefault(require("../config"));
 
-  /** 服务器地址 */
-  serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
+var _store = require("../lib/store");
 
-  /** 页面的url */
-  locationUrl: decodeURIComponent(location.origin + location.pathname),
+var _util = require("../util");
 
-  /** 存储登录凭证的 */
-  loginCredentials: 'loginCredentials'
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
 };
-exports.default = _default;
-},{}],"node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
+
+/** 用来识别身份的key */
+var key = '';
+/** 附带登录信息的ajax */
+
+function au_getJSON(url, data) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee() {
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (data === undefined) data = {};
+
+            if (!key) {
+              _context.next = 5;
+              break;
+            }
+
+            _context.t0 = key;
+            _context.next = 8;
+            break;
+
+          case 5:
+            _context.next = 7;
+            return (0, _store.getLocalItem)(_config.default.loginCredentials);
+
+          case 7:
+            _context.t0 = _context.sent;
+
+          case 8:
+            data.key = _context.t0;
+            return _context.abrupt("return", (0, _util.getJSon)(url, data));
+
+          case 10:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+/** 登录 */
+
+
+function _login(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee2() {
+    var res;
+    return _regenerator.default.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return (0, _util.getJSon)(_config.default.serverIp + 'login', par);
+
+          case 2:
+            res = _context2.sent;
+            if (res.body && res.body.length > 0) key = res.body;
+            (0, _store.setLocalItem)(_config.default.loginCredentials, key);
+            return _context2.abrupt("return", res);
+
+          case 6:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+}
+/** 注册 */
+
+
+function remote_register(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee3() {
+    return _regenerator.default.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.next = 2;
+            return (0, _util.getJSon)(_config.default.serverIp + 'register', par);
+
+          case 2:
+            return _context3.abrupt("return", _context3.sent);
+
+          case 3:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_getStore(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee4() {
+    return _regenerator.default.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.next = 2;
+            return au_getJSON(_config.default.serverIp + 'getStore', par);
+
+          case 2:
+            return _context4.abrupt("return", _context4.sent);
+
+          case 3:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+}
+/** 设置存储库 */
+
+
+function remote_setStore(par) {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee5() {
+    return _regenerator.default.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return au_getJSON(_config.default.serverIp + 'setStore', par);
+
+          case 2:
+            return _context5.abrupt("return", _context5.sent);
+
+          case 3:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+}
+/** 获取存储库 */
+
+
+function remote_getAllStore() {
+  return __awaiter(this, void 0, void 0,
+  /*#__PURE__*/
+  _regenerator.default.mark(function _callee6() {
+    return _regenerator.default.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.next = 2;
+            return au_getJSON(_config.default.serverIp + 'getAllStore');
+
+          case 2:
+            return _context6.abrupt("return", _context6.sent);
+
+          case 3:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6);
+  }));
+}
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"config.ts","../lib/store":"lib/store.ts","../util":"util.ts"}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
 function _typeof(obj) {
@@ -1105,7 +1583,7 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof;
-},{}],"node_modules/@babel/runtime/helpers/assertThisInitialized.js":[function(require,module,exports) {
+},{}],"../node_modules/@babel/runtime/helpers/assertThisInitialized.js":[function(require,module,exports) {
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -1115,7 +1593,7 @@ function _assertThisInitialized(self) {
 }
 
 module.exports = _assertThisInitialized;
-},{}],"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":[function(require,module,exports) {
+},{}],"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":[function(require,module,exports) {
 var _typeof = require("../helpers/typeof");
 
 var assertThisInitialized = require("./assertThisInitialized");
@@ -1129,7 +1607,7 @@ function _possibleConstructorReturn(self, call) {
 }
 
 module.exports = _possibleConstructorReturn;
-},{"../helpers/typeof":"node_modules/@babel/runtime/helpers/typeof.js","./assertThisInitialized":"node_modules/@babel/runtime/helpers/assertThisInitialized.js"}],"node_modules/@babel/runtime/helpers/getPrototypeOf.js":[function(require,module,exports) {
+},{"../helpers/typeof":"../node_modules/@babel/runtime/helpers/typeof.js","./assertThisInitialized":"../node_modules/@babel/runtime/helpers/assertThisInitialized.js"}],"../node_modules/@babel/runtime/helpers/getPrototypeOf.js":[function(require,module,exports) {
 function _getPrototypeOf(o) {
   module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
@@ -1138,7 +1616,7 @@ function _getPrototypeOf(o) {
 }
 
 module.exports = _getPrototypeOf;
-},{}],"node_modules/@babel/runtime/helpers/setPrototypeOf.js":[function(require,module,exports) {
+},{}],"../node_modules/@babel/runtime/helpers/setPrototypeOf.js":[function(require,module,exports) {
 function _setPrototypeOf(o, p) {
   module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
     o.__proto__ = p;
@@ -1149,7 +1627,7 @@ function _setPrototypeOf(o, p) {
 }
 
 module.exports = _setPrototypeOf;
-},{}],"node_modules/@babel/runtime/helpers/inherits.js":[function(require,module,exports) {
+},{}],"../node_modules/@babel/runtime/helpers/inherits.js":[function(require,module,exports) {
 var setPrototypeOf = require("./setPrototypeOf");
 
 function _inherits(subClass, superClass) {
@@ -1168,138 +1646,7 @@ function _inherits(subClass, superClass) {
 }
 
 module.exports = _inherits;
-},{"./setPrototypeOf":"node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"node_modules/@babel/runtime/helpers/classCallCheck.js":[function(require,module,exports) {
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-module.exports = _classCallCheck;
-},{}],"node_modules/@babel/runtime/helpers/createClass.js":[function(require,module,exports) {
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-module.exports = _createClass;
-},{}],"网页笔记/ui/style.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Style = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Style = function Style() {
-  (0, _classCallCheck2.default)(this, Style);
-};
-
-exports.Style = Style;
-Style.message = "\n    border: 1px solid black;\n    background-color: white;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    animation: llej_myfirst 5s;\n    z-index:800;\n    ";
-Style.warning = "\n    border: 1px solid black;\n    background-color: red;\n    position: fixed;\n    top: 20px;\n    left: 30px;\n    z-index:800;\n    ";
-Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n    position: sticky;\n    top: 20px;\n    left: 30px;\n    width: auto;\n    height: auto;\n    z-index:800;\n    ";
-/** 注入动画 */
-
-var keyframes = document.createElement('style');
-keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red;color:white; }\n    to { background: yellow;color:black; }\n}\n";
-document.head.appendChild(keyframes);
-},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js"}],"网页笔记/ui/message.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Message = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _style = require("./style");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/** 消息的基类 扩展类记得重写 thatMessage 以免公用出现bug */
-var Message =
-/*#__PURE__*/
-function () {
-  function Message(par) {
-    (0, _classCallCheck2.default)(this, Message);
-    this.el = document.createElement('msg-llej');
-    /** 用来指向不同的类，以便扩展这个类的类的old_message不被公用 */
-
-    this.autoHideTime = 1000 * 3;
-    this.setThis(par);
-  }
-  /** 进行一些赋值工作 */
-
-
-  (0, _createClass2.default)(Message, [{
-    key: "setThis",
-    value: function setThis(_ref) {
-      var _ref$style = _ref.style,
-          style = _ref$style === void 0 ? _style.Style.message : _ref$style,
-          msg = _ref.msg;
-      this.el.innerHTML = "\n        <div style=\"".concat(style, "\">").concat(msg, "</div>\n        ");
-    }
-    /** 展示el */
-
-  }, {
-    key: "show",
-    value: function show() {
-      document.body.appendChild(this.el);
-      return this;
-    }
-    /** 隐藏el */
-
-  }, {
-    key: "hide",
-    value: function hide() {
-      this.el.remove();
-      return this;
-    }
-    /** 展示el  autoHideTime 毫秒后隐藏*/
-
-  }, {
-    key: "autoHide",
-    value: function autoHide() {
-      var _this = this;
-
-      this.show();
-      setTimeout(function () {
-        _this.hide();
-      }, this.autoHideTime);
-      return this;
-    }
-    /** 获取一个Messag对象，它不一定是新的。这是为了优化内存占用 */
-
-  }], [{
-    key: "getMessage",
-    value: function getMessage(par) {
-      return new Message(par);
-    }
-  }]);
-  return Message;
-}();
-
-exports.Message = Message;
-},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","./style":"网页笔记/ui/style.ts"}],"网页笔记/ui/note.ts":[function(require,module,exports) {
+},{"./setPrototypeOf":"../node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"ui/note.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1353,7 +1700,7 @@ function (_Message) {
 }(_message.Message);
 
 exports.note = note;
-},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","./message":"网页笔记/ui/message.ts","./style":"网页笔记/ui/style.ts"}],"网页笔记/Command.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"function/Command.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1371,11 +1718,11 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _message = require("./ui/message");
+var _message = require("../ui/message");
 
-var _note = require("./ui/note");
+var _note = require("../ui/note");
 
-var _util = require("./util");
+var _util = require("../util");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1566,13 +1913,13 @@ function (_Command4) {
 exports.addNote = addNote;
 var CommandControl = {
   commandStack: [],
-  backoutStack: [],
+  backOutStack: [],
   pushCommand: function pushCommand(command) {
     return this.commandStack.push(command);
   },
   run: function run(command) {
     try {
-      this.backoutStack.splice(0, this.backoutStack.length);
+      this.backOutStack.splice(0, this.backOutStack.length);
       return this.pushCommand(command.do());
     } catch (error) {
       console.error('命令执行失败', command, error);
@@ -1580,7 +1927,7 @@ var CommandControl = {
 
     return -1;
   },
-  backout: function backout() {
+  backOut: function backOut() {
     if (this.commandStack.length === 0) {
       console.warn('命令栈已空，无法进行撤销');
 
@@ -1592,10 +1939,10 @@ var CommandControl = {
     }
 
     var command = this.commandStack.pop();
-    return this.backoutStack.push(command.undo());
+    return this.backOutStack.push(command.undo());
   },
   reform: function reform() {
-    if (this.backoutStack.length === 0) {
+    if (this.backOutStack.length === 0) {
       console.warn('撤销栈已空，无法进行重做');
 
       _message.Message.getMessage({
@@ -1605,7 +1952,7 @@ var CommandControl = {
       return;
     }
 
-    var command = this.backoutStack.pop();
+    var command = this.backOutStack.pop();
     return this.commandStack.push(command.redo());
   },
   loadCommandJSON: function loadCommandJSON(obj) {
@@ -1632,7 +1979,31 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{"@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"node_modules/@babel/runtime/helpers/createClass.js","./ui/message":"网页笔记/ui/message.ts","./ui/note":"网页笔记/ui/note.ts","./util":"util.ts"}],"网页笔记/ui/warning.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","../ui/message":"ui/message.ts","../ui/note":"ui/note.ts","../util":"util.ts"}],"state/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setPath = setPath;
+exports.editElement = exports.path = exports.currentElement = void 0;
+
+/** 当前被选中的元素 */
+var currentElement;
+exports.currentElement = currentElement;
+var path;
+exports.path = path;
+
+function setPath(elList) {
+  exports.path = path = elList;
+  exports.currentElement = currentElement = elList[0];
+}
+/** 标记被修改后的元素，以便保存修改的内容 */
+
+
+var editElement = new Set();
+exports.editElement = editElement;
+},{}],"ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1672,16 +2043,39 @@ function (_Message) {
 }(_message.Message);
 
 exports.Warning = Warning;
-},{"@babel/runtime/helpers/classCallCheck":"node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"node_modules/@babel/runtime/helpers/inherits.js","./message":"网页笔记/ui/message.ts","./style":"网页笔记/ui/style.ts"}],"网页笔记/store.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"function/fun.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setLocalItem = setLocalItem;
-exports.getLocalItem = getLocalItem;
+exports.loadChanges = loadChanges;
+exports.outline = outline;
+exports.fun = exports.key_funName = void 0;
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _config = _interopRequireWildcard(require("../config"));
+
+var _store = require("../lib/store");
+
+var _message = require("../ui/message");
+
+var _ajax = require("./ajax");
+
+var _Command = require("./Command");
+
+var _index = require("../state/index");
+
+var _warning = require("../ui/warning");
+
+var _util = _interopRequireWildcard(require("../util"));
+
+var _fun;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1712,10 +2106,54 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-/** 设置一条本地存储 */
 
+/** ════════════════════════🏳‍🌈 提供给用户使用的功能 🏳‍🌈════════════════════════
+ *
+ ** ════════════════════════🚧 提供给用户使用的功能 🚧════════════════════════ */
 
-function setLocalItem(name, value) {
+/** 函数名 */
+var key_funName;
+exports.key_funName = key_funName;
+
+(function (key_funName) {
+  key_funName[key_funName["editElement"] = 0] = "editElement";
+  key_funName[key_funName["deleteElement"] = 1] = "deleteElement";
+  key_funName[key_funName["copyTitle"] = 2] = "copyTitle";
+  key_funName[key_funName["closeEdit"] = 3] = "closeEdit";
+  key_funName[key_funName["backOut"] = 4] = "backOut";
+  key_funName[key_funName["undo"] = 5] = "undo";
+  key_funName[key_funName["addNote"] = 6] = "addNote";
+  key_funName[key_funName["saveChanges"] = 7] = "saveChanges";
+  key_funName[key_funName["uploadThe"] = 8] = "uploadThe";
+  key_funName[key_funName["downloadThe"] = 9] = "downloadThe";
+  key_funName[key_funName["register"] = 10] = "register";
+  key_funName[key_funName["login"] = 11] = "login";
+})(key_funName || (exports.key_funName = key_funName = {}));
+
+var fun = (_fun = {}, (0, _defineProperty2.default)(_fun, key_funName.editElement, function () {
+  if (_index.currentElement.innerHTML.length > 10 * 1000) return new _warning.Warning({
+    msg: '该元素内容过大，请选择更确定的文本元素。'
+  }).autoHide();
+
+  _Command.CommandControl.run(new _Command.editSelect(_index.currentElement));
+}), (0, _defineProperty2.default)(_fun, key_funName.deleteElement, function () {
+  _Command.CommandControl.run(new _Command.deleteSelect(_index.currentElement));
+}), (0, _defineProperty2.default)(_fun, key_funName.copyTitle, function () {
+  _util.default.copyTitle(_index.currentElement);
+}), (0, _defineProperty2.default)(_fun, key_funName.closeEdit, function () {
+  _Command.CommandControl.run(new _Command.closeEditSelect(_index.currentElement));
+}), (0, _defineProperty2.default)(_fun, key_funName.backOut, function () {
+  _Command.CommandControl.backOut();
+}), (0, _defineProperty2.default)(_fun, key_funName.undo, function () {
+  _Command.CommandControl.reform();
+}), (0, _defineProperty2.default)(_fun, key_funName.addNote, function () {
+  _Command.CommandControl.run(new _Command.addNote(_index.currentElement));
+}), (0, _defineProperty2.default)(_fun, key_funName.saveChanges, function () {
+  saveChanges(_index.editElement);
+  new _message.Message({
+    msg: '保存成功'
+  }).autoHide();
+}), (0, _defineProperty2.default)(_fun, key_funName.uploadThe, function () {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee() {
@@ -1723,203 +2161,81 @@ function setLocalItem(name, value) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
-              _context.next = 6;
-              break;
-            }
+            _context.t0 = _ajax.remote_setStore;
+            _context.t1 = _config.default.locationUrl;
+            _context.next = 4;
+            return saveChanges(_index.editElement);
 
-            _context.next = 3;
-            return GM.setValue(name, value);
+          case 4:
+            _context.t2 = _context.sent;
+            _context.t3 = {
+              url: _context.t1,
+              store: _context.t2
+            };
 
-          case 3:
-            return _context.abrupt("return", _context.sent);
+            _context.t4 = function (r) {
+              new _message.Message({
+                msg: "云端存储:" + r.message
+              }).autoHide();
+            };
 
-          case 6:
-            _context.next = 8;
-            return localStorage.setItem(name, String(value));
+            (0, _context.t0)(_context.t3).then(_context.t4);
 
           case 8:
-            return _context.abrupt("return", _context.sent);
-
-          case 9:
           case "end":
             return _context.stop();
         }
       }
     }, _callee);
   }));
-}
-/** 读取一条本地存储 */
+}), (0, _defineProperty2.default)(_fun, key_funName.downloadThe, function () {
+  new _message.Message({
+    msg: "正在读取云端存储"
+  }).autoHide();
+  (0, _ajax.remote_getStore)({
+    url: _config.default.locationUrl
+  }).then(function (r) {
+    if (r.body === undefined || r.body.length === 0) return new _message.Message({
+      msg: "云端存储:" + r.message
+    }).autoHide();
+    var allStore = JSON.parse(r.body[0].store);
+    loadChanges(allStore);
+    new _message.Message({
+      msg: "云端存储:" + r.message
+    }).autoHide();
+  });
+}), (0, _defineProperty2.default)(_fun, key_funName.register, function () {
+  register();
+}), (0, _defineProperty2.default)(_fun, key_funName.login, function () {
+  login();
+}), _fun);
+/** 保存修改 */
 
+exports.fun = fun;
 
-function getLocalItem(
-/** 键名 */
-name,
-/** 没有的时候的默认值 */
-defaultValue) {
+function saveChanges(editElement) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee2() {
-    var res, value;
+    var data, data_str;
     return _regenerator.default.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            if (!(window.hasOwnProperty("GM") && window.hasOwnProperty("GM"))) {
-              _context2.next = 8;
-              break;
-            }
-
-            _context2.next = 3;
-            return GM.getValue(name, defaultValue);
-
-          case 3:
-            res = _context2.sent;
-            console.log(res);
-            return _context2.abrupt("return", res);
-
-          case 8:
-            value = localStorage.getItem(name);
-
-            if (!(value === null)) {
-              _context2.next = 13;
-              break;
-            }
-
-            _context2.next = 12;
-            return defaultValue;
-
-          case 12:
-            return _context2.abrupt("return", _context2.sent);
-
-          case 13:
-            _context2.next = 15;
-            return value;
-
-          case 15:
-            return _context2.abrupt("return", _context2.sent);
-
-          case 16:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-}
-},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js"}],"网页笔记/ajax.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.au_getJSON = au_getJSON;
-exports._login = _login;
-exports._regist = _regist;
-exports.remote_getStore = remote_getStore;
-exports.remote_setStore = remote_setStore;
-exports.remote_getAllStore = remote_getAllStore;
-
-var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
-
-var _config = _interopRequireDefault(require("./config"));
-
-var _store = require("./store");
-
-var _util = require("./util");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-/** 用来识别身份的key */
-var key = '';
-/** 附带登录信息的ajax */
-
-function au_getJSON(url, data) {
-  return __awaiter(this, void 0, void 0,
-  /*#__PURE__*/
-  _regenerator.default.mark(function _callee() {
-    return _regenerator.default.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            if (data === undefined) data = {};
-
-            if (!key) {
-              _context.next = 5;
-              break;
-            }
-
-            _context.t0 = key;
-            _context.next = 8;
-            break;
+            data = {
+              element_List: {},
+              CommandStack: _Command.CommandControl.getCommandStackJsonObj()
+            };
+            editElement.forEach(function (el) {
+              var selectors = (0, _util.getSelectors)(el);
+              data.element_List[selectors] = el.innerHTML;
+            });
+            data_str = JSON.stringify(data);
+            _context2.next = 5;
+            return (0, _store.setLocalItem)(_config.AllStoreName, JSON.stringify(data));
 
           case 5:
-            _context.next = 7;
-            return (0, _store.getLocalItem)(_config.default.loginCredentials);
-
-          case 7:
-            _context.t0 = _context.sent;
-
-          case 8:
-            data.key = _context.t0;
-            return _context.abrupt("return", (0, _util.getJSon)(url, data));
-
-          case 10:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-}
-/** 登录 */
-
-
-function _login(par) {
-  return __awaiter(this, void 0, void 0,
-  /*#__PURE__*/
-  _regenerator.default.mark(function _callee2() {
-    var res;
-    return _regenerator.default.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return (0, _util.getJSon)(_config.default.serverIp + 'login', par);
-
-          case 2:
-            res = _context2.sent;
-            if (res.body && res.body.length > 0) key = res.body;
-            (0, _store.setLocalItem)(_config.default.loginCredentials, key);
-            return _context2.abrupt("return", res);
+            return _context2.abrupt("return", data_str);
 
           case 6:
           case "end":
@@ -1929,24 +2245,56 @@ function _login(par) {
     }, _callee2);
   }));
 }
-/** 注册 */
+/** 加载修改 */
 
 
-function _regist(par) {
+function loadChanges(allStroe) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee3() {
+    var selectors, html, el;
     return _regenerator.default.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            _context3.next = 2;
-            return (0, _util.getJSon)(_config.default.serverIp + 'register', par);
+            _context3.t0 = _regenerator.default.keys(allStroe.element_List);
 
-          case 2:
-            return _context3.abrupt("return", _context3.sent);
+          case 1:
+            if ((_context3.t1 = _context3.t0()).done) {
+              _context3.next = 12;
+              break;
+            }
 
-          case 3:
+            selectors = _context3.t1.value;
+
+            if (!allStroe.element_List.hasOwnProperty(selectors)) {
+              _context3.next = 10;
+              break;
+            }
+
+            html = allStroe.element_List[selectors];
+            el = document.querySelector(selectors);
+
+            if (!(el === null)) {
+              _context3.next = 8;
+              break;
+            }
+
+            return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
+
+          case 8:
+            _index.editElement.add(el);
+
+            el.innerHTML = html;
+
+          case 10:
+            _context3.next = 1;
+            break;
+
+          case 12:
+            _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
+
+          case 13:
           case "end":
             return _context3.stop();
         }
@@ -1954,99 +2302,128 @@ function _regist(par) {
     }, _callee3);
   }));
 }
-/** 获取存储库 */
 
+;
 
-function remote_getStore(par) {
-  return __awaiter(this, void 0, void 0,
-  /*#__PURE__*/
-  _regenerator.default.mark(function _callee4() {
-    return _regenerator.default.wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.next = 2;
-            return au_getJSON(_config.default.serverIp + 'getStore', par);
-
-          case 2:
-            return _context4.abrupt("return", _context4.sent);
-
-          case 3:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
+function login() {
+  var title = '>>>网页笔记<<<\n';
+  var user = prompt(title + '请输入用户名');
+  if (user === null) return;
+  var secret_key = prompt(title + '请输入密钥。');
+  if (secret_key === null) return;
+  (0, _ajax._login)({
+    user: user,
+    secret_key: secret_key
+  }).then(function (r) {
+    new _message.Message({
+      msg: r.message
+    }).autoHide();
+  });
 }
-/** 设置存储库 */
 
-
-function remote_setStore(par) {
-  return __awaiter(this, void 0, void 0,
-  /*#__PURE__*/
-  _regenerator.default.mark(function _callee5() {
-    return _regenerator.default.wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            _context5.next = 2;
-            return au_getJSON(_config.default.serverIp + 'setStore', par);
-
-          case 2:
-            return _context5.abrupt("return", _context5.sent);
-
-          case 3:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
+function register() {
+  var title = '>>>网页笔记<<<\n';
+  var user = prompt(title + '请输入用户名');
+  if (user === null) return;
+  var secret_key = prompt(title + '请输入密钥。要记住哦，没有提供找回功能');
+  if (secret_key === null) return;
+  (0, _ajax.remote_register)({
+    user: user,
+    secret_key: secret_key
+  }).then(function (r) {
+    new _message.Message({
+      msg: r.message
+    }).autoHide();
+  });
 }
-/** 获取存储库 */
+/** 轮廓线,用以显示当前元素 */
 
 
-function remote_getAllStore() {
-  return __awaiter(this, void 0, void 0,
-  /*#__PURE__*/
-  _regenerator.default.mark(function _callee6() {
-    return _regenerator.default.wrap(function _callee6$(_context6) {
-      while (1) {
-        switch (_context6.prev = _context6.next) {
-          case 0:
-            _context6.next = 2;
-            return au_getJSON(_config.default.serverIp + 'getAllStore');
+function outline(elemt) {
+  if (elemt.style.outline == "2px solid red") return;
+  elemt.style.outline = "2px solid red";
+  setTimeout(function () {
+    if (elemt == _index.currentElement) {
+      outline(elemt);
+      return;
+    }
 
-          case 2:
-            return _context6.abrupt("return", _context6.sent);
-
-          case 3:
-          case "end":
-            return _context6.stop();
-        }
-      }
-    }, _callee6);
-  }));
+    elemt.style.outline = "";
+  }, 400);
 }
-},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js","./config":"网页笔记/config.ts","./store":"网页笔记/store.ts","./util":"util.ts"}],"网页笔记.ts":[function(require,module,exports) {
+/** 自动保存 */
+
+
+setInterval(function () {
+  saveChanges(_index.editElement);
+}, 1000 * 60);
+},{"@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"config.ts","../lib/store":"lib/store.ts","../ui/message":"ui/message.ts","./ajax":"function/ajax.ts","./Command":"function/Command.ts","../state/index":"state/index.ts","../ui/warning":"ui/warning.ts","../util":"util.ts"}],"config.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.KeyMap = exports.AllStoreName = void 0;
+
+var _fun = require("./function/fun");
+
+/** 是不是开发环境 */
+var isDev = location.href.includes('127.0.0.1');
+var config = {
+  state: 0,
+
+  /** 是否开启编辑 */
+  //是开发环境自动开启
+  elementEdit: isDev,
+
+  /** 服务器地址 */
+  serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
+
+  /** 页面的url */
+  locationUrl: decodeURIComponent(location.origin + location.pathname),
+
+  /** 存储登录凭证的 */
+  loginCredentials: 'loginCredentials'
+};
+/** 存储修改的地方 */
+
+var AllStoreName = '_storeName_llej_' + config.locationUrl;
+exports.AllStoreName = AllStoreName;
+var KeyMap = {
+  "KeyQ": _fun.key_funName.editElement,
+  'KeyD': _fun.key_funName.deleteElement,
+  'KeyC': _fun.key_funName.copyTitle,
+  'KeyW': _fun.key_funName.closeEdit,
+  'KeyZ': _fun.key_funName.backOut,
+  "KeyY": _fun.key_funName.undo,
+  "KeyN": _fun.key_funName.addNote,
+  "KeyS": _fun.key_funName.saveChanges,
+  "KeyO": _fun.key_funName.uploadThe,
+  "KeyP": _fun.key_funName.downloadThe,
+  "KeyK": _fun.key_funName.register,
+  "KeyL": _fun.key_funName.login
+};
+exports.KeyMap = KeyMap;
+var _default = config;
+exports.default = _default;
+},{"./function/fun":"function/fun.ts"}],"网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _util = _interopRequireWildcard(require("./util"));
+var _config = _interopRequireWildcard(require("./config"));
 
-var _config = _interopRequireDefault(require("./config"));
+var _Command = require("./function/Command");
 
-var _Command = require("./Command");
+var _fun = require("./function/fun");
+
+var _store = require("./lib/store");
+
+var _index = require("./state/index");
 
 var _warning = require("./ui/warning");
 
-var _message = require("./ui/message");
-
-var _store = require("./store");
-
-var _ajax = require("./ajax");
+var _util = require("./util");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -2083,7 +2460,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.35
+// @version      1.36
 // @description  所见即所得！
 // @author       You
 // @match        *
@@ -2098,173 +2475,34 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 (function () {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
-  _regenerator.default.mark(function _callee4() {
-    var path, editElement, AllStoreName, mouse, outline, switchState, saveChanges, loadChanges, login, regist, AllStoreStr, allStroe;
-    return _regenerator.default.wrap(function _callee4$(_context4) {
+  _regenerator.default.mark(function _callee2() {
+    var mouse, switchState, AllStoreStr, allStroe;
+    return _regenerator.default.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            regist = function _ref7() {
-              var titile = '>>>网页笔记<<<\n';
-              var user = prompt(titile + '请输入用户名');
-              if (user === null) return;
-              var secret_key = prompt(titile + '请输入密钥。要记住哦，没有提供找回功能');
-              if (secret_key === null) return;
-              (0, _ajax._regist)({
-                user: user,
-                secret_key: secret_key
-              }).then(function (r) {
-                new _message.Message({
-                  msg: r.message
-                }).autoHide();
-              });
-            };
-
-            login = function _ref6() {
-              var titile = '>>>网页笔记<<<\n';
-              var user = prompt(titile + '请输入用户名');
-              if (user === null) return;
-              var secret_key = prompt(titile + '请输入密钥。');
-              if (secret_key === null) return;
-              (0, _ajax._login)({
-                user: user,
-                secret_key: secret_key
-              }).then(function (r) {
-                new _message.Message({
-                  msg: r.message
-                }).autoHide();
-              });
-            };
-
-            loadChanges = function _ref5(allStroe) {
-              return __awaiter(this, void 0, void 0,
-              /*#__PURE__*/
-              _regenerator.default.mark(function _callee3() {
-                var selectors, html, el;
-                return _regenerator.default.wrap(function _callee3$(_context3) {
-                  while (1) {
-                    switch (_context3.prev = _context3.next) {
-                      case 0:
-                        _context3.t0 = _regenerator.default.keys(allStroe.element_List);
-
-                      case 1:
-                        if ((_context3.t1 = _context3.t0()).done) {
-                          _context3.next = 12;
-                          break;
-                        }
-
-                        selectors = _context3.t1.value;
-
-                        if (!allStroe.element_List.hasOwnProperty(selectors)) {
-                          _context3.next = 10;
-                          break;
-                        }
-
-                        html = allStroe.element_List[selectors];
-                        el = document.querySelector(selectors);
-
-                        if (!(el === null)) {
-                          _context3.next = 8;
-                          break;
-                        }
-
-                        return _context3.abrupt("return", console.error("".concat(selectors, " \u7684\u5143\u7D20\u65E0\u6CD5\u627E\u5230\uFF0C\u8D4B\u503C\u5931\u8D25")));
-
-                      case 8:
-                        editElement.add(el);
-                        el.innerHTML = html;
-
-                      case 10:
-                        _context3.next = 1;
-                        break;
-
-                      case 12:
-                        _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
-
-                      case 13:
-                      case "end":
-                        return _context3.stop();
-                    }
-                  }
-                }, _callee3);
-              }));
-            };
-
-            saveChanges = function _ref4(editElement) {
-              return __awaiter(this, void 0, void 0,
-              /*#__PURE__*/
-              _regenerator.default.mark(function _callee2() {
-                var data, data_str;
-                return _regenerator.default.wrap(function _callee2$(_context2) {
-                  while (1) {
-                    switch (_context2.prev = _context2.next) {
-                      case 0:
-                        data = {
-                          element_List: {},
-                          CommandStack: _Command.CommandControl.getCommandStackJsonObj()
-                        };
-                        editElement.forEach(function (el) {
-                          var selectors = (0, _util.getSelectors)(el);
-                          data.element_List[selectors] = el.innerHTML;
-                        });
-                        data_str = JSON.stringify(data);
-                        _context2.next = 5;
-                        return (0, _store.setLocalItem)(AllStoreName, JSON.stringify(data));
-
-                      case 5:
-                        return _context2.abrupt("return", data_str);
-
-                      case 6:
-                      case "end":
-                        return _context2.stop();
-                    }
-                  }
-                }, _callee2);
-              }));
-            };
-
-            switchState = function _ref3(mouse, event) {
-              _config.default.elemtEdit = !_config.default.elemtEdit;
-              console.log('切换编辑状态', _config.default.elemtEdit);
-              if (_config.default.elemtEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
+            switchState = function _ref2(mouse, event) {
+              _config.default.elementEdit = !_config.default.elementEdit;
+              console.log('切换编辑状态', _config.default.elementEdit);
+              if (_config.default.elementEdit) //不处于编辑状态则移除鼠标监听事件，降低性能的消耗
                 document.addEventListener('mouseover', mouse);else document.removeEventListener("mouseover", mouse);
               event.preventDefault();
               event.returnValue = false;
               return false;
             };
 
-            outline = function _ref2(elemt) {
-              if (elemt.style.outline == "2px solid red") return;
-              elemt.style.outline = "2px solid red";
-              setTimeout(function () {
-                if (elemt == path[0]) {
-                  outline(elemt);
-                  return;
-                }
-
-                elemt.style.outline = "";
-              }, 400);
-            };
-
             mouse = function _ref(event) {
               if (event.target instanceof HTMLElement) {
-                path = (0, _util.nodePath)(event.target);
-                outline(event.target);
+                (0, _index.setPath)((0, _util.nodePath)(event.target));
+                (0, _fun.outline)(event.target);
               }
             };
 
             /** 调试用 */
             window.CommandControl = _Command.CommandControl;
-            /** 存储鼠标所在位置的所有元素 */
-
-            /** 标记被修改后的元素，以便保存修改的内容 */
-            editElement = new Set();
-            /** 存储修改的地方 */
-
-            AllStoreName = '_storeName_llej_' + _config.default.locationUrl;
             /** 监听鼠标移动 */
 
-            if (_config.default.elemtEdit) {
+            if (_config.default.elementEdit) {
               document.addEventListener('mouseover', mouse);
             }
             /** 监测按键事件 */
@@ -2274,7 +2512,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               return __awaiter(this, void 0, void 0,
               /*#__PURE__*/
               _regenerator.default.mark(function _callee() {
-                var code;
+                var code, funName;
                 return _regenerator.default.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
@@ -2297,7 +2535,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                         return _context.abrupt("return", switchState(mouse, event));
 
                       case 5:
-                        if (!(_config.default.elemtEdit === false)) {
+                        if (!(_config.default.elementEdit === false)) {
                           _context.next = 7;
                           break;
                         }
@@ -2306,129 +2544,16 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 
                       case 7:
                         console.log('keyCode', code);
-                        _context.t0 = code;
-                        _context.next = _context.t0 === 'KeyQ' ? 11 : _context.t0 === 'KeyD' ? 15 : _context.t0 === 'KeyC' ? 17 : _context.t0 === "KeyW" ? 20 : _context.t0 === 'KeyZ' ? 22 : _context.t0 === "KeyY" ? 24 : _context.t0 === "KeyN" ? 26 : _context.t0 === "KeyS" ? 28 : _context.t0 === "KeyO" ? 31 : _context.t0 === "KeyP" ? 40 : _context.t0 === "KeyK" ? 43 : _context.t0 === "KeyL" ? 45 : 47;
-                        break;
 
-                      case 11:
-                        if (!(path[0].innerHTML.length > 10 * 1000)) {
-                          _context.next = 13;
-                          break;
+                        if (code in _config.KeyMap) {
+                          /** 执行按键绑定的函数 */
+                          ///@ts-ignore
+                          funName = _config.KeyMap[code]; ///@ts-ignore
+
+                          _fun.fun[funName]();
                         }
 
-                        return _context.abrupt("return", new _warning.Warning({
-                          msg: '该元素内容过大，请选择更确定的文本元素。'
-                        }).autoHide());
-
-                      case 13:
-                        _Command.CommandControl.run(new _Command.editSelect(path[0]));
-
-                        return _context.abrupt("break", 48);
-
-                      case 15:
-                        /** 删除元素 */
-                        _Command.CommandControl.run(new _Command.deleteSelect(path[0]));
-
-                        return _context.abrupt("break", 48);
-
-                      case 17:
-                        /** 赋值titile */
-                        _util.default.copyTitle(path[0]);
-
-                        if (!(event.ctrlKey === false)) {
-                          _context.next = 20;
-                          break;
-                        }
-
-                        return _context.abrupt("break", 48);
-
-                      case 20:
-                        /** 关闭可编辑 */
-                        _Command.CommandControl.run(new _Command.closeEditSelect(path[0]));
-
-                        return _context.abrupt("break", 48);
-
-                      case 22:
-                        /** 撤销 */
-                        _Command.CommandControl.backout();
-
-                        return _context.abrupt("break", 48);
-
-                      case 24:
-                        /** 重做 */
-                        _Command.CommandControl.reform();
-
-                        return _context.abrupt("break", 48);
-
-                      case 26:
-                        /** 新增笔记 */
-                        _Command.CommandControl.run(new _Command.addNote(path[0]));
-
-                        return _context.abrupt("break", 48);
-
-                      case 28:
-                        /** 保存所有的修改 */
-                        saveChanges(editElement);
-                        new _message.Message({
-                          msg: '保存成功'
-                        }).autoHide();
-                        return _context.abrupt("break", 48);
-
-                      case 31:
-                        _context.t1 = _ajax.remote_setStore;
-                        _context.t2 = _config.default.locationUrl;
-                        _context.next = 35;
-                        return saveChanges(editElement);
-
-                      case 35:
-                        _context.t3 = _context.sent;
-                        _context.t4 = {
-                          url: _context.t2,
-                          store: _context.t3
-                        };
-
-                        _context.t5 = function (r) {
-                          new _message.Message({
-                            msg: "云端存储:" + r.message
-                          }).autoHide();
-                        };
-
-                        (0, _context.t1)(_context.t4).then(_context.t5);
-                        return _context.abrupt("break", 48);
-
-                      case 40:
-                        /** 从云端下载修改 */
-                        new _message.Message({
-                          msg: "正在读取云端存储"
-                        }).autoHide();
-                        (0, _ajax.remote_getStore)({
-                          url: _config.default.locationUrl
-                        }).then(function (r) {
-                          if (r.body === undefined || r.body.length === 0) return new _message.Message({
-                            msg: "云端存储:" + r.message
-                          }).autoHide();
-                          var allStroe = JSON.parse(r.body[0].store);
-                          loadChanges(allStroe);
-                          new _message.Message({
-                            msg: "云端存储:" + r.message
-                          }).autoHide();
-                        });
-                        return _context.abrupt("break", 48);
-
-                      case 43:
-                        /** 注册 */
-                        regist();
-                        return _context.abrupt("break", 48);
-
-                      case 45:
-                        /** 登录 */
-                        login();
-                        return _context.abrupt("break", 48);
-
-                      case 47:
-                        return _context.abrupt("return", true);
-
-                      case 48:
+                      case 9:
                       case "end":
                         return _context.stop();
                     }
@@ -2448,59 +2573,44 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
                 var el = event.target;
                 if (el.innerHTML.length > 10 * 1000) new _warning.Warning({
                   msg: '该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。'
-                }).autoHide();else editElement.add(el);
+                }).autoHide();else _index.editElement.add(el);
               }
             });
-            /** 轮廓线,用以显示当前元素 */
+            /** 切换状态 */
 
-            ;
+            _context2.next = 9;
+            return (0, _store.getLocalItem)(_config.AllStoreName, undefined);
 
-            /** 自动保存 */
-            setInterval(function () {
-              saveChanges(editElement);
-              new _message.Message({
-                msg: '自动保存成功...'
-              }).autoHide();
-            }, 1000 * 60);
-            /** 自动加载更改 */
-
-            _context4.next = 18;
-            return (0, _store.getLocalItem)(AllStoreName, undefined);
-
-          case 18:
-            AllStoreStr = _context4.sent;
+          case 9:
+            AllStoreStr = _context2.sent;
 
             if (!(AllStoreStr === undefined)) {
-              _context4.next = 21;
+              _context2.next = 12;
               break;
             }
 
-            return _context4.abrupt("return", console.warn('没有可用的存储库'));
+            return _context2.abrupt("return", console.warn('没有可用的存储库'));
 
-          case 21:
+          case 12:
             allStroe = JSON.parse(AllStoreStr);
 
             if (document.readyState === "complete") {
-              loadChanges(allStroe);
+              (0, _fun.loadChanges)(allStroe);
             } else {
               window.addEventListener('load', function () {
-                loadChanges(allStroe);
+                (0, _fun.loadChanges)(allStroe);
               });
             }
 
-          case 23:
+          case 14:
           case "end":
-            return _context4.stop();
+            return _context2.stop();
         }
       }
-    }, _callee4);
+    }, _callee2);
   }));
 })();
-
-setTimeout(function () {
-  _util.default.copyTitle(Math.random().toString(36).substr(2));
-}, 1000);
-},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js","./util":"util.ts","./config":"网页笔记/config.ts","./Command":"网页笔记/Command.ts","./ui/warning":"网页笔记/ui/warning.ts","./ui/message":"网页笔记/ui/message.ts","./store":"网页笔记/store.ts","./ajax":"网页笔记/ajax.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./config":"config.ts","./function/Command":"function/Command.ts","./function/fun":"function/fun.ts","./lib/store":"lib/store.ts","./state/index":"state/index.ts","./ui/warning":"ui/warning.ts","./util":"util.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2528,7 +2638,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "26876" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56776" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

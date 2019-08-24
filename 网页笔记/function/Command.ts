@@ -102,35 +102,35 @@ export class addNote extends Command {
 /** 命令控制器 */
 export const CommandControl: CommandControl = {
     commandStack: [],
-    backoutStack: [],
+    backOutStack: [],
     pushCommand(command) {
         return this.commandStack.push(command)
     },
     run(command) {
         try {
-            this.backoutStack.splice(0, this.backoutStack.length)
+            this.backOutStack.splice(0, this.backOutStack.length)
             return this.pushCommand(command.do())
         } catch (error) {
             console.error('命令执行失败',command,error);
         }
         return -1
     },
-    backout() {
+    backOut() {
         if (this.commandStack.length === 0) {
             console.warn('命令栈已空，无法进行撤销');
             Message.getMessage({ msg: '命令栈已空，无法进行撤销' }).autoHide()
             return
         }
         const command = this.commandStack.pop()
-        return this.backoutStack.push(command.undo())
+        return this.backOutStack.push(command.undo())
     },
     reform() {
-        if (this.backoutStack.length === 0) {
+        if (this.backOutStack.length === 0) {
             console.warn('撤销栈已空，无法进行重做');
             Message.getMessage({ msg: '撤销栈已空，无法进行重做' }).autoHide()
             return
         }
-        const command = this.backoutStack.pop()
+        const command = this.backOutStack.pop()
         return this.commandStack.push(command.redo())
     },
     loadCommandJSON(obj) {
@@ -162,19 +162,19 @@ interface CommandControl {
     /** 命令栈，执行过的 */
     commandStack: Command[]
     /** 撤销栈，被撤销的命令 */
-    backoutStack: Command[]
+    backOutStack: Command[]
     /** 向命令栈中添加一个命令 */
     pushCommand(command: Command): number
     /** 执行一个命令并加入命令栈，清空撤销栈 */
     run(command: Command): number
     /** 撤销最后一个命令并加入撤消栈 */
-    backout(): number
+    backOut(): number
     /** 重做,重做撤销栈中的命令,命令会被转移至命令栈 */
     reform(): number
     /** 加载commandJSON转化为命令对象 */
     loadCommandJSON(obj: commandJSON):Command
 
-    /** 不是很关键的一些命令。用来提供方便的 */
+    // 不是很关键的一些命令。用来提供方便的
 
     /** 获取命令栈的JSON对象 */
     getCommandStackJsonObj(): any[]
