@@ -10,7 +10,7 @@ import { nodePath } from "./util";
 // @namespace    http://tampermonkey.net/
 // @version      1.36
 // @description  所见即所得！
-// @author       You
+// @author       崮生 2234839456@qq.com
 // @match        *
 // @include      *
 // @connect      shenzilong.cn
