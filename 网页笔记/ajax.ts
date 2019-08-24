@@ -26,7 +26,7 @@ export async function _login(par:{
 }
 
 /** 注册 */
-export async function _regist(par: {
+export async function remote_register(par: {
     user: string,
     secret_key: string,
 }) {

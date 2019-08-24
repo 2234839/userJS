@@ -5,7 +5,7 @@ import { Warning } from "./ui/warning";
 import { Message } from "./ui/message";
 import { setLocalItem, getLocalItem, AllStore } from "./store";
 import { async } from "q";
-import { _login, remote_getStore, remote_setStore, _regist } from "./ajax";
+import { _login, remote_getStore, remote_setStore, remote_register } from "./ajax";
 import util from "./util";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
@@ -212,7 +212,7 @@ import util from "./util";
         const secret_key = prompt(titile +'请输入密钥。要记住哦，没有提供找回功能');
         if (secret_key === null)
             return
-        _regist({
+        remote_register({
             user,secret_key
         }).then(r=>{
             new Message({ msg: r.message}).autoHide()
