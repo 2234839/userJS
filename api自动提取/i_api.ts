@@ -8,7 +8,14 @@ export interface api {
         name: string
         /** 是否必需 */
         must: boolean
-        type: 'string' | 'number'
+        type: any
         describe: string
-    }[]
+    }[],
+    resList: {
+        name: string
+        /** 是否必需 */
+        must: boolean
+        type: any
+        describe: string
+    }[],
 }

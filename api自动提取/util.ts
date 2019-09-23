@@ -1,23 +1,9 @@
 /** 将url转为友好的名字 */
 export function urlToName(url: string) {
-    return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
+    // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
+    return url.split('/').map(str => str.replace('-', '_')).join('_')
+
 }
-
-/** 从int double 之类的 获取类型 */
-export function getType(str:string){
-    if(str.includes('int'))
-        return 'number'
-    if (str.includes('long'))
-        return 'number'
-    if (str.includes('double'))
-        return 'number'
-
-    /** 没有类型注释,传进来的是示例,通过示例判断类型 */
-    if(isNaN(Number(str)))
-        return 'string'
-    return 'number'
-}
-
 
 
 export function qALL<T>(selector: string,t?:T) {
@@ -32,4 +18,13 @@ export function qALL<T>(selector: string,t?:T) {
         })
     }
     return res
+}
+
+export function getTextConten(el:Element){
+    if(el!==undefined && 'textContent' in el){
+        return el.textContent
+    }else{
+        console.warn('textContent 属性不存在',el);
+        return ''
+    }
 }
