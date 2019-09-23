@@ -19,7 +19,7 @@ import util from "../网页笔记/util";
 parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
  */
 ; (async function () {
-    if(!["https://www.showdoc.cc"].includes(location.origin)){
+    if (!["https://www.showdoc.cc"].includes(location.origin)) {
         console.log("非指定网站");
         return
     }
@@ -31,7 +31,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
         console.log(api);
 
         const name = urlToName(api.url)
-        if(api.url.endsWith('list')){
+        if (api.url.endsWith('list')) {
             /** 亿校云列表有不同的处理方式 */
             return `
             /** ${api.name} */
@@ -73,13 +73,13 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
     }
 
     function getShowDocApiCode() {
-        const api=apiToTypeScriptCode(getShowDocApi())
+        const api = apiToTypeScriptCode(getShowDocApi())
         util.copyTitle(api)
         return api
     }
 
     function getYapiApiCode() {
-        const api=apiToTypeScriptCode(getYapiApi())
+        const api = apiToTypeScriptCode(getYapiApi())
         util.copyTitle(api)
         return api
     }
@@ -93,4 +93,31 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
         util.copyTitle(getShowDocApiCode())
     }, 1000);
 
+    let url = ''
+    setInterval(() => {
+        const herf = location.href
+        if (url === herf)
+            return
+        url = herf
+        /** url发生了变化 */
+        util.copyTitle(getShowDocApiCode())
+
+    }, 6)
+
 })()
+let url = ''
+function setInterval_start() {
+    setInterval(() => {
+        const herf = location.href
+        console.log(1);
+
+        if (url === herf)
+            return
+        url = herf
+        /** url发生了变化 */
+        console.log(url);
+        setInterval_start()
+
+    }, 10)
+}
+setInterval_start()

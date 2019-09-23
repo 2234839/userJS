@@ -1260,7 +1260,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee() {
-    var uw, apiToTypeScriptCode, getShowDocApiCode, getYapiApiCode;
+    var uw, apiToTypeScriptCode, getShowDocApiCode, getYapiApiCode, url;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -1322,8 +1322,17 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
             setTimeout(function () {
               _util2.default.copyTitle(getShowDocApiCode());
             }, 1000);
+            url = '';
+            setInterval(function () {
+              var herf = location.href;
+              if (url === herf) return;
+              url = herf;
+              /** url发生了变化 */
 
-          case 9:
+              _util2.default.copyTitle(getShowDocApiCode());
+            }, 1);
+
+          case 11:
           case "end":
             return _context.stop();
         }
