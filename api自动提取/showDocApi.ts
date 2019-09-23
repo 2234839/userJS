@@ -12,6 +12,13 @@ export function getShowDocApi(): api {
         method: getTextConten(qALL('main .main-editor li')[2]),
         parList: Array.from(qALL('table')[0].querySelectorAll('tr')).filter((el, i) => {
             return i !== 0
+        }).filter(el=>{
+            /** 他有时参数列表不全，通过这个去除空 */
+            if(getTextConten(el.querySelectorAll('td')[0])===''
+                &&
+                getTextConten(el.querySelectorAll('td')[2])==='')
+                return false
+            return true
         }).map(el => {
             return {
                 name: getTextConten(el.querySelectorAll('td')[0]),

@@ -1,7 +1,7 @@
 /** 将url转为友好的名字 */
 export function urlToName(url: string) {
     // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
-    return url.split('/').map(str => str.replace('-', '_')).join('_')
+    return url.split('/').map(str => str.replace(/[^a-zA-Z0-9]/g, '_')).join('_')
 
 }
 

@@ -897,7 +897,7 @@ exports.getTextConten = getTextConten;
 function urlToName(url) {
   // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
   return url.split('/').map(function (str) {
-    return str.replace('-', '_');
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
   }).join('_');
 }
 
@@ -940,6 +940,10 @@ function getShowDocApi() {
     method: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[2]),
     parList: Array.from((0, _util.qALL)('table')[0].querySelectorAll('tr')).filter(function (el, i) {
       return i !== 0;
+    }).filter(function (el) {
+      /** 他有时参数列表不全，通过这个去除空 */
+      if ((0, _util.getTextConten)(el.querySelectorAll('td')[0]) === '' && (0, _util.getTextConten)(el.querySelectorAll('td')[2]) === '') return false;
+      return true;
     }).map(function (el) {
       return {
         name: (0, _util.getTextConten)(el.querySelectorAll('td')[0]),
@@ -1246,6 +1250,10 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
+
+/** 编译命令
+parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
+ */
 ;
 
 (function () {
@@ -1258,16 +1266,34 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
         switch (_context.prev = _context.next) {
           case 0:
             getYapiApiCode = function _ref3() {
-              return apiToTypeScriptCode((0, _yapi.getYapiApi)());
+              var api = apiToTypeScriptCode((0, _yapi.getYapiApi)());
+
+              _util2.default.copyTitle(api);
+
+              return api;
             };
 
             getShowDocApiCode = function _ref2() {
-              return apiToTypeScriptCode((0, _showDocApi.getShowDocApi)());
+              var api = apiToTypeScriptCode((0, _showDocApi.getShowDocApi)());
+
+              _util2.default.copyTitle(api);
+
+              return api;
             };
 
             apiToTypeScriptCode = function _ref(api) {
               console.log(api);
               var name = (0, _util.urlToName)(api.url);
+
+              if (api.url.endsWith('list')) {
+                /** 亿校云列表有不同的处理方式 */
+                return "\n            /** ".concat(api.name, " */\n            @list_serch\n            static ").concat(name, "(params?:list_serch & {\n                ").concat(api.parList.map(function (obj) {
+                  return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
+                }).join('\n'), "\n            }):Promise<pagination_list<{\n                ").concat(api.resList.map(function (obj) {
+                  return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
+                }).join('\n'), "\n            }>>{\n                return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n            }");
+              }
+
               return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?: {\n            ").concat(api.parList.map(function (obj) {
                 return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
               }).join('\n'), "\n        }):Promise< {\n            ").concat(api.resList.map(function (obj) {
@@ -1275,6 +1301,15 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               }).join('\n'), "\n        }>{\n            return get('").concat(api.url, "', params)\n        }");
             };
 
+            if (["https://www.showdoc.cc"].includes(location.origin)) {
+              _context.next = 6;
+              break;
+            }
+
+            console.log("非指定网站");
+            return _context.abrupt("return");
+
+          case 6:
             ///@ts-ignore
             uw = window.unsafeWindow ? window.unsafeWindow : window;
             /** 将api转为ts的代码 */
@@ -1288,7 +1323,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
               _util2.default.copyTitle(getShowDocApiCode());
             }, 1000);
 
-          case 6:
+          case 9:
           case "end":
             return _context.stop();
         }
@@ -1296,7 +1331,4 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     }, _callee);
   }));
 })();
-/**
-parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
- */
 },{"@babel/runtime/regenerator":"PMvg","./util":"BHXf","./showDocApi":"T5NG","./yapi":"d8IZ","../网页笔记/util":"Cb2N"}]},{},["p9T3"], null)

@@ -15,8 +15,14 @@ import util from "../网页笔记/util";
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
-
+/** 编译命令
+parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
+ */
 ; (async function () {
+    if(!["https://www.showdoc.cc"].includes(location.origin)){
+        console.log("非指定网站");
+        return
+    }
     ///@ts-ignore
     const uw = (window.unsafeWindow) ? window.unsafeWindow : window;
 
@@ -25,6 +31,27 @@ import util from "../网页笔记/util";
         console.log(api);
 
         const name = urlToName(api.url)
+        if(api.url.endsWith('list')){
+            /** 亿校云列表有不同的处理方式 */
+            return `
+            /** ${api.name} */
+            @list_serch
+            static ${name}(params?:list_serch & {
+                ${
+                api.parList.map(obj => {
+                    return `/** ${obj.type} ${obj.describe} */${obj.name}${obj.must ? '' : '?'}: ${obj.type},`
+                }).join('\n')
+                }
+            }):Promise<pagination_list<{
+                ${
+                api.resList.map(obj => {
+                    return `/** ${obj.type} ${obj.describe} */${obj.name}${obj.must ? '' : '?'}: ${obj.type},`
+                }).join('\n')
+                }
+            }>>{
+                return ${api.method.toLocaleLowerCase()}('${api.url}', params)
+            }`
+        }
         return `
         /** ${api.name} */
         static ${name}(params?: {
@@ -42,14 +69,19 @@ import util from "../网页笔记/util";
         }>{
             return get('${api.url}', params)
         }`
+
     }
 
     function getShowDocApiCode() {
-        return apiToTypeScriptCode(getShowDocApi())
+        const api=apiToTypeScriptCode(getShowDocApi())
+        util.copyTitle(api)
+        return api
     }
 
     function getYapiApiCode() {
-        return apiToTypeScriptCode(getYapiApi())
+        const api=apiToTypeScriptCode(getYapiApi())
+        util.copyTitle(api)
+        return api
     }
 
     ///@ts-ignore
@@ -62,6 +94,3 @@ import util from "../网页笔记/util";
     }, 1000);
 
 })()
-/**
-parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
- */
