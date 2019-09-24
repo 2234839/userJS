@@ -1298,7 +1298,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
                 return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
               }).join('\n'), "\n        }):Promise< {\n            ").concat(api.resList.map(function (obj) {
                 return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-              }).join('\n'), "\n        }>{\n            return get('").concat(api.url, "', params)\n        }");
+              }).join('\n'), "\n        }>{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
             };
 
             if (["https://www.showdoc.cc"].includes(location.origin)) {
@@ -1330,7 +1330,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
               /** url发生了变化 */
 
               _util2.default.copyTitle(getShowDocApiCode());
-            }, 1);
+            }, 6);
 
           case 11:
           case "end":
@@ -1340,4 +1340,21 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
     }, _callee);
   }));
 })();
+
+var url = '';
+
+function setInterval_start() {
+  setInterval(function () {
+    var herf = location.href;
+    console.log(1);
+    if (url === herf) return;
+    url = herf;
+    /** url发生了变化 */
+
+    console.log(url);
+    setInterval_start();
+  }, 10);
+}
+
+setInterval_start();
 },{"@babel/runtime/regenerator":"PMvg","./util":"BHXf","./showDocApi":"T5NG","./yapi":"d8IZ","../网页笔记/util":"Cb2N"}]},{},["p9T3"], null)

@@ -67,7 +67,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
             }).join('\n')
             }
         }>{
-            return get('${api.url}', params)
+            return ${api.method.toLocaleLowerCase()}('${api.url}', params)
         }`
 
     }
