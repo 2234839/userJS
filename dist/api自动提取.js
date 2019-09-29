@@ -892,6 +892,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.urlToName = urlToName;
 exports.qALL = qALL;
 exports.getTextConten = getTextConten;
+exports.getTable = getTable;
+exports.getElText = getElText;
 
 /** 将url转为友好的名字 */
 function urlToName(url) {
@@ -921,7 +923,30 @@ function getTextConten(el) {
     return '';
   }
 }
-},{}],"T5NG":[function(require,module,exports) {
+/** 将table元素解析为字符串二维数组 */
+
+
+function getTable(el) {
+  var res = Array.from(el.querySelectorAll('tr')).map(function (el) {
+    return Array.from(el.querySelectorAll('td')).map(function (el) {
+      return el.textContent.trim();
+    });
+  });
+  return res;
+}
+/** 获取指定元素的TextContent */
+
+
+function getElText(selsector) {
+  var el = document.querySelector(selsector);
+
+  if (el === null) {
+    return "";
+  }
+
+  return el.textContent;
+}
+},{}],"kJX2":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -929,7 +954,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getShowDocApi = getShowDocApi;
 
-var _util = require("./util");
+var _util = require("../util");
 
 /** 获取showDoc平台的api */
 function getShowDocApi() {
@@ -973,7 +998,7 @@ function getShowDocApi() {
 }
 
 ;
-},{"./util":"BHXf"}],"d8IZ":[function(require,module,exports) {
+},{"../util":"BHXf"}],"wRmx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -981,7 +1006,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getYapiApi = getYapiApi;
 
-var _util = require("./util");
+var _util = require("../util");
 
 var $$ = _util.qALL;
 /** 获取Yapi平台的api */
@@ -1002,16 +1027,17 @@ function getYapiApi() {
 
         /** 是否必需 */
         must: el.querySelectorAll('td')[1].textContent === '是',
-        type: (0, _util.getType)(el.querySelectorAll('td')[2].textContent),
+        type: el.querySelectorAll('td')[2].textContent,
         describe: el.querySelectorAll('td')[3].textContent
       };
-    })
+    }),
+    resList: []
   };
   return api;
 }
 
 ;
-},{"./util":"BHXf"}],"Cb2N":[function(require,module,exports) {
+},{"../util":"BHXf"}],"Cb2N":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1192,18 +1218,161 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{"@babel/runtime/regenerator":"PMvg"}],"p9T3":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"PMvg"}],"89Q4":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.swagger_bootstrap_ui = swagger_bootstrap_ui;
+
+var _util = require("../util");
+
+/** 获取 swagger_bootstrap_ui 页面的ui */
+function swagger_bootstrap_ui() {
+  var this_tab = document.querySelector('.layui-tab-item.layui-show .swbu-main');
+  var par_el = this_tab.querySelectorAll("table")[2];
+  var res_el = this_tab.querySelectorAll("table")[6];
+  /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
+
+  var par_table = (0, _util.getTable)(par_el);
+  /** 参数名称 参数说明 类型 schema */
+
+  var res_table = (0, _util.getTable)(res_el);
+  console.log(par_table, res_table);
+  var api = {
+    url: this_tab.querySelector('div p:nth-child(1) code').textContent,
+    name: (0, _util.getElText)('.layui-tab-item.layui-show .tab-pane div:nth-child(2) div'),
+    describe: this_tab.querySelector('div p:nth-child(5) code').textContent,
+    method: this_tab.querySelector('div p:nth-child(2) code').textContent,
+    parList: reduction_tree(par_el, par_table.map(function (str_list) {
+      return {
+        name: str_list[0],
+        must: str_list[3] === "true",
+        type: str_list[4],
+        describe: str_list[0]
+      };
+    })),
+    resList: reduction_tree(res_el, res_table.map(function (str_list) {
+      return {
+        name: str_list[0],
+        must: undefined,
+        type: str_list[2],
+        describe: str_list[1]
+      };
+    }))
+  };
+  console.log("最终结果", par_table, res_table, api);
+  return api;
+}
+/** 根据table 获取到树的结构 */
+
+
+function reduction_tree(table, parlist) {
+  /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
+  var level_list = Array.from(table.querySelectorAll('tr td:nth-child(1)')).map(function (el) {
+    /** swagger-bootstrap-ui 层级越高 这种元素越多 */
+    return el.querySelectorAll('.treeTable-empty').length;
+  });
+  /** 最高级 */
+
+  var hierarchy = [];
+  var current_hierarchy = hierarchy;
+
+  for (var i = 0; i < level_list.length; i++) {
+    var level = level_list[i];
+
+    if (i === 0) {
+      current_hierarchy.push(parlist[i]);
+      continue;
+    }
+    /** 同级元素 */
+
+
+    if (level > level_list[i - 1]) {
+      /** 按一般规律来说它就是 当前层级数组最后一个元素的 子级 */
+      var parent = current_hierarchy[current_hierarchy.length - 1];
+
+      if (parent.children === undefined) {
+        parent.children = [];
+      }
+      /** 指向下一级 */
+
+
+      current_hierarchy = parent.children;
+    } else if (level === level_list[i - 1]) {
+      /** 同级的 */
+    } else {
+      /** 小于的要提升当前层级 */
+
+      /** 从最高的0级开始降级,直到它所在的等级 */
+      var demotion_temp = hierarchy;
+      /** 开始降级 */
+
+      for (var _i = 0; _i < level; _i++) {
+        /** 按一般规律来说 它一定生成在最后一个元素的子级 */
+        demotion_temp = demotion_temp[demotion_temp.length - 1].children;
+      }
+      /** 指向将到的级别 */
+
+
+      current_hierarchy = demotion_temp;
+    }
+    /** 将元素添加到当前层级 */
+
+
+    current_hierarchy.push(parlist[i]);
+  }
+
+  return hierarchy;
+}
+},{"../util":"BHXf"}],"ZABJ":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.apiToTypeScriptCode = apiToTypeScriptCode;
+
+var _util = require("../util");
+
+/** 将api转为ts的代码 */
+function apiToTypeScriptCode(api) {
+  console.log(api);
+  var name = (0, _util.urlToName)(api.url);
+  return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?:\n            ").concat(parse_par_List(api.parList), "\n        ):Promise<\n            ").concat(parse_par_List(api.resList), "\n        >{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
+}
+/** 解析api的par为字符串 */
+
+
+function parse_par_item(par) {
+  return "        /** ".concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
+    if (par.children === undefined) return par.type.replace("string(", '_string(')
+    /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
+    .replace("number(", '_number(').replace('(', '<').replace(')', '>').replace('-', '_');
+    return "".concat(parse_par_List(par.children));
+  }());
+}
+/** 解析api的par数组为字符串 */
+
+
+function parse_par_List(par) {
+  return "{".concat(par.map(parse_par_item).join(',\n'), "}");
+}
+},{"../util":"BHXf"}],"p9T3":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _util = require("./util");
+var _showDocApi = require("./parse/showDocApi");
 
-var _showDocApi = require("./showDocApi");
+var _yapi = require("./parse/yapi");
 
-var _yapi = require("./yapi");
+var _util = _interopRequireDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
 
-var _util2 = _interopRequireDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
+var _swaggerBootstrapUi = require("./parse/swagger-bootstrap-ui");
+
+var _apiToTypeScriptCode = require("./parse/apiToTypeScriptCode");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1245,8 +1414,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @version      1.0.0
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
-// @match        *
-// @include      *
+// @include      https://www.showdoc.cc/*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
@@ -1260,79 +1428,48 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee() {
-    var uw, apiToTypeScriptCode, getShowDocApiCode, getYapiApiCode, url;
+    var uw, getShowDocApiCode, getYapiApiCode, get_swagger_bootstrap_ui_code;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            getYapiApiCode = function _ref3() {
-              var api = apiToTypeScriptCode((0, _yapi.getYapiApi)());
+            get_swagger_bootstrap_ui_code = function _ref3() {
+              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _swaggerBootstrapUi.swagger_bootstrap_ui)());
 
-              _util2.default.copyTitle(api);
-
-              return api;
-            };
-
-            getShowDocApiCode = function _ref2() {
-              var api = apiToTypeScriptCode((0, _showDocApi.getShowDocApi)());
-
-              _util2.default.copyTitle(api);
+              _util.default.copyTitle(api);
 
               return api;
             };
 
-            apiToTypeScriptCode = function _ref(api) {
-              console.log(api);
-              var name = (0, _util.urlToName)(api.url);
+            getYapiApiCode = function _ref2() {
+              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _yapi.getYapiApi)());
 
-              if (api.url.endsWith('list')) {
-                /** 亿校云列表有不同的处理方式 */
-                return "\n            /** ".concat(api.name, " */\n            @list_serch\n            static ").concat(name, "(params?:list_serch & {\n                ").concat(api.parList.map(function (obj) {
-                  return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-                }).join('\n'), "\n            }):Promise<pagination_list<{\n                ").concat(api.resList.map(function (obj) {
-                  return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-                }).join('\n'), "\n            }>>{\n                return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n            }");
-              }
+              _util.default.copyTitle(api);
 
-              return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?: {\n            ").concat(api.parList.map(function (obj) {
-                return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-              }).join('\n'), "\n        }):Promise< {\n            ").concat(api.resList.map(function (obj) {
-                return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-              }).join('\n'), "\n        }>{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
+              return api;
             };
 
-            if (["https://www.showdoc.cc"].includes(location.origin)) {
-              _context.next = 6;
-              break;
-            }
+            getShowDocApiCode = function _ref() {
+              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _showDocApi.getShowDocApi)());
 
-            console.log("非指定网站");
-            return _context.abrupt("return");
+              _util.default.copyTitle(api);
 
-          case 6:
-            ///@ts-ignore
+              return api;
+            };
+
+            console.log('api 自动提取开始运行');
             uw = window.unsafeWindow ? window.unsafeWindow : window;
-            /** 将api转为ts的代码 */
-
-            ///@ts-ignore
+            console.log("test");
             uw._api = {
               getShowDocApiCode: getShowDocApiCode,
-              getYapiApiCode: getYapiApiCode
+              getYapiApiCode: getYapiApiCode,
+              swagger_bootstrap_ui: _swaggerBootstrapUi.swagger_bootstrap_ui
             };
             setTimeout(function () {
-              _util2.default.copyTitle(getShowDocApiCode());
+              _util.default.copyTitle(get_swagger_bootstrap_ui_code());
             }, 1000);
-            url = '';
-            setInterval(function () {
-              var herf = location.href;
-              if (url === herf) return;
-              url = herf;
-              /** url发生了变化 */
 
-              _util2.default.copyTitle(getShowDocApiCode());
-            }, 6);
-
-          case 11:
+          case 8:
           case "end":
             return _context.stop();
         }
@@ -1346,7 +1483,6 @@ var url = '';
 function setInterval_start() {
   setInterval(function () {
     var herf = location.href;
-    console.log(1);
     if (url === herf) return;
     url = herf;
     /** url发生了变化 */
@@ -1357,4 +1493,4 @@ function setInterval_start() {
 }
 
 setInterval_start();
-},{"@babel/runtime/regenerator":"PMvg","./util":"BHXf","./showDocApi":"T5NG","./yapi":"d8IZ","../网页笔记/util":"Cb2N"}]},{},["p9T3"], null)
+},{"@babel/runtime/regenerator":"PMvg","./parse/showDocApi":"kJX2","./parse/yapi":"wRmx","../网页笔记/util":"Cb2N","./parse/swagger-bootstrap-ui":"89Q4","./parse/apiToTypeScriptCode":"ZABJ"}]},{},["p9T3"], null)

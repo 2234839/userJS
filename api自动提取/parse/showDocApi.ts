@@ -1,5 +1,5 @@
-import { api } from "./i_api";
-import { qALL, getTextConten } from "./util";
+import { api } from "../i_api";
+import { qALL, getTextConten } from "../util";
 
 
 

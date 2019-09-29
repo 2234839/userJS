@@ -28,3 +28,22 @@ export function getTextConten(el:Element){
         return ''
     }
 }
+
+/** 将table元素解析为字符串二维数组 */
+export function getTable(el:HTMLTableElement){
+    const res=Array.from(el.querySelectorAll('tr')).map(el=>{
+        return Array.from(el.querySelectorAll('td')).map(el=>{
+            return el.textContent.trim()
+        })
+    })
+    return res
+}
+
+/** 获取指定元素的TextContent */
+export function getElText(selsector:string){
+    const el=document.querySelector(selsector)
+    if(el===null){
+        return ""
+    }
+    return el.textContent
+}

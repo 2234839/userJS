@@ -1,0 +1,1067 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "亿校云商城用户项目文档 - 客户端接口",
+        "version": "1.0",
+        "title": "yxy-mall-user"
+    },
+    "host": "192.168.2.167:8018",
+    "basePath": "/api-user",
+    "tags": [
+        {
+            "name": "common-region-controller",
+            "description": "Common Region Controller"
+        },
+        {
+            "name": "mall-address-controller",
+            "description": "Mall Address Controller"
+        },
+        {
+            "name": "mall-shopping-cart-controller",
+            "description": "Mall Shopping Cart Controller"
+        },
+        {
+            "name": "mall-user-controller",
+            "description": "Mall User Controller"
+        },
+        {
+            "name": "mall-user-login-controller",
+            "description": "Mall User Login Controller"
+        },
+        {
+            "name": "merchants-goods-controller",
+            "description": "Merchants Goods Controller"
+        },
+        {
+            "name": "price-coupon-controller",
+            "description": "Price Coupon Controller"
+        }
+    ],
+    "paths": {
+        "/common/region/list": {
+            "get": {
+                "tags": [
+                    "common-region-controller"
+                ],
+                "summary": "getUserList",
+                "operationId": "getUserListUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/address/add": {
+            "post": {
+                "tags": [
+                    "mall-address-controller"
+                ],
+                "summary": "addMallAddress",
+                "operationId": "addMallAddressUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallAddress",
+                        "description": "mallAddress",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallAddress"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/address/delete": {
+            "post": {
+                "tags": [
+                    "mall-address-controller"
+                ],
+                "summary": "deleteMerchantsUser",
+                "operationId": "deleteMerchantsUserUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "id",
+                        "description": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/address/list": {
+            "post": {
+                "tags": [
+                    "mall-address-controller"
+                ],
+                "summary": "getMerchantsUserList",
+                "operationId": "getMerchantsUserListUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/address/update": {
+            "post": {
+                "tags": [
+                    "mall-address-controller"
+                ],
+                "summary": "updateMallAddress",
+                "operationId": "updateMallAddressUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallAddress",
+                        "description": "mallAddress",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallAddress"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/address/{id}": {
+            "get": {
+                "tags": [
+                    "mall-address-controller"
+                ],
+                "summary": "getUser",
+                "operationId": "getUserUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/captcha": {
+            "get": {
+                "tags": [
+                    "mall-user-login-controller"
+                ],
+                "summary": "captcha",
+                "operationId": "captchaUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/login": {
+            "post": {
+                "tags": [
+                    "mall-user-login-controller"
+                ],
+                "summary": "login",
+                "operationId": "loginUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallLoginRequestDTO",
+                        "description": "mallLoginRequestDTO",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallLoginRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/login-user": {
+            "get": {
+                "tags": [
+                    "mall-user-login-controller"
+                ],
+                "summary": "loginUser",
+                "operationId": "loginUserUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/logout": {
+            "get": {
+                "tags": [
+                    "mall-user-login-controller"
+                ],
+                "summary": "logout",
+                "operationId": "logoutUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/shopping-cart/add": {
+            "post": {
+                "tags": [
+                    "mall-shopping-cart-controller"
+                ],
+                "summary": "addMallShoppingCart",
+                "operationId": "addMallShoppingCartUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallShoppingCart",
+                        "description": "mallShoppingCart",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallShoppingCart"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/shopping-cart/delete": {
+            "post": {
+                "tags": [
+                    "mall-shopping-cart-controller"
+                ],
+                "summary": "deleteMallShoppingCart",
+                "operationId": "deleteMallShoppingCartUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallShoppingCartDeleteRequestDTO",
+                        "description": "mallShoppingCartDeleteRequestDTO",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallShoppingCartDeleteRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/shopping-cart/list": {
+            "post": {
+                "tags": [
+                    "mall-shopping-cart-controller"
+                ],
+                "summary": "getMallShoppingCartList",
+                "operationId": "getMallShoppingCartListUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/mall/user/update": {
+            "post": {
+                "tags": [
+                    "mall-user-controller"
+                ],
+                "summary": "updateUser",
+                "operationId": "updateUserUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "mallUserRequestDTO",
+                        "description": "mallUserRequestDTO",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MallUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/merchants/goods/list": {
+            "post": {
+                "tags": [
+                    "merchants-goods-controller"
+                ],
+                "summary": "getMerchantsOrderlyList",
+                "operationId": "getMerchantsOrderlyListUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "basePageRequestDTO",
+                        "description": "basePageRequestDTO",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BasePageRequestDTO«MerchantsGoodsForUserSearchRequestDTO»"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/merchants/goods/{id}": {
+            "get": {
+                "tags": [
+                    "merchants-goods-controller"
+                ],
+                "summary": "getOrder",
+                "operationId": "getOrderUsingGET",
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/price/coupon/add": {
+            "post": {
+                "tags": [
+                    "price-coupon-controller"
+                ],
+                "summary": "addPriceCoupon",
+                "operationId": "addPriceCouponUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "priceCouponRequestDTO",
+                        "description": "priceCouponRequestDTO",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PriceCouponRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/price/coupon/list": {
+            "post": {
+                "tags": [
+                    "price-coupon-controller"
+                ],
+                "summary": "getPriceCouponUserList",
+                "operationId": "getPriceCouponUserListUsingPOST",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "*/*"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/price/coupon/{id}": {
+            "get": {
+                "tags": [
+                    "price-coupon-controller"
+                ],
+                "summary": "getUser",
+                "operationId": "getUserUsingGET_1",
+                "produces": [
+                    "*/*"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "deprecated": false
+            }
+        }
+    },
+    "definitions": {
+        "BasePageRequestDTO«MerchantsGoodsForUserSearchRequestDTO»": {
+            "type": "object",
+            "properties": {
+                "orderBy": {
+                    "type": "string"
+                },
+                "pageNum": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "search": {
+                    "$ref": "#/definitions/MerchantsGoodsForUserSearchRequestDTO"
+                }
+            },
+            "title": "BasePageRequestDTO«MerchantsGoodsForUserSearchRequestDTO»"
+        },
+        "BaseResponseDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "object"
+                }
+            },
+            "title": "BaseResponseDTO"
+        },
+        "MallAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "createTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "district": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": -128,
+                    "maximum": 127
+                },
+                "updateTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "userId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "zipCode": {
+                    "type": "string"
+                }
+            },
+            "title": "MallAddress"
+        },
+        "MallLoginRequestDTO": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "verificationCode": {
+                    "type": "string"
+                }
+            },
+            "title": "MallLoginRequestDTO"
+        },
+        "MallShoppingCart": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "goodsId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "number": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "updateTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "userId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "title": "MallShoppingCart"
+        },
+        "MallShoppingCartDeleteRequestDTO": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "title": "MallShoppingCartDeleteRequestDTO"
+        },
+        "MallUserRequestDTO": {
+            "type": "object",
+            "properties": {
+                "merchantsId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": -128,
+                    "maximum": 127
+                },
+                "userId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "wechat": {
+                    "type": "string"
+                }
+            },
+            "title": "MallUserRequestDTO"
+        },
+        "MerchantsGoodsForUserSearchRequestDTO": {
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "endPresentPrice": {
+                    "type": "number"
+                },
+                "endTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "goodsId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "goodsName": {
+                    "type": "string"
+                },
+                "shopsId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "startPresentPrice": {
+                    "type": "number"
+                },
+                "startTime": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            },
+            "title": "MerchantsGoodsForUserSearchRequestDTO"
+        },
+        "PriceCouponRequestDTO": {
+            "type": "object",
+            "properties": {
+                "couponId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "couponPrice": {
+                    "type": "number"
+                },
+                "couponType": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": -128,
+                    "maximum": 127
+                },
+                "expiryTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "goodsName": {
+                    "type": "string"
+                },
+                "remainingInventory": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "shopsId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": -128,
+                    "maximum": 127
+                },
+                "userId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "title": "PriceCouponRequestDTO"
+        }
+    }
+}

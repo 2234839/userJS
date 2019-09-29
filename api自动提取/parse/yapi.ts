@@ -1,5 +1,5 @@
-import { api } from "./i_api";
-import { qALL, getType } from "./util";
+import { api } from "../i_api";
+import { qALL } from "../util";
 
 const $$ =qALL
 
@@ -19,10 +19,10 @@ export function getYapiApi(): api {
                 name: el.querySelectorAll('td')[0].textContent,
                 /** 是否必需 */
                 must: el.querySelectorAll('td')[1].textContent === '是',
-                type: getType(el.querySelectorAll('td')[2].textContent),
+                type: el.querySelectorAll('td')[2].textContent,
                 describe: el.querySelectorAll('td')[3].textContent
             }
-        })
+        }),resList:[]
     }
     return api;
 };

@@ -46,7 +46,6 @@ import { nodePath } from "./util";
         }
         console.log('keyCode', code);
         if (code in KeyMap) { /** 执行按键绑定的函数 */
-            ///@ts-ignore
             const funName = KeyMap[code]
             ///@ts-ignore
             fun[funName]()

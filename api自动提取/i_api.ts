@@ -4,18 +4,16 @@ export interface api {
     name: string
     describe: string
     method: string
-    parList: {
-        name: string
-        /** 是否必需 */
-        must: boolean
-        type: any
-        describe: string
-    }[],
-    resList: {
-        name: string
-        /** 是否必需 */
-        must: boolean
-        type: any
-        describe: string
-    }[],
+    parList:par[],
+    resList: par[],
+}
+
+export interface par{
+    name: string
+    /** 是否必需 */
+    must: boolean
+    type: any
+    describe: string,
+    /** 可能存在子级的参数 */
+    children?:par[]
 }
