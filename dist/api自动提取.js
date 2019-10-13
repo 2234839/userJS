@@ -883,161 +883,7 @@ if (hadRuntime) {
 },{"./runtime":"QVnC"}],"PMvg":[function(require,module,exports) {
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":"QYzI"}],"BHXf":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.urlToName = urlToName;
-exports.qALL = qALL;
-exports.getTextConten = getTextConten;
-exports.getTable = getTable;
-exports.getElText = getElText;
-
-/** 将url转为友好的名字 */
-function urlToName(url) {
-  // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
-  return url.split('/').map(function (str) {
-    return str.replace(/[^a-zA-Z0-9]/g, '_');
-  }).join('_');
-}
-
-function qALL(selector, t) {
-  var res = document.querySelectorAll(selector);
-
-  res.includes = function (text) {
-    return Array.from(res).filter(function (el) {
-      return el.textContent.includes(text);
-    });
-  };
-
-  return res;
-}
-
-function getTextConten(el) {
-  if (el !== undefined && 'textContent' in el) {
-    return el.textContent;
-  } else {
-    console.warn('textContent 属性不存在', el);
-    return '';
-  }
-}
-/** 将table元素解析为字符串二维数组 */
-
-
-function getTable(el) {
-  var res = Array.from(el.querySelectorAll('tr')).map(function (el) {
-    return Array.from(el.querySelectorAll('td')).map(function (el) {
-      return el.textContent.trim();
-    });
-  });
-  return res;
-}
-/** 获取指定元素的TextContent */
-
-
-function getElText(selsector) {
-  var el = document.querySelector(selsector);
-
-  if (el === null) {
-    return "";
-  }
-
-  return el.textContent;
-}
-},{}],"kJX2":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getShowDocApi = getShowDocApi;
-
-var _util = require("../util");
-
-/** 获取showDoc平台的api */
-function getShowDocApi() {
-  var api = {
-    url: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[1]),
-    name: (0, _util.getTextConten)((0, _util.qALL)('main div')[0]),
-    describe: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[1]),
-    method: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[2]),
-    parList: Array.from((0, _util.qALL)('table')[0].querySelectorAll('tr')).filter(function (el, i) {
-      return i !== 0;
-    }).filter(function (el) {
-      /** 他有时参数列表不全，通过这个去除空 */
-      if ((0, _util.getTextConten)(el.querySelectorAll('td')[0]) === '' && (0, _util.getTextConten)(el.querySelectorAll('td')[2]) === '') return false;
-      return true;
-    }).map(function (el) {
-      return {
-        name: (0, _util.getTextConten)(el.querySelectorAll('td')[0]),
-
-        /** 是否必需 */
-        must: (0, _util.getTextConten)(el.querySelectorAll('td')[1]) === '是',
-        type: (0, _util.getTextConten)(el.querySelectorAll('td')[2]),
-        describe: (0, _util.getTextConten)(el.querySelectorAll('td')[3])
-      };
-    }),
-
-    /** 返回结果的列表 */
-    resList: Array.from((0, _util.qALL)('table')[1].querySelectorAll('tr')).filter(function (el, i) {
-      return i !== 0;
-    }).map(function (el) {
-      return {
-        name: (0, _util.getTextConten)(el.querySelectorAll('td')[0]),
-
-        /** 是否必需 */
-        must: true,
-        type: (0, _util.getTextConten)(el.querySelectorAll('td')[1]),
-        describe: (0, _util.getTextConten)(el.querySelectorAll('td')[2])
-      };
-    })
-  };
-  return api;
-}
-
-;
-},{"../util":"BHXf"}],"wRmx":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getYapiApi = getYapiApi;
-
-var _util = require("../util");
-
-var $$ = _util.qALL;
-/** 获取Yapi平台的api */
-
-function getYapiApi() {
-  var desNodeList = $$('.interface-title').includes('备注');
-  var describe = desNodeList.length > 0 ? '' : desNodeList[0].nextElementSibling.textContent;
-  var api = {
-    url: $$('.tag-method + span')[0].textContent,
-    name: $$('.interface-title + div div div:nth-child(2)')[0].textContent,
-    describe: describe,
-    method: $$('.tag-method')[0].textContent,
-    parList: Array.from($$('table')[0].querySelectorAll('tr')).filter(function (el, i) {
-      return i !== 0;
-    }).map(function (el) {
-      return {
-        name: el.querySelectorAll('td')[0].textContent,
-
-        /** 是否必需 */
-        must: el.querySelectorAll('td')[1].textContent === '是',
-        type: el.querySelectorAll('td')[2].textContent,
-        describe: el.querySelectorAll('td')[3].textContent
-      };
-    }),
-    resList: []
-  };
-  return api;
-}
-
-;
-},{"../util":"BHXf"}],"Cb2N":[function(require,module,exports) {
+},{"regenerator-runtime":"QYzI"}],"Cb2N":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1218,7 +1064,155 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{"@babel/runtime/regenerator":"PMvg"}],"89Q4":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"PMvg"}],"BHXf":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.urlToName = urlToName;
+exports.qALL = qALL;
+exports.getTextConten = getTextConten;
+exports.getTable = getTable;
+exports.getElText = getElText;
+
+/** 将url转为友好的名字 */
+function urlToName(url) {
+  // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
+  return url.split('/').map(function (str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '_');
+  }).join('_');
+}
+
+function qALL(selector, t) {
+  var res = document.querySelectorAll(selector);
+
+  res.includes = function (text) {
+    return Array.from(res).filter(function (el) {
+      return el.textContent.includes(text);
+    });
+  };
+
+  return res;
+}
+
+function getTextConten(el) {
+  if (el !== undefined && 'textContent' in el) {
+    return el.textContent;
+  } else {
+    console.warn('textContent 属性不存在', el);
+    return '';
+  }
+}
+/** 将table元素解析为字符串二维数组 */
+
+
+function getTable(el) {
+  var res = Array.from(el.querySelectorAll('tr')).map(function (el) {
+    return Array.from(el.querySelectorAll('td')).map(function (el) {
+      return el.textContent.trim();
+    });
+  });
+  return res;
+}
+/** 获取指定元素的TextContent */
+
+
+function getElText(selsector) {
+  var el = document.querySelector(selsector);
+
+  if (el === null) {
+    return "";
+  }
+
+  return el.textContent;
+}
+},{}],"ZABJ":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.apiToTypeScriptCode = apiToTypeScriptCode;
+
+var _util = require("../util");
+
+/** 将api转为ts的代码 */
+function apiToTypeScriptCode(api) {
+  console.log(api);
+  var name = (0, _util.urlToName)(api.url);
+  return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?:\n            ").concat(parse_par_List(api.parList), "\n        ):Promise<\n            ").concat(parse_par_List(api.resList), "\n        >{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
+}
+/** 解析api的par为字符串 */
+
+
+function parse_par_item(par) {
+  return "        /** ".concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
+    if (par.children === undefined) return par.type.replace("string(", '_string(')
+    /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
+    .replace("number(", '_number(').replace('(', '<').replace(')', '>').replace('-', '_');
+    return "".concat(parse_par_List(par.children));
+  }());
+}
+/** 解析api的par数组为字符串 */
+
+
+function parse_par_List(par) {
+  return "{".concat(par.map(parse_par_item).join(',\n'), "}");
+}
+},{"../util":"BHXf"}],"kJX2":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getShowDocApi = getShowDocApi;
+
+var _util = require("../util");
+
+/** 获取showDoc平台的api */
+function getShowDocApi() {
+  var api = {
+    url: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[1]),
+    name: (0, _util.getTextConten)((0, _util.qALL)('main div')[0]),
+    describe: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[1]),
+    method: (0, _util.getTextConten)((0, _util.qALL)('main .main-editor li')[2]),
+    parList: Array.from((0, _util.qALL)('table')[0].querySelectorAll('tr')).filter(function (el, i) {
+      return i !== 0;
+    }).filter(function (el) {
+      /** 他有时参数列表不全，通过这个去除空 */
+      if ((0, _util.getTextConten)(el.querySelectorAll('td')[0]) === '' && (0, _util.getTextConten)(el.querySelectorAll('td')[2]) === '') return false;
+      return true;
+    }).map(function (el) {
+      return {
+        name: (0, _util.getTextConten)(el.querySelectorAll('td')[0]),
+
+        /** 是否必需 */
+        must: (0, _util.getTextConten)(el.querySelectorAll('td')[1]) === '是',
+        type: (0, _util.getTextConten)(el.querySelectorAll('td')[2]),
+        describe: (0, _util.getTextConten)(el.querySelectorAll('td')[3])
+      };
+    }),
+
+    /** 返回结果的列表 */
+    resList: Array.from((0, _util.qALL)('table')[1].querySelectorAll('tr')).filter(function (el, i) {
+      return i !== 0;
+    }).map(function (el) {
+      return {
+        name: (0, _util.getTextConten)(el.querySelectorAll('td')[0]),
+
+        /** 是否必需 */
+        must: true,
+        type: (0, _util.getTextConten)(el.querySelectorAll('td')[1]),
+        describe: (0, _util.getTextConten)(el.querySelectorAll('td')[2])
+      };
+    })
+  };
+  return api;
+}
+
+;
+},{"../util":"BHXf"}],"89Q4":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1326,53 +1320,59 @@ function reduction_tree(table, parlist) {
 
   return hierarchy;
 }
-},{"../util":"BHXf"}],"ZABJ":[function(require,module,exports) {
+},{"../util":"BHXf"}],"wRmx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.apiToTypeScriptCode = apiToTypeScriptCode;
+exports.getYapiApi = getYapiApi;
 
 var _util = require("../util");
 
-/** 将api转为ts的代码 */
-function apiToTypeScriptCode(api) {
-  console.log(api);
-  var name = (0, _util.urlToName)(api.url);
-  return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?:\n            ").concat(parse_par_List(api.parList), "\n        ):Promise<\n            ").concat(parse_par_List(api.resList), "\n        >{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
+var $$ = _util.qALL;
+/** 获取Yapi平台的api */
+
+function getYapiApi() {
+  var desNodeList = $$('.interface-title').includes('备注');
+  var describe = desNodeList.length > 0 ? '' : desNodeList[0].nextElementSibling.textContent;
+  var api = {
+    url: $$('.tag-method + span')[0].textContent,
+    name: $$('.interface-title + div div div:nth-child(2)')[0].textContent,
+    describe: describe,
+    method: $$('.tag-method')[0].textContent,
+    parList: Array.from($$('table')[0].querySelectorAll('tr')).filter(function (el, i) {
+      return i !== 0;
+    }).map(function (el) {
+      return {
+        name: el.querySelectorAll('td')[0].textContent,
+
+        /** 是否必需 */
+        must: el.querySelectorAll('td')[1].textContent === '是',
+        type: el.querySelectorAll('td')[2].textContent,
+        describe: el.querySelectorAll('td')[3].textContent
+      };
+    }),
+    resList: []
+  };
+  return api;
 }
-/** 解析api的par为字符串 */
 
-
-function parse_par_item(par) {
-  return "        /** ".concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
-    if (par.children === undefined) return par.type.replace("string(", '_string(')
-    /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
-    .replace("number(", '_number(').replace('(', '<').replace(')', '>').replace('-', '_');
-    return "".concat(parse_par_List(par.children));
-  }());
-}
-/** 解析api的par数组为字符串 */
-
-
-function parse_par_List(par) {
-  return "{".concat(par.map(parse_par_item).join(',\n'), "}");
-}
+;
 },{"../util":"BHXf"}],"p9T3":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _showDocApi = require("./parse/showDocApi");
-
-var _yapi = require("./parse/yapi");
-
 var _util = _interopRequireDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
+
+var _apiToTypeScriptCode = require("./parse/apiToTypeScriptCode");
+
+var _showDocApi = require("./parse/showDocApi");
 
 var _swaggerBootstrapUi = require("./parse/swagger-bootstrap-ui");
 
-var _apiToTypeScriptCode = require("./parse/apiToTypeScriptCode");
+var _yapi = require("./parse/yapi");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1415,6 +1415,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @include      https://www.showdoc.cc/*
+// @include      http://192.*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
@@ -1463,7 +1464,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
             uw._api = {
               getShowDocApiCode: getShowDocApiCode,
               getYapiApiCode: getYapiApiCode,
-              swagger_bootstrap_ui: _swaggerBootstrapUi.swagger_bootstrap_ui
+              get_swagger_bootstrap_ui_code: get_swagger_bootstrap_ui_code
             };
             setTimeout(function () {
               _util.default.copyTitle(get_swagger_bootstrap_ui_code());
@@ -1493,4 +1494,4 @@ function setInterval_start() {
 }
 
 setInterval_start();
-},{"@babel/runtime/regenerator":"PMvg","./parse/showDocApi":"kJX2","./parse/yapi":"wRmx","../网页笔记/util":"Cb2N","./parse/swagger-bootstrap-ui":"89Q4","./parse/apiToTypeScriptCode":"ZABJ"}]},{},["p9T3"], null)
+},{"@babel/runtime/regenerator":"PMvg","../网页笔记/util":"Cb2N","./parse/apiToTypeScriptCode":"ZABJ","./parse/showDocApi":"kJX2","./parse/swagger-bootstrap-ui":"89Q4","./parse/yapi":"wRmx"}]},{},["p9T3"], null)

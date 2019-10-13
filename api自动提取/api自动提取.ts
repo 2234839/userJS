@@ -1,10 +1,8 @@
-import { urlToName } from "./util";
-import { api } from "./i_api";
-import { getShowDocApi } from "./parse/showDocApi";
-import { getYapiApi } from "./parse/yapi";
 import util from "../网页笔记/util";
-import { swagger_bootstrap_ui } from "./parse/swagger-bootstrap-ui";
 import { apiToTypeScriptCode } from "./parse/apiToTypeScriptCode";
+import { getShowDocApi } from "./parse/showDocApi";
+import { swagger_bootstrap_ui } from "./parse/swagger-bootstrap-ui";
+import { getYapiApi } from "./parse/yapi";
 
 // ==UserScript==
 // @name         api自动提取
@@ -13,6 +11,7 @@ import { apiToTypeScriptCode } from "./parse/apiToTypeScriptCode";
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @include      https://www.showdoc.cc/*
+// @include      http://192.*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
@@ -22,7 +21,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
 ; (async function () {
     console.log('api 自动提取开始运行');
 
-    const uw = (window.unsafeWindow) ? window.unsafeWindow : window;
+    const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
 
 
@@ -48,7 +47,7 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
     uw._api = {
         getShowDocApiCode,
         getYapiApiCode,
-        swagger_bootstrap_ui: swagger_bootstrap_ui
+        get_swagger_bootstrap_ui_code: get_swagger_bootstrap_ui_code
     }
     setTimeout(() => {
         util.copyTitle(get_swagger_bootstrap_ui_code())
