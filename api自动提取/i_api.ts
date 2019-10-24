@@ -13,6 +13,7 @@ export interface par{
     /** 是否必需 */
     must: boolean
     type: any
+    /** 描述 */
     describe: string,
     /** 可能存在子级的参数 */
     children?:par[]

@@ -1244,7 +1244,7 @@ function swagger_bootstrap_ui() {
         name: str_list[0],
         must: str_list[3] === "true",
         type: str_list[4],
-        describe: str_list[0]
+        describe: str_list[1]
       };
     })),
     resList: reduction_tree(res_el, res_table.map(function (str_list) {
