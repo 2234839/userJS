@@ -30,13 +30,24 @@ export function getTextConten(el:Element){
 }
 
 /** 将table元素解析为字符串二维数组 */
-export function getTable(el:HTMLTableElement){
-    const res=Array.from(el.querySelectorAll('tr')).map(el=>{
-        return Array.from(el.querySelectorAll('td')).map(el=>{
-            return el.textContent.trim()
-        })
-    })
-    return res
+export function getTable(el:HTMLElement,tr_selector="tr",td_selector="td",/** 特定元素的识别器 */recognizer:{
+    [i:number]:(el:HTMLElement)=>string
+}={}){
+    const table:string[][]=[]
+    for (let i = 0; i < el.querySelectorAll(tr_selector).length; i++) { /** tr */
+        const tr_el = el.querySelectorAll(tr_selector)[i];
+        const tr=[]
+        for (let j = 0; j < tr_el.querySelectorAll(td_selector).length; j++) { /** tr */
+            const td_el =<HTMLElement> tr_el.querySelectorAll(td_selector)[j];
+            if(recognizer[j]!==undefined){
+                tr.push(recognizer[j](td_el))
+            }else{
+                tr.push(td_el.textContent.trim())
+            }
+        }
+        table.push(tr)
+    }
+    return table
 }
 
 /** 获取指定元素的TextContent */
@@ -46,4 +57,12 @@ export function getElText(selsector:string){
         return ""
     }
     return el.textContent
+}
+/** 复制某个字符串多少次 */
+export function copyStr(el:string,length:number) {
+    let str=""
+    for (let index = 0; index < length; index++) {
+        str+=el
+    }
+    return str
 }

@@ -3,6 +3,8 @@ import { apiToTypeScriptCode } from "./parse/apiToTypeScriptCode";
 import { getShowDocApi } from "./parse/showDocApi";
 import { swagger_bootstrap_ui } from "./parse/swagger-bootstrap-ui";
 import { getYapiApi } from "./parse/yapi";
+import { api } from "./i_api";
+import { getRap2Api } from "./parse/rap2-taobo";
 
 // ==UserScript==
 // @name         api自动提取
@@ -12,6 +14,7 @@ import { getYapiApi } from "./parse/yapi";
 // @author       崮生 2234839456@qq.com
 // @include      https://www.showdoc.cc/*
 // @include      http://192.*
+// @include      *://rap2.taobao.org/*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
@@ -23,50 +26,25 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
 
     const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
-
-
-    function getShowDocApiCode() {
-        const api = apiToTypeScriptCode(getShowDocApi())
-        util.copyTitle(api)
-        return api
+    function getcode(fun:()=>api) {
+        return ()=>{
+            const api = apiToTypeScriptCode(fun())
+            util.copyTitle(api)
+            return api
+        }
     }
 
-    function getYapiApiCode() {
-        const api = apiToTypeScriptCode(getYapiApi())
-        util.copyTitle(api)
-        return api
-    }
-    function get_swagger_bootstrap_ui_code() {
-        const api = apiToTypeScriptCode(swagger_bootstrap_ui())
-        util.copyTitle(api)
-        return api
-    }
 
     console.log("test");
 
     uw._api = {
-        getShowDocApiCode,
-        getYapiApiCode,
-        get_swagger_bootstrap_ui_code: get_swagger_bootstrap_ui_code
+        getShowDocApiCode:getcode(getShowDocApi),
+        getYapiApiCode:getcode(getYapiApi),
+        get_swagger_bootstrap_ui_code: getcode(swagger_bootstrap_ui),
+        get_rap2_taobao_code:getcode(getRap2Api)
     }
     setTimeout(() => {
-        util.copyTitle(get_swagger_bootstrap_ui_code())
-    }, 1000);
+        util.copyTitle(uw._api.get_rap2_taobao_code())
+    }, 2000);
 
 })()
-
-let url = ''
-function setInterval_start() {
-    setInterval(() => {
-        const herf = location.href
-
-        if (url === herf)
-            return
-        url = herf
-        /** url发生了变化 */
-        console.log(url);
-        setInterval_start()
-
-    }, 10)
-}
-setInterval_start()

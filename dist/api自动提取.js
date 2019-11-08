@@ -1075,6 +1075,7 @@ exports.qALL = qALL;
 exports.getTextConten = getTextConten;
 exports.getTable = getTable;
 exports.getElText = getElText;
+exports.copyStr = copyStr;
 
 /** 将url转为友好的名字 */
 function urlToName(url) {
@@ -1108,12 +1109,31 @@ function getTextConten(el) {
 
 
 function getTable(el) {
-  var res = Array.from(el.querySelectorAll('tr')).map(function (el) {
-    return Array.from(el.querySelectorAll('td')).map(function (el) {
-      return el.textContent.trim();
-    });
-  });
-  return res;
+  var tr_selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "tr";
+  var td_selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "td";
+  var recognizer = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  var table = [];
+
+  for (var i = 0; i < el.querySelectorAll(tr_selector).length; i++) {
+    /** tr */
+    var tr_el = el.querySelectorAll(tr_selector)[i];
+    var tr = [];
+
+    for (var j = 0; j < tr_el.querySelectorAll(td_selector).length; j++) {
+      /** tr */
+      var td_el = tr_el.querySelectorAll(td_selector)[j];
+
+      if (recognizer[j] !== undefined) {
+        tr.push(recognizer[j](td_el));
+      } else {
+        tr.push(td_el.textContent.trim());
+      }
+    }
+
+    table.push(tr);
+  }
+
+  return table;
 }
 /** 获取指定元素的TextContent */
 
@@ -1126,6 +1146,18 @@ function getElText(selsector) {
   }
 
   return el.textContent;
+}
+/** 复制某个字符串多少次 */
+
+
+function copyStr(el, length) {
+  var str = "";
+
+  for (var index = 0; index < length; index++) {
+    str += el;
+  }
+
+  return str;
 }
 },{}],"ZABJ":[function(require,module,exports) {
 "use strict";
@@ -1141,24 +1173,28 @@ var _util = require("../util");
 function apiToTypeScriptCode(api) {
   console.log(api);
   var name = (0, _util.urlToName)(api.url);
-  return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?:\n            ").concat(parse_par_List(api.parList), "\n        ):Promise<\n            ").concat(parse_par_List(api.resList), "\n        >{\n            return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params)\n        }");
+  return "\n        /** ".concat(api.name, " */\n        static ").concat(name, "(params?:\n            ").concat(parse_par_List(api.parList), "\n        ):Promise< ").concat(parse_par_List(api.resList), " >{ return ").concat(api.method.toLocaleLowerCase(), "('").concat(api.url, "', params) }");
 }
 /** 解析api的par为字符串 */
 
 
 function parse_par_item(par) {
-  return "        /** ".concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
+  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  return "".concat((0, _util.copyStr)('\t', level), "/** ").concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
     if (par.children === undefined) return par.type.replace("string(", '_string(')
     /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
     .replace("number(", '_number(').replace('(', '<').replace(')', '>').replace('-', '_');
-    return "".concat(parse_par_List(par.children));
+    return "".concat(parse_par_List(par.children, level + 1));
   }());
 }
 /** 解析api的par数组为字符串 */
 
 
 function parse_par_List(par) {
-  return "{".concat(par.map(parse_par_item).join(',\n'), "}");
+  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  return "{\r".concat(par.map(function (el) {
+    return parse_par_item(el, level);
+  }).join(',\n'), "}");
 }
 },{"../util":"BHXf"}],"kJX2":[function(require,module,exports) {
 "use strict";
@@ -1212,7 +1248,7 @@ function getShowDocApi() {
 }
 
 ;
-},{"../util":"BHXf"}],"89Q4":[function(require,module,exports) {
+},{"../util":"BHXf"}],"Q4CB":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1359,6 +1395,126 @@ function getYapiApi() {
 }
 
 ;
+},{"../util":"BHXf"}],"wCVr":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getRap2Api = getRap2Api;
+
+var _util = require("../util");
+
+/** 获取rap2平台的api */
+function getRap2Api() {
+  console.log("参数列表=========================");
+  var par_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(2) > div.body > div > div.RSortableWrapper.depth-1");
+  /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
+
+  var par_table = (0, _util.getTable)(par_el, ".SortableTreeTableRow", ".td.payload", [undefined, function (el) {
+    return el.querySelector("input").checked ? "true" : "false";
+  }]);
+  var res_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(3) > div.body > div > div.RSortableWrapper.depth-1");
+  /** 参数名称 参数说明 类型 schema */
+
+  var res_table = (0, _util.getTable)(res_el, ".SortableTreeTableRow", ".td.payload", [undefined, function (el) {
+    return el.querySelector("input").checked ? "true" : "false";
+  }]);
+  console.log("参数和响应", par_el, res_el, par_table, res_table);
+
+  var get_level_list = function get_level_list(table) {
+    var tr_list = table.querySelectorAll(".SortableTreeTableRow");
+    return Array.from(tr_list).map(function (tr) {
+      var match = tr.parentElement.className.match(/depth(\d)/);
+      if (match === null) return 0;else {
+        return Number(match[1]) + 1;
+      }
+    });
+  };
+
+  var api = {
+    url: (0, _util.getElText)('.summary li:nth-child(1) a'),
+    name: (0, _util.getElText)('#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span'),
+    describe: "",
+    method: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
+    parList: reduction_tree(par_el, par_table.map(function (str_list) {
+      return {
+        name: str_list[0],
+        must: str_list[1] === "true",
+        type: str_list[2],
+        describe: str_list[5]
+      };
+    }), get_level_list),
+    resList: reduction_tree(res_el, res_table.map(function (str_list) {
+      return {
+        name: str_list[0],
+        must: str_list[1] === "true",
+        type: str_list[2],
+        describe: str_list[5]
+      };
+    }), get_level_list)
+  };
+  console.log("最终结果", par_table, res_table, api);
+  return api;
+}
+/** 根据table 获取到树的结构 */
+
+
+function reduction_tree(table, parlist, get_level_list) {
+  /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
+  var level_list = get_level_list(table);
+  /** 最高级 */
+
+  var hierarchy = [];
+  var current_hierarchy = hierarchy;
+
+  for (var i = 0; i < level_list.length; i++) {
+    var level = level_list[i];
+
+    if (i === 0) {
+      current_hierarchy.push(parlist[i]);
+      continue;
+    }
+    /** 同级元素 */
+
+
+    if (level > level_list[i - 1]) {
+      /** 按一般规律来说它就是 当前层级数组最后一个元素的 子级 */
+      var parent = current_hierarchy[current_hierarchy.length - 1];
+
+      if (parent.children === undefined) {
+        parent.children = [];
+      }
+      /** 指向下一级 */
+
+
+      current_hierarchy = parent.children;
+    } else if (level === level_list[i - 1]) {
+      /** 同级的 */
+    } else {
+      /** 小于的要提升当前层级 */
+
+      /** 从最高的0级开始降级,直到它所在的等级 */
+      var demotion_temp = hierarchy;
+      /** 开始降级 */
+
+      for (var _i = 0; _i < level; _i++) {
+        /** 按一般规律来说 它一定生成在最后一个元素的子级 */
+        demotion_temp = demotion_temp[demotion_temp.length - 1].children;
+      }
+      /** 指向将到的级别 */
+
+
+      current_hierarchy = demotion_temp;
+    }
+    /** 将元素添加到当前层级 */
+
+
+    current_hierarchy.push(parlist[i]);
+  }
+
+  return hierarchy;
+}
 },{"../util":"BHXf"}],"p9T3":[function(require,module,exports) {
 "use strict";
 
@@ -1373,6 +1529,8 @@ var _showDocApi = require("./parse/showDocApi");
 var _swaggerBootstrapUi = require("./parse/swagger-bootstrap-ui");
 
 var _yapi = require("./parse/yapi");
+
+var _rap2Taobo = require("./parse/rap2-taobo");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1416,6 +1574,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 // @author       崮生 2234839456@qq.com
 // @include      https://www.showdoc.cc/*
 // @include      http://192.*
+// @include      *://rap2.taobao.org/*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
@@ -1429,48 +1588,35 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee() {
-    var uw, getShowDocApiCode, getYapiApiCode, get_swagger_bootstrap_ui_code;
+    var uw, getcode;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            get_swagger_bootstrap_ui_code = function _ref3() {
-              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _swaggerBootstrapUi.swagger_bootstrap_ui)());
+            getcode = function _ref(fun) {
+              return function () {
+                var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)(fun());
 
-              _util.default.copyTitle(api);
+                _util.default.copyTitle(api);
 
-              return api;
-            };
-
-            getYapiApiCode = function _ref2() {
-              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _yapi.getYapiApi)());
-
-              _util.default.copyTitle(api);
-
-              return api;
-            };
-
-            getShowDocApiCode = function _ref() {
-              var api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)((0, _showDocApi.getShowDocApi)());
-
-              _util.default.copyTitle(api);
-
-              return api;
+                return api;
+              };
             };
 
             console.log('api 自动提取开始运行');
             uw = window.unsafeWindow ? window.unsafeWindow : window;
             console.log("test");
             uw._api = {
-              getShowDocApiCode: getShowDocApiCode,
-              getYapiApiCode: getYapiApiCode,
-              get_swagger_bootstrap_ui_code: get_swagger_bootstrap_ui_code
+              getShowDocApiCode: getcode(_showDocApi.getShowDocApi),
+              getYapiApiCode: getcode(_yapi.getYapiApi),
+              get_swagger_bootstrap_ui_code: getcode(_swaggerBootstrapUi.swagger_bootstrap_ui),
+              get_rap2_taobao_code: getcode(_rap2Taobo.getRap2Api)
             };
             setTimeout(function () {
-              _util.default.copyTitle(get_swagger_bootstrap_ui_code());
-            }, 1000);
+              _util.default.copyTitle(uw._api.get_rap2_taobao_code());
+            }, 2000);
 
-          case 8:
+          case 6:
           case "end":
             return _context.stop();
         }
@@ -1478,20 +1624,4 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
     }, _callee);
   }));
 })();
-
-var url = '';
-
-function setInterval_start() {
-  setInterval(function () {
-    var herf = location.href;
-    if (url === herf) return;
-    url = herf;
-    /** url发生了变化 */
-
-    console.log(url);
-    setInterval_start();
-  }, 10);
-}
-
-setInterval_start();
-},{"@babel/runtime/regenerator":"PMvg","../网页笔记/util":"Cb2N","./parse/apiToTypeScriptCode":"ZABJ","./parse/showDocApi":"kJX2","./parse/swagger-bootstrap-ui":"89Q4","./parse/yapi":"wRmx"}]},{},["p9T3"], null)
+},{"@babel/runtime/regenerator":"PMvg","../网页笔记/util":"Cb2N","./parse/apiToTypeScriptCode":"ZABJ","./parse/showDocApi":"kJX2","./parse/swagger-bootstrap-ui":"Q4CB","./parse/yapi":"wRmx","./parse/rap2-taobo":"wCVr"}]},{},["p9T3"], null)

@@ -15,6 +15,8 @@ export interface par{
     type: any
     /** 描述 */
     describe: string,
+    /** 参数所在的位置 */
+    place?:"query" | "body"
     /** 可能存在子级的参数 */
     children?:par[]
 }
