@@ -1439,7 +1439,7 @@ function getRap2Api() {
     method: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
     parList: reduction_tree(par_el, par_table.map(function (str_list) {
       return {
-        name: str_list[0].replace(/BODY$/, ''),
+        name: str_list[0].replace(/BODY$/, '').replace(/QUERY$/, ''),
         must: str_list[1] === "true",
         type: str_list[2],
         describe: str_list[5]
