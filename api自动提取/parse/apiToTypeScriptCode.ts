@@ -22,6 +22,7 @@ function parse_par_item(par: par,level=0) {
                 .replace("number(", '_number(')
                 .replace("String", 'string') /** 基元类型不要用 */
                 .replace("Number", 'number')
+                .replace("Boolean", 'boolean')
                 .replace('(', '<')
                 .replace(')', '>')
                 .replace('-', '_')
