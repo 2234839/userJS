@@ -1183,7 +1183,9 @@ function parse_par_item(par) {
   return "".concat((0, _util.copyStr)('\t', level), "/** ").concat(par.type, " ").concat(par.describe, " */").concat(par.name).concat(par.must ? '' : '?', ": ").concat(function () {
     if (par.children === undefined) return par.type.replace("string(", '_string(')
     /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
-    .replace("number(", '_number(').replace('(', '<').replace(')', '>').replace('-', '_');
+    .replace("number(", '_number(').replace("String", 'string')
+    /** 基元类型不要用 */
+    .replace("String", 'string').replace('(', '<').replace(')', '>').replace('-', '_');
     return "".concat(parse_par_List(par.children, level + 1));
   }());
 }
