@@ -6,7 +6,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "marked": "^0.6.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.2"
   },
   "dependencies": {
     "glob": "^7.1.4",
