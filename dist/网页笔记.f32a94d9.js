@@ -900,7 +900,7 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty;
-},{}],"lib/store.ts":[function(require,module,exports) {
+},{}],"../网页笔记/lib/store.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1061,7 +1061,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
-},{}],"ui/style.ts":[function(require,module,exports) {
+},{}],"../网页笔记/ui/style.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1086,7 +1086,7 @@ Style.note = "\n    border: 1px solid black;\n    background-color: #c6c5ba;\n  
 var keyframes = document.createElement('style');
 keyframes.innerHTML = "\n@keyframes llej_myfirst\n{\n    from { background: red;color:white; }\n    to { background: yellow;color:black; }\n}\n";
 document.head.appendChild(keyframes);
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js"}],"ui/message.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js"}],"../网页笔记/ui/message.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1166,7 +1166,7 @@ function () {
 }();
 
 exports.Message = Message;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","./style":"ui/style.ts"}],"util.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","./style":"../网页笔记/ui/style.ts"}],"../网页笔记/util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1345,7 +1345,7 @@ function jsonToURLpar(json) {
     return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
   }).join("&");
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"function/ajax.ts":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js"}],"../网页笔记/function/ajax.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1567,7 +1567,7 @@ function remote_getAllStore() {
     }, _callee6);
   }));
 }
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"config.ts","../lib/store":"lib/store.ts","../util":"util.ts"}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"../网页笔记/config.ts","../lib/store":"../网页笔记/lib/store.ts","../util":"../网页笔记/util.ts"}],"../node_modules/@babel/runtime/helpers/typeof.js":[function(require,module,exports) {
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
 function _typeof(obj) {
@@ -1648,7 +1648,7 @@ function _inherits(subClass, superClass) {
 }
 
 module.exports = _inherits;
-},{"./setPrototypeOf":"../node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"ui/note.ts":[function(require,module,exports) {
+},{"./setPrototypeOf":"../node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"../网页笔记/ui/note.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1702,166 +1702,19 @@ function (_Message) {
 }(_message.Message);
 
 exports.note = note;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"function/command-list.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"../网页笔记/ui/message.ts","./style":"../网页笔记/ui/style.ts"}],"../网页笔记/function/command.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+exports.CommandControl = exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = exports.Command = void 0;
 
 var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
 
 var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
 
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
-
-var _note = require("../ui/note");
-
-var _Command5 = require("./Command");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/** 删除一个元素 */
-var deleteSelect =
-/*#__PURE__*/
-function (_Command) {
-  (0, _inherits2.default)(deleteSelect, _Command);
-
-  function deleteSelect() {
-    (0, _classCallCheck2.default)(this, deleteSelect);
-    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(deleteSelect).apply(this, arguments));
-  }
-
-  (0, _createClass2.default)(deleteSelect, [{
-    key: "do",
-    value: function _do() {
-      this.selectEL_display = this.selectEL.style.display;
-      this.selectEL.style.display = "none";
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.selectEL.style.display = this.selectEL_display;
-      return this;
-    }
-  }]);
-  return deleteSelect;
-}(_Command5.Command);
-/** 使元素可编辑 */
-
-
-exports.deleteSelect = deleteSelect;
-
-var editSelect =
-/*#__PURE__*/
-function (_Command2) {
-  (0, _inherits2.default)(editSelect, _Command2);
-
-  function editSelect() {
-    (0, _classCallCheck2.default)(this, editSelect);
-    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(editSelect).apply(this, arguments));
-  }
-
-  (0, _createClass2.default)(editSelect, [{
-    key: "do",
-    value: function _do() {
-      this.selectEL_contentEditable = this.selectEL.contentEditable;
-      this.selectEL.contentEditable = 'true';
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.selectEL.contentEditable = this.selectEL_contentEditable;
-      return this;
-    }
-  }]);
-  return editSelect;
-}(_Command5.Command);
-/** 使元素不可编辑 */
-
-
-exports.editSelect = editSelect;
-
-var closeEditSelect =
-/*#__PURE__*/
-function (_Command3) {
-  (0, _inherits2.default)(closeEditSelect, _Command3);
-
-  function closeEditSelect() {
-    (0, _classCallCheck2.default)(this, closeEditSelect);
-    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(closeEditSelect).apply(this, arguments));
-  }
-
-  (0, _createClass2.default)(closeEditSelect, [{
-    key: "do",
-    value: function _do() {
-      this.selectEL_contentEditable = this.selectEL.contentEditable;
-      this.selectEL.contentEditable = 'false';
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.selectEL.contentEditable = this.selectEL_contentEditable;
-      return this;
-    }
-  }]);
-  return closeEditSelect;
-}(_Command5.Command);
-/** 新增一个笔记 */
-
-
-exports.closeEditSelect = closeEditSelect;
-
-var addNote =
-/*#__PURE__*/
-function (_Command4) {
-  (0, _inherits2.default)(addNote, _Command4);
-
-  function addNote() {
-    (0, _classCallCheck2.default)(this, addNote);
-    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(addNote).apply(this, arguments));
-  }
-
-  (0, _createClass2.default)(addNote, [{
-    key: "do",
-    value: function _do() {
-      this.note = new _note.note({
-        el: this.selectEL
-      }).show();
-      return this;
-    }
-  }, {
-    key: "undo",
-    value: function undo() {
-      this.note.hide();
-      return this;
-    }
-  }, {
-    key: "redo",
-    value: function redo() {
-      this.note.show();
-      return this;
-    }
-  }]);
-  return addNote;
-}(_Command5.Command);
-
-exports.addNote = addNote;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","../ui/note":"ui/note.ts","./Command":"function/Command.ts"}],"function/Command.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CommandControl = exports.Command = void 0;
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
@@ -1871,7 +1724,7 @@ var _message = require("../ui/message");
 
 var _util = require("../util");
 
-var _commandList = require("./command-list");
+var _note = require("../ui/note");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1927,10 +1780,141 @@ function () {
   }]);
   return Command;
 }();
-/** 命令控制器 */
+/** 删除一个元素 */
 
 
 exports.Command = Command;
+
+var deleteSelect =
+/*#__PURE__*/
+function (_Command) {
+  (0, _inherits2.default)(deleteSelect, _Command);
+
+  function deleteSelect() {
+    (0, _classCallCheck2.default)(this, deleteSelect);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(deleteSelect).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(deleteSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_display = this.selectEL.style.display;
+      this.selectEL.style.display = "none";
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.style.display = this.selectEL_display;
+      return this;
+    }
+  }]);
+  return deleteSelect;
+}(Command);
+/** 使元素可编辑 */
+
+
+exports.deleteSelect = deleteSelect;
+
+var editSelect =
+/*#__PURE__*/
+function (_Command2) {
+  (0, _inherits2.default)(editSelect, _Command2);
+
+  function editSelect() {
+    (0, _classCallCheck2.default)(this, editSelect);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(editSelect).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(editSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_contentEditable = this.selectEL.contentEditable;
+      this.selectEL.contentEditable = 'true';
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.contentEditable = this.selectEL_contentEditable;
+      return this;
+    }
+  }]);
+  return editSelect;
+}(Command);
+/** 使元素不可编辑 */
+
+
+exports.editSelect = editSelect;
+
+var closeEditSelect =
+/*#__PURE__*/
+function (_Command3) {
+  (0, _inherits2.default)(closeEditSelect, _Command3);
+
+  function closeEditSelect() {
+    (0, _classCallCheck2.default)(this, closeEditSelect);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(closeEditSelect).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(closeEditSelect, [{
+    key: "do",
+    value: function _do() {
+      this.selectEL_contentEditable = this.selectEL.contentEditable;
+      this.selectEL.contentEditable = 'false';
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.selectEL.contentEditable = this.selectEL_contentEditable;
+      return this;
+    }
+  }]);
+  return closeEditSelect;
+}(Command);
+/** 新增一个笔记 */
+
+
+exports.closeEditSelect = closeEditSelect;
+
+var addNote =
+/*#__PURE__*/
+function (_Command4) {
+  (0, _inherits2.default)(addNote, _Command4);
+
+  function addNote() {
+    (0, _classCallCheck2.default)(this, addNote);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(addNote).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(addNote, [{
+    key: "do",
+    value: function _do() {
+      this.note = new _note.note({
+        el: this.selectEL
+      }).show();
+      return this;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      this.note.hide();
+      return this;
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      this.note.show();
+      return this;
+    }
+  }]);
+  return addNote;
+}(Command);
+/** 命令控制器 */
+
+
+exports.addNote = addNote;
 var CommandControl = {
   commandStack: [],
   backOutStack: [],
@@ -1976,10 +1960,10 @@ var CommandControl = {
     return this.commandStack.push(command.redo());
   },
   loadCommandJSON: function loadCommandJSON(obj) {
-    if (obj.constructor === "deleteSelect") return Command.load(obj, _commandList.deleteSelect);
-    if (obj.constructor === "editSelect") return Command.load(obj, _commandList.editSelect);
-    if (obj.constructor === "closeEditSelect") return Command.load(obj, _commandList.closeEditSelect);
-    if (obj.constructor === "addNote") return Command.load(obj, _commandList.addNote);
+    if (obj.constructor === "deleteSelect") return Command.load(obj, deleteSelect);
+    if (obj.constructor === "editSelect") return Command.load(obj, editSelect);
+    if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
+    if (obj.constructor === "addNote") return Command.load(obj, addNote);
   },
   getCommandStackJsonObj: function getCommandStackJsonObj() {
     return this.commandStack.map(function (a) {
@@ -1999,7 +1983,7 @@ var CommandControl = {
   }
 };
 exports.CommandControl = CommandControl;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","../ui/message":"ui/message.ts","../util":"util.ts","./command-list":"function/command-list.ts"}],"state/index.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","../ui/message":"../网页笔记/ui/message.ts","../util":"../网页笔记/util.ts","../ui/note":"../网页笔记/ui/note.ts"}],"../网页笔记/state/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2023,7 +2007,7 @@ function setPath(elList) {
 
 var editElement = new Set();
 exports.editElement = editElement;
-},{}],"ui/warning.ts":[function(require,module,exports) {
+},{}],"../网页笔记/ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2063,7 +2047,7 @@ function (_Message) {
 }(_message.Message);
 
 exports.Warning = Warning;
-},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"ui/message.ts","./style":"ui/style.ts"}],"function/fun.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","./message":"../网页笔记/ui/message.ts","./style":"../网页笔记/ui/style.ts"}],"../网页笔记/function/fun.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2085,9 +2069,7 @@ var _message = require("../ui/message");
 
 var _ajax = require("./ajax");
 
-var _Command = require("./Command");
-
-var _commandList = require("./command-list");
+var _command = require("./command");
 
 var _index = require("../state/index");
 
@@ -2157,19 +2139,19 @@ var fun = (_fun = {}, (0, _defineProperty2.default)(_fun, key_funName.editElemen
     msg: '该元素内容过大，请选择更确定的文本元素。'
   }).autoHide();
 
-  _Command.CommandControl.run(new _commandList.editSelect(_index.currentElement));
+  _command.CommandControl.run(new _command.editSelect(_index.currentElement));
 }), (0, _defineProperty2.default)(_fun, key_funName.deleteElement, function () {
-  _Command.CommandControl.run(new _commandList.deleteSelect(_index.currentElement));
+  _command.CommandControl.run(new _command.deleteSelect(_index.currentElement));
 }), (0, _defineProperty2.default)(_fun, key_funName.copyTitle, function () {
   _util.default.copyTitle(_index.currentElement);
 }), (0, _defineProperty2.default)(_fun, key_funName.closeEdit, function () {
-  _Command.CommandControl.run(new _commandList.closeEditSelect(_index.currentElement));
+  _command.CommandControl.run(new _command.closeEditSelect(_index.currentElement));
 }), (0, _defineProperty2.default)(_fun, key_funName.backOut, function () {
-  _Command.CommandControl.backOut();
+  _command.CommandControl.backOut();
 }), (0, _defineProperty2.default)(_fun, key_funName.undo, function () {
-  _Command.CommandControl.reform();
+  _command.CommandControl.reform();
 }), (0, _defineProperty2.default)(_fun, key_funName.addNote, function () {
-  _Command.CommandControl.run(new _commandList.addNote(_index.currentElement));
+  _command.CommandControl.run(new _command.addNote(_index.currentElement));
 }), (0, _defineProperty2.default)(_fun, key_funName.saveChanges, function () {
   saveChanges(_index.editElement);
   new _message.Message({
@@ -2246,7 +2228,7 @@ function saveChanges(editElement) {
           case 0:
             data = {
               element_List: {},
-              CommandStack: _Command.CommandControl.getCommandStackJsonObj()
+              CommandStack: _command.CommandControl.getCommandStackJsonObj()
             };
             editElement.forEach(function (el) {
               var selectors = (0, _util.getSelectors)(el);
@@ -2314,7 +2296,7 @@ function loadChanges(allStroe) {
             break;
 
           case 12:
-            _Command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
+            _command.CommandControl.loadCommandJsonAndRun(allStroe.CommandStack);
 
           case 13:
           case "end":
@@ -2379,7 +2361,7 @@ function outline(elemt) {
 setInterval(function () {
   saveChanges(_index.editElement);
 }, 1000 * 60);
-},{"@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"config.ts","../lib/store":"lib/store.ts","../ui/message":"ui/message.ts","./ajax":"function/ajax.ts","./Command":"function/Command.ts","./command-list":"function/command-list.ts","../state/index":"state/index.ts","../ui/warning":"ui/warning.ts","../util":"util.ts"}],"config.ts":[function(require,module,exports) {
+},{"@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../config":"../网页笔记/config.ts","../lib/store":"../网页笔记/lib/store.ts","../ui/message":"../网页笔记/ui/message.ts","./ajax":"../网页笔记/function/ajax.ts","./command":"../网页笔记/function/command.ts","../state/index":"../网页笔记/state/index.ts","../ui/warning":"../网页笔记/ui/warning.ts","../util":"../网页笔记/util.ts"}],"../网页笔记/config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2428,14 +2410,14 @@ var KeyMap = {
 exports.KeyMap = KeyMap;
 var _default = config;
 exports.default = _default;
-},{"./function/fun":"function/fun.ts"}],"网页笔记.ts":[function(require,module,exports) {
+},{"./function/fun":"../网页笔记/function/fun.ts"}],"../网页笔记/网页笔记.ts":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _config = _interopRequireWildcard(require("./config"));
 
-var _Command = require("./function/Command");
+var _command = require("./function/command");
 
 var _fun = require("./function/fun");
 
@@ -2521,7 +2503,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
             };
 
             /** 调试用 */
-            window.CommandControl = _Command.CommandControl;
+            window.CommandControl = _command.CommandControl;
             /** 监听鼠标移动 */
 
             if (_config.default.elementEdit) {
@@ -2634,7 +2616,7 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     }, _callee2);
   }));
 })();
-},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./config":"config.ts","./function/Command":"function/Command.ts","./function/fun":"function/fun.ts","./lib/store":"lib/store.ts","./state/index":"state/index.ts","./ui/warning":"ui/warning.ts","./util":"util.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","./config":"../网页笔记/config.ts","./function/command":"../网页笔记/function/command.ts","./function/fun":"../网页笔记/function/fun.ts","./lib/store":"../网页笔记/lib/store.ts","./state/index":"../网页笔记/state/index.ts","./ui/warning":"../网页笔记/ui/warning.ts","./util":"../网页笔记/util.ts"}],"C:/Users/崮生/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2662,7 +2644,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61787" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61810" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -2837,5 +2819,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","网页笔记.ts"], null)
-//# sourceMappingURL=../build/网页笔记.js.map
+},{}]},{},["C:/Users/崮生/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../网页笔记/网页笔记.ts"], null)
+//# sourceMappingURL=/网页笔记.f32a94d9.js.map

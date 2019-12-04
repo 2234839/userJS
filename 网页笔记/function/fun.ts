@@ -2,7 +2,7 @@ import config, { AllStoreName } from "../config";
 import { AllStore, setLocalItem } from "../lib/store";
 import { Message } from "../ui/message";
 import { remote_getStore, remote_setStore, remote_register, _login } from "./ajax";
-import { addNote, closeEditSelect, CommandControl, deleteSelect, editSelect } from "./Command";
+import { CommandControl, editSelect, deleteSelect, closeEditSelect, addNote } from "./command";
 import { currentElement, editElement } from "../state/index";
 import { Warning } from "../ui/warning";
 import $, { getSelectors } from "../util";

@@ -1,16 +1,10 @@
 import { Message } from "../ui/message";
-import { note } from "../ui/note";
 import { getSelectors } from "../util";
+import { note } from "../ui/note";
 
-export interface commandJSON{
-    /** 选择器 */
-    selectEL: string,
-    /** 构造函数的名字，一般就是类名 */
-    constructor: string
-}
 
 /** 每一个命令都应该实现的东西 */
-class Command {
+export class Command {
     selectEL: HTMLElement
     constructor(/** 要被删除的元素 */ select: HTMLElement) {
         this.selectEL = select
@@ -28,7 +22,7 @@ class Command {
         return this.do()
     }
     /** 将命令变成可以转化为json字符串的对象 */
-    toCommandJSON():commandJSON {
+    toCommandJSON(): commandJSON {
         return {
             selectEL: getSelectors(this.selectEL),
             constructor: (<any>this).__proto__.constructor.name
@@ -40,64 +34,65 @@ class Command {
     }
 }
 
+
+
 /** 删除一个元素 */
 export class deleteSelect extends Command {
-    selectEL_display: string
+    /** 被选中元素的显示状态 */
+    selectEL_display: string;
     do() {
-        this.selectEL_display = this.selectEL.style.display
-        this.selectEL.style.display = "none"
-        return this
+        this.selectEL_display = this.selectEL.style.display;
+        this.selectEL.style.display = "none";
+        return this;
     }
     undo() {
-        this.selectEL.style.display = this.selectEL_display
-        return this
+        this.selectEL.style.display = this.selectEL_display;
+        return this;
     }
 }
-
 /** 使元素可编辑 */
 export class editSelect extends Command {
-    selectEL_contentEditable: string
+    selectEL_contentEditable: string;
     do() {
-        this.selectEL_contentEditable = this.selectEL.contentEditable
+        this.selectEL_contentEditable = this.selectEL.contentEditable;
         this.selectEL.contentEditable = 'true';
-        return this
+        return this;
     }
     undo() {
-        this.selectEL.contentEditable = this.selectEL_contentEditable
-        return this
+        this.selectEL.contentEditable = this.selectEL_contentEditable;
+        return this;
     }
 }
-
 /** 使元素不可编辑 */
 export class closeEditSelect extends Command {
-    selectEL_contentEditable: string
+    selectEL_contentEditable: string;
     do() {
-        this.selectEL_contentEditable = this.selectEL.contentEditable
+        this.selectEL_contentEditable = this.selectEL.contentEditable;
         this.selectEL.contentEditable = 'false';
-        return this
+        return this;
     }
     undo() {
-        this.selectEL.contentEditable = this.selectEL_contentEditable
-        return this
+        this.selectEL.contentEditable = this.selectEL_contentEditable;
+        return this;
+    }
+}
+/** 新增一个笔记 */
+export class addNote extends Command {
+    note: note;
+    do() {
+        this.note = new note({ el: this.selectEL }).show();
+        return this;
+    }
+    undo() {
+        this.note.hide();
+        return this;
+    }
+    redo() {
+        this.note.show();
+        return this;
     }
 }
 
-/** 新增一个笔记 */
-export class addNote extends Command {
-    note: note
-    do() {
-        this.note = new note({ el: this.selectEL }).show()
-        return this
-    }
-    undo() {
-        this.note.hide()
-        return this
-    }
-    redo() {
-        this.note.show()
-        return this
-    }
-}
 
 /** 命令控制器 */
 export const CommandControl: CommandControl = {
@@ -111,7 +106,7 @@ export const CommandControl: CommandControl = {
             this.backOutStack.splice(0, this.backOutStack.length)
             return this.pushCommand(command.do())
         } catch (error) {
-            console.error('命令执行失败',command,error);
+            console.error('命令执行失败', command, error);
         }
         return -1
     },
@@ -143,20 +138,27 @@ export const CommandControl: CommandControl = {
         if (obj.constructor === "addNote")
             return Command.load(obj, addNote)
     },
-    getCommandStackJsonObj(){
+    getCommandStackJsonObj() {
         return this.commandStack.map(a => a.toCommandJSON())
     },
-    getCommandStackJSON(){
+    getCommandStackJSON() {
         return JSON.stringify(this.getCommandStackJsonObj())
     },
-    loadCommandJsonAndRun(commandJSON){
+    loadCommandJsonAndRun(commandJSON) {
         commandJSON
             .map(this.loadCommandJSON)
-            .forEach(command=>this.run(command))
+            .forEach(command => this.run(command))
         return true
     }
+
 }
 
+export interface commandJSON {
+    /** 选择器 */
+    selectEL: string,
+    /** 构造函数的名字，一般就是类名 */
+    constructor: string
+}
 /** 命令控制器的接口 */
 interface CommandControl {
     /** 命令栈，执行过的 */
@@ -172,7 +174,7 @@ interface CommandControl {
     /** 重做,重做撤销栈中的命令,命令会被转移至命令栈 */
     reform(): number
     /** 加载commandJSON转化为命令对象 */
-    loadCommandJSON(obj: commandJSON):Command
+    loadCommandJSON(obj: commandJSON): Command
 
     // 不是很关键的一些命令。用来提供方便的
 
@@ -180,8 +182,8 @@ interface CommandControl {
     getCommandStackJsonObj(): any[]
 
     /** 获取命令栈的JSON字符串 */
-    getCommandStackJSON():string
+    getCommandStackJSON(): string
 
     /** 加载命令栈的JSON字符串并且执行 */
-    loadCommandJsonAndRun(commandJSON:commandJSON[]): boolean
+    loadCommandJsonAndRun(commandJSON: commandJSON[]): boolean
 }

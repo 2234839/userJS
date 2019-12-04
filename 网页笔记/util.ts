@@ -30,7 +30,6 @@ export default {
 }
 
 /** 获取一个元素的选择器 */
-
 export function getSelectors(el: Element) {
     /** 通过path路径来确定元素 */
     let pathSelectors = nodePath(el).reverse().map(el => {
@@ -62,7 +61,6 @@ export function getIndex(el: Element) {
 }
 
 /** 获取一个元素的所有父节点到html为止  */
-
 export function nodePath(...path: Element[]): HTMLElement[] {
     while (path[path.length - 1].parentElement != null) {
         path.push(path[path.length - 1].parentElement);
@@ -74,7 +72,9 @@ export function nodePath(...path: Element[]): HTMLElement[] {
 
 export async function getJSon(url: string, data?: any){
     const str= await ajax_get(url,data)
-    return JSON.parse(str)
+    const res=JSON.parse(str)
+    console.log(url,data,res);
+    return res
 }
 
 /** 油猴的ajaxget */

@@ -1,5 +1,5 @@
 import config, { KeyMap, AllStoreName } from "./config";
-import { CommandControl } from "./function/Command";
+import { CommandControl } from "./function/command";
 import { fun, outline, loadChanges } from "./function/fun";
 import { AllStore, getLocalItem } from "./lib/store";
 import { editElement, setPath } from "./state/index";
@@ -47,9 +47,11 @@ import { nodePath } from "./util";
         console.log('keyCode', code);
         if (code in KeyMap) { /** 执行按键绑定的函数 */
             ///@ts-ignore
-            const funName = KeyMap[code]
-            ///@ts-ignore
-            fun[funName]()
+            const funNameList = KeyMap[code]
+            funNameList.forEach((funName:string)=>{
+                ///@ts-ignore
+                fun[funName]()
+            })
         }
     });
 

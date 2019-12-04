@@ -1,4 +1,4 @@
-import { key_funName } from "./function/fun";
+import { key_funName as fun } from "./function/fun";
 
 /** 是不是开发环境 */
 const isDev= location.href.includes('127.0.0.1')
@@ -8,7 +8,7 @@ const config={
     /** 是否开启编辑 *///是开发环境自动开启
     elementEdit: isDev,
     /** 服务器地址 */
-    serverIp: isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
+    serverIp: 'https://shenzilong.cn/note/',// isDev ? 'https://127.0.0.1/note/' : 'https://shenzilong.cn/note/',
     /** 页面的url */
     locationUrl: decodeURIComponent(location.origin + location.pathname),
     /** 存储登录凭证的 */
@@ -17,17 +17,17 @@ const config={
 /** 存储修改的地方 */
 export const AllStoreName = '_storeName_llej_' + config.locationUrl
 export const KeyMap={
-    "KeyQ":key_funName.editElement,
-    'KeyD':key_funName.deleteElement,
-    'KeyC':key_funName.copyTitle,
-    'KeyW':key_funName.closeEdit,
-    'KeyZ':key_funName.backOut,
-    "KeyY":key_funName.undo,
-    "KeyN":key_funName.addNote,
-    "KeyS":key_funName.saveChanges,
-    "KeyO":key_funName.uploadThe,
-    "KeyP":key_funName.downloadThe,
-    "KeyK":key_funName.register,
-    "KeyL":key_funName.login
+    "KeyQ":[fun.editElement],
+    'KeyD':[fun.deleteElement],
+    'KeyC':[fun.copyTitle],
+    'KeyW':[fun.closeEdit],
+    'KeyZ':[fun.backOut],
+    "KeyY":[fun.undo],
+    "KeyN":[fun.addNote],
+    "KeyS":[fun.saveChanges],
+    "KeyO":[fun.uploadThe],
+    "KeyP":[fun.downloadThe,fun.saveChanges],
+    "KeyK":[fun.register],
+    "KeyL":[fun.login]
 }
 export default config
