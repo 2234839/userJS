@@ -51,8 +51,8 @@ export function getTable(el:HTMLElement,tr_selector="tr",td_selector="td",/** �
 }
 
 /** 获取指定元素的TextContent */
-export function getElText(selsector:string){
-    const el=document.querySelector(selsector)
+export function getElText(selector:string){
+    const el=document.querySelector(selector)
     if(el===null){
         return ""
     }

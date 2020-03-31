@@ -15,8 +15,6 @@ export async function getLocalItem<T>(/** 键名 */ name: string,/** 没有的�
     //为了在非油猴环境下存储依旧能起一部分的作用
     if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) {
         const res = await GM.getValue(name, defaultValue)
-        console.log(res);
-
         return res
     } else {
         const value = localStorage.getItem(name)

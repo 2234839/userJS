@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -841,7 +841,7 @@ var global = arguments[3];
   })() || Function("return this")()
 );
 
-},{}],"node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
+},{}],"../node_modules/regenerator-runtime/runtime-module.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -880,26 +880,65 @@ if (hadRuntime) {
   }
 }
 
-},{"./runtime":"node_modules/regenerator-runtime/runtime.js"}],"node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
+},{"./runtime":"../node_modules/regenerator-runtime/runtime.js"}],"../node_modules/@babel/runtime/regenerator/index.js":[function(require,module,exports) {
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":"node_modules/regenerator-runtime/runtime-module.js"}],"util.ts":[function(require,module,exports) {
+},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime-module.js"}],"../util/gm/xhr.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSelectors = getSelectors;
-exports.getIndex = getIndex;
-exports.nodePath = nodePath;
-exports.getJSon = getJSon;
-exports.ajax_get = ajax_get;
-exports.default = void 0;
+exports.gm_ajax_get = gm_ajax_get;
+
+/** 油猴的ajaxget */
+function gm_ajax_get(url, data) {
+  if (data) url += "?" + jsonToURLpar(data);
+  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) return new Promise(function (resolve, reject) {
+    GM.xmlHttpRequest({
+      method: "GET",
+      url: url,
+      onload: function onload(response) {
+        resolve(response.responseText);
+      },
+      onerror: reject
+    });
+  });else return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", function () {
+      resolve(xhr.responseText);
+    });
+    xhr.addEventListener("error", reject);
+    xhr.open("get", url);
+    xhr.send();
+  });
+}
+/** json 转 urlpar 只能转一层 */
+
+
+function jsonToURLpar(json) {
+  return Object.keys(json).map(function (key) {
+    return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+  }).join("&");
+}
+},{}],"自动同步文章.ts":[function(require,module,exports) {
+"use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
+var _xhr = require("../util/gm/xhr");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// ==UserScript==
+// @name         自动同步文章
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://zhuanlan.zhihu.com/*
+// @grant        GM.xmlHttpRequest
+// ==/UserScript==
 var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   return new (P || (P = Promise))(function (resolve, reject) {
     function fulfilled(value) {
@@ -927,209 +966,57 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-/** 用于复制文本的input */
 
+(function () {
+  "use strict";
 
-var input_copy = document.createElement('textarea');
-input_copy.id = '__';
-input_copy.style.display = 'none'; //不能设置为none因为会导致没有可访问性
-
-input_copy.setAttribute('style', "\n        position: absolute;\n        top: -9999px;\n        left: -9999px;");
-document.body.appendChild(input_copy);
-/** 工具类 */
-
-var _default = {
-  /** 复制一个元素的titil 或者一段字符串到剪贴板 */
-  copyTitle: function copyTitle(el) {
-    var title;
-    if (typeof el === 'string') title = el;else title = el.getAttribute("title");
-    input_copy.setAttribute('readonly', 'readonly');
-    input_copy.setAttribute('value', title);
-    input_copy.value = title;
-    input_copy.select();
-    input_copy.setSelectionRange(0, 9999);
-    document.execCommand('copy');
-  }
-};
-/** 获取一个元素的选择器 */
-
-exports.default = _default;
-
-function getSelectors(el) {
-  /** 通过path路径来确定元素 */
-  var pathSelectors = nodePath(el).reverse().map(function (el) {
-    return el.nodeName + ":nth-child(".concat(getIndex(el), ")");
-  }).join('>');
-  /** 通过id以及class来确定元素 */
-
-  var id_className = "";
-  var id = el.id;
-  if (id) id_className += "#".concat(id);
-  el.classList.forEach(function (className) {
-    id_className += ".".concat(className);
-  });
-  /** nth-child 选择 看它是第几个元素 */
-
-  var index = getIndex(el);
-  /** 最终构造出来的选择器 */
-
-  return "".concat(pathSelectors).concat(id_className, ":nth-child(").concat(index, ")");
-}
-/** 获取元素它在第几位 */
-
-
-function getIndex(el) {
-  if (el.nodeName === 'HTML') return 1;
-  return 1 + Array.from(el.parentElement.children).findIndex(function (child) {
-    return child === el;
-  });
-}
-/** 获取一个元素的所有父节点到html为止  */
-
-
-function nodePath() {
-  for (var _len = arguments.length, path = new Array(_len), _key = 0; _key < _len; _key++) {
-    path[_key] = arguments[_key];
-  }
-
-  while (path[path.length - 1].parentElement != null) {
-    path.push(path[path.length - 1].parentElement);
-  }
-  /** 只需要是HTMLElement的 */
-
-
-  var HTMLElementPath = path.filter(function (el) {
-    return el instanceof HTMLElement;
-  });
-  return HTMLElementPath;
-}
-
-function getJSon(url, data) {
   return __awaiter(this, void 0, void 0,
   /*#__PURE__*/
   _regenerator.default.mark(function _callee() {
-    var str;
+    var edit_content;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return ajax_get(url, data);
+            _context.t0 = console;
+            _context.next = 3;
+            return (0, _xhr.gm_ajax_get)("http://127.0.0.1:9093/|mouse_left_click:800:600");
 
-          case 2:
-            str = _context.sent;
-            return _context.abrupt("return", JSON.parse(str));
+          case 3:
+            _context.t1 = _context.sent;
 
-          case 4:
+            _context.t0.log.call(_context.t0, _context.t1);
+
+            /** 知乎的编辑器主体 */
+            edit_content = document.querySelector(".notranslate,.public-DraftEditor-content");
+            edit_content.focus();
+            _context.t2 = console;
+            _context.next = 10;
+            return (0, _xhr.gm_ajax_get)("http://127.0.0.1:9093/|key_down:17|key_press:65|key_up:17");
+
+          case 10:
+            _context.t3 = _context.sent;
+
+            _context.t2.log.call(_context.t2, _context.t3);
+
+            _context.t4 = console;
+            _context.next = 15;
+            return (0, _xhr.gm_ajax_get)("http://127.0.0.1:9093/|key_down:17|key_press:86|key_up:17");
+
+          case 15:
+            _context.t5 = _context.sent;
+
+            _context.t4.log.call(_context.t4, _context.t5);
+
+          case 17:
           case "end":
             return _context.stop();
         }
       }
     }, _callee);
   }));
-}
-/** 油猴的ajaxget */
-
-
-function ajax_get(url, data) {
-  if (data) url += '?' + jsonToURLpar(data);
-  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) return new Promise(function (resolve, reject) {
-    GM.xmlHttpRequest({
-      method: "GET",
-      url: url,
-      onload: function onload(response) {
-        resolve(response.responseText);
-      },
-      onerror: reject
-    });
-  });else return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', function () {
-      resolve(xhr.responseText);
-    });
-    xhr.addEventListener('error', reject);
-    xhr.open('get', url);
-    xhr.send();
-  });
-}
-/** json 转 urlpar 只能转一层 */
-
-
-function jsonToURLpar(json) {
-  return Object.keys(json).map(function (key) {
-    return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
-  }).join("&");
-}
-},{"@babel/runtime/regenerator":"node_modules/@babel/runtime/regenerator/index.js"}],"api自动提取.ts":[function(require,module,exports) {
-"use strict";
-
-var util = _interopRequireWildcard(require("../\u7F51\u9875\u7B14\u8BB0/util"));
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function getShowDocApiCode() {
-  return apiToTypeScriptCode(getShowDocApi());
-}
-/** 获取showDoc平台的api */
-
-
-function getShowDocApi() {
-  var api = {
-    url: qALL('main .main-editor li')[1].textContent,
-    name: qALL('main div')[0].textContent,
-    describe: qALL('main .main-editor li')[1].textContent,
-    method: qALL('main .main-editor li')[2].textContent,
-    parList: Array.from(qALL('table')[0].querySelectorAll('tr')).filter(function (el, i) {
-      return i !== 0;
-    }).map(function (el) {
-      return {
-        name: el.querySelectorAll('td')[0].textContent,
-
-        /** 是否必需 */
-        must: el.querySelectorAll('td')[1].textContent === '是',
-        type: getType(el.querySelectorAll('td')[2].textContent),
-        describe: el.querySelectorAll('td')[3].textContent
-      };
-    })
-  };
-  return api;
-}
-
-;
-
-function qALL(selector) {
-  return document.querySelectorAll(selector);
-}
-/** 将api转为ts的代码 */
-
-
-function apiToTypeScriptCode(api) {
-  console.log(api);
-  var name = urlToName(api.url);
-  return "\n/** ".concat(api.name, " */\nexport const ").concat(name, " = (par: {\n    ").concat(api.parList.map(function (obj) {
-    return "/** ".concat(obj.type, " ").concat(obj.describe, " */").concat(obj.name).concat(obj.must ? '' : '?', ": ").concat(obj.type, ",");
-  }).join('\n'), "\n}): Promise<resData<any>> => autoAjax('").concat(api.url, "', par)\n\n    ");
-}
-/** 将url转为友好的名字 */
-
-
-function urlToName(url) {
-  return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(function (str) {
-    return str.replace(/\//g, '');
-  }).join('_');
-}
-/** 从int double 之类的 获取类型 */
-
-
-function getType(str) {
-  if (str.includes('int')) return 'number';
-  if (str.includes('long')) return 'number';
-  if (str.includes('double')) return 'number';
-  return 'string';
-}
-
-util.default.copyTitle(getShowDocApiCode());
-},{"../网页笔记/util":"util.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+})();
+},{"@babel/runtime/regenerator":"../node_modules/@babel/runtime/regenerator/index.js","../util/gm/xhr":"../util/gm/xhr.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1157,7 +1044,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "27434" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58816" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -1188,8 +1075,9 @@ if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
         assetsToAccept.forEach(function (v) {
           hmrAcceptRun(v[0], v[1]);
         });
-      } else {
-        window.location.reload();
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
       }
     }
 
@@ -1332,5 +1220,4 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","api自动提取.ts"], null)
-//# sourceMappingURL=../dist/api自动提取.js.map
+},{}]},{},["C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js","自动同步文章.ts"], null)
