@@ -345,4 +345,4 @@ function hmrAcceptRun(bundle, id) {
   }
 }
 },{}]},{},["C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js","请求代理.user.ts"], null)
-//# sourceMappingURL=/请求代理.user.js.map
+//# sourceMappingURL=http://127.0.0.1:1234/请求代理.user.js.map

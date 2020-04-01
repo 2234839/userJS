@@ -16,12 +16,9 @@
   import { editElement, setPath } from "./state/index";
   import { Warning } from "./ui/warning";
   import { nodePath } from "./util";
-  let msg_list = [];
-
-  let visible = false;
-
+  import Msg from "./svelte/msg";
   /** 监听鼠标移动 */
-  function mouse(event) {
+  function on_mouse(event) {
     if (event.target instanceof HTMLElement) {
       setPath(nodePath(event.target));
       if (config.elementEdit) {
@@ -29,36 +26,29 @@
       }
     }
   }
-  if (config.elementEdit) {
-    document.addEventListener("mouseover", mouse);
-  }
   /** 监测按键事件 */
-  document.addEventListener("keydown", async function(event) {
+  async function on_keydown(event) {
     const code = event.code;
-    //有元素获得焦点，视为正在输入文本，不执行下面的功能
+    //有元素获得焦点，视为正在输入文本，不执行指令
     if (document.querySelectorAll(":focus").length > 0) {
       return;
     }
-
+    /** 切换编辑模式 */
     if (code === "F2" || code === "KeyM") {
-      return switchState(mouse, event);
+      return switchState(event);
     }
     /** 没有开启编辑功能 */
     if (config.elementEdit === false) {
       return;
     }
-    console.log("keyCode", code);
     if (code in KeyMap) {
       /** 执行按键绑定的函数 */
-      ///@ts-ignore
       const funName = KeyMap[code];
-      ///@ts-ignore
       fun[funName]();
     }
-  });
-
-  /** 元素被编辑了 */
-  document.addEventListener("input", function(event) {
+  }
+  /** 编辑事件 */
+  function on_input(event) {
     if (event.target instanceof HTMLElement) {
       const el = event.target;
       if (el.innerHTML.length > 10 * 1000)
@@ -67,17 +57,15 @@
         }).autoHide();
       else editElement.add(el);
     }
-  });
-
+  }
   /** 切换状态 */
-  function switchState(mouse, event) {
+  function switchState(event) {
     config.elementEdit = !config.elementEdit;
     event.preventDefault();
     event.returnValue = false;
     return false;
   }
-
-  /** 自动加载更改 */
+  /** 自动加载本地暂存更改 */
   (async () => {
     const AllStoreStr = await getLocalItem(AllStoreName, undefined);
     if (AllStoreStr === undefined) return console.warn("没有可用的存储库");
@@ -102,12 +90,13 @@
   }
 </style>
 
-<svelte:body on:mouseover={mouse} />
+<svelte:window
+  on:keydown={on_keydown}
+  on:input={on_input}
+  on:mouseover={on_mouse} />
 <div class="root">
-  {#if visible}
-    <div transition:slide>fades in and out</div>
-  {/if}
-  {#each msg_list as str}
-    <div transition:scale>{str}</div>
-  {/each}
+  <!-- <Msg /> -->
 </div>
+
+<!-- 外发光的选中样式 -->
+{@html `<style>.user_js_llej_outline{outline:2px solid red}</style>`}

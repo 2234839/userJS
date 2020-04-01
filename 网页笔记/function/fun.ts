@@ -150,16 +150,9 @@ function register() {
   });
 }
 
-const div = document.createElement("div");
-div.style.outline = "2px solid red";
-const outline_str = div.style.outline;
 /** 轮廓线,用以显示当前元素 */
 export function outline(el: HTMLElement) {
-  if (el.style.outline !== outline_str) {
-    //@ts-ignore
-    el.__outline__ = el.style.outline;
-    el.style.outline = outline_str;
-  }
+  el.classList.add("user_js_llej_outline");
   setTimeout(reduction, 400);
   function reduction() {
     if (el == currentElement) {
@@ -167,8 +160,7 @@ export function outline(el: HTMLElement) {
       /** 鼠标还在这个元素上，再等会 */
       return;
     }
-    //@ts-ignore
-    el.style.outline = el.__outline__;
+    el.classList.remove("user_js_llej_outline")
   }
 }
 

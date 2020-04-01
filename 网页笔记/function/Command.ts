@@ -6,7 +6,7 @@ import { note } from "../ui/note";
 /** 每一个命令都应该实现的东西 */
 export class Command {
     selectEL: HTMLElement
-    constructor(/** 要被删除的元素 */ select: HTMLElement) {
+    constructor(/** 命令执行的元素 */ select: HTMLElement) {
         this.selectEL = select
     }
     /** 执行这个命令 */

@@ -17,9 +17,8 @@ import { setLocalItem } from "./lib/store";
 // ==/UserScript==
 (async function() {
   /** 调试用 */
-  (<any>window).CommandControl = CommandControl;
-  setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
-
+  // (<any>window).CommandControl = CommandControl;
+  // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
   const app_div = document.createElement("div");
   document.body.appendChild(app_div);
   const app= new App({
