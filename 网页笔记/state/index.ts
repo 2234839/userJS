@@ -4,6 +4,7 @@ export let currentElement:HTMLElement
 
 export let path:HTMLElement[]
 
+/** 修改当前指向的元素和路径 */
 export function setPath(elList:HTMLElement[]) {
     path=elList
     currentElement=elList[0]

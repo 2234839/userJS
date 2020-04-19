@@ -1,5 +1,3 @@
-import { Command } from "../function/command";
-
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {
   //为了在非油猴环境下存储依旧能起一部分的作用
@@ -21,12 +19,4 @@ export async function getLocalItem<T>(/** 键名 */ name: string, /** 没有的�
     if (value === null) return await defaultValue;
     return await value;
   }
-}
-
-/** 存储所有的东西 */
-export interface AllStore {
-  CommandStack: Command[];
-  element_List: {
-    [/** 选择器 */ name: string]: /** innerHTML */ string;
-  };
 }

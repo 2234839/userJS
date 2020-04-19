@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "网页笔记",
+			"problemMatcher": [],
+			"label": "npm: 网页笔记",
+			"detail": "parcel  ./网页笔记/网页笔记.user.ts"
+		}
+	]
+}
