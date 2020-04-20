@@ -40,7 +40,5 @@
       )
       .join(",");
   }
-  console.log(style_el.innerHTML);
-
   document.body.appendChild(style_el);
 })();
