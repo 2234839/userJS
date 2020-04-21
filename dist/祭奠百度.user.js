@@ -132,32 +132,37 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 // ==/UserScript==
 
 (() => {
-  const style_el = document.createElement("style");
-  const gray = `-webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
-  filter: gray;`;
-  style_el.innerHTML = `
-    ${pan_contained([
-  /** 百度 */
-  "baidu",
-  /** 百度静态资源 */
-  "bdstatic",
-  /**  */
-  "bdimg"])},
-    /** https://pan.baidu.com/buy/checkoutcounter?from=non&vip=1 */
-    .cashier-page-logo
-    {${gray}}
-    `;
+  function main() {
+    const style_el = document.createElement("style");
+    const gray = `-webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;`;
+    style_el.innerHTML = `
+      ${pan_contained([
+    /** 百度 */
+    "baidu",
+    /** 百度静态资源 */
+    "bdstatic",
+    /**  */
+    "bdimg"])},
+      /** https://pan.baidu.com/buy/checkoutcounter?from=non&vip=1 */
+      .cashier-page-logo
+      {${gray}}
+      `;
 
-  function pan_contained(selector) {
-    return selector.map(s => `[src*=${s}],
-          [style*=${s}]`).join(",");
+    function pan_contained(selector) {
+      return selector.map(s => `[src*=${s}],
+            [style*=${s}]`).join(",");
+    } // Create an observer instance linked to the callback function
+
+
+    document.body.insertBefore(style_el, document.querySelector("body *"));
   }
 
-  document.body.appendChild(style_el);
+  main();
 })();
 },{}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -187,7 +192,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59563" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52338" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
