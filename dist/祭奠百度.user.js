@@ -121,7 +121,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 "use strict"; // ==UserScript==
 // @name         祭奠百度
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  或许未来只有一片精致的灰 ！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -191,7 +191,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52338" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60144" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
