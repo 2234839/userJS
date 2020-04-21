@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         祭奠百度
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  或许未来只有一片精致的灰 ！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -42,7 +42,6 @@
         .join(",");
     }
 
-    // Create an observer instance linked to the callback function
     document.body.insertBefore(style_el, document.querySelector("body *"));
   }
   main();

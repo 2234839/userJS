@@ -156,8 +156,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
     function pan_contained(selector) {
       return selector.map(s => `[src*=${s}],
             [style*=${s}]`).join(",");
-    } // Create an observer instance linked to the callback function
-
+    }
 
     document.body.insertBefore(style_el, document.querySelector("body *"));
   }
