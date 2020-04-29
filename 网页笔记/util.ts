@@ -13,22 +13,22 @@ input_copy.setAttribute(
         left: -9999px;`,
 );
 document.body.appendChild(input_copy);
+/** 复制一个元素的titil 或者一段字符串到剪贴板 */
+export function copyTitle(el: HTMLElement | string) {
+  let title;
+  if (typeof el === "string") title = el;
+  else title = el.getAttribute("title");
 
+  input_copy.setAttribute("readonly", "readonly");
+  input_copy.setAttribute("value", title);
+  input_copy.value = title;
+  input_copy.select();
+  input_copy.setSelectionRange(0, 9999);
+  document.execCommand("copy");
+}
 /** 工具类 */
 export default {
-  /** 复制一个元素的titil 或者一段字符串到剪贴板 */
-  copyTitle(el: HTMLElement | string) {
-    let title;
-    if (typeof el === "string") title = el;
-    else title = el.getAttribute("title");
-
-    input_copy.setAttribute("readonly", "readonly");
-    input_copy.setAttribute("value", title);
-    input_copy.value = title;
-    input_copy.select();
-    input_copy.setSelectionRange(0, 9999);
-    document.execCommand("copy");
-  },
+  copyTitle,
 };
 
 /** 获取一个元素的选择器 */
@@ -88,7 +88,7 @@ export function ajax_get(url: string, data?: any): Promise<string> {
       GM.xmlHttpRequest({
         method: "GET",
         url,
-        onload: function(response: any) {
+        onload: function (response: any) {
           resolve(response.responseText);
         },
         onerror: reject,
@@ -97,7 +97,7 @@ export function ajax_get(url: string, data?: any): Promise<string> {
   else
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.addEventListener("load", function() {
+      xhr.addEventListener("load", function () {
         resolve(xhr.responseText);
       });
       xhr.addEventListener("error", reject);
@@ -109,7 +109,7 @@ export function ajax_get(url: string, data?: any): Promise<string> {
 /** json 转 urlpar 只能转一层 */
 function jsonToURLpar(json: any) {
   return Object.keys(json)
-    .map(function(key) {
+    .map(function (key) {
       return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
     })
     .join("&");

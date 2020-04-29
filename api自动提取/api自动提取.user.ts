@@ -21,30 +21,30 @@ import { getRap2Api } from "./parse/rap2-taobo";
 /** 编译命令
 parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
  */
-; (async function () {
-    console.log('api 自动提取开始运行');
+(async function () {
+  console.log("api 自动提取开始运行");
 
-    const uw = window.unsafeWindow ? window.unsafeWindow : window;
+  const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
-    function getcode(fun:()=>api) {
-        return ()=>{
-            const api = apiToTypeScriptCode(fun())
-            util.copyTitle(api)
-            return api
-        }
-    }
+  function getCode(fun: () => api) {
+    return () => {
+      const api = apiToTypeScriptCode(fun());
+      util.copyTitle(api);
+      return api;
+    };
+  }
+  uw._api = {
+    getShowDocApiCode: getCode(getShowDocApi),
+    getYapiApiCode: getCode(getYapiApi),
+    get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui),
+    get_rap2_taobao_code: getCode(getRap2Api),
+  };
+  console.log(util);
 
+  setTimeout(() => {
+    const code = uw._api.getYapiApiCode();
+    console.log(code);
 
-    console.log("test");
-
-    uw._api = {
-        getShowDocApiCode:getcode(getShowDocApi),
-        getYapiApiCode:getcode(getYapiApi),
-        get_swagger_bootstrap_ui_code: getcode(swagger_bootstrap_ui),
-        get_rap2_taobao_code:getcode(getRap2Api)
-    }
-    setTimeout(() => {
-        util.copyTitle(uw._api.get_rap2_taobao_code())
-    }, 2000);
-
-})()
+    util.copyTitle(code);
+  }, 3000);
+})();
