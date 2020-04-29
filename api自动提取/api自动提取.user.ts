@@ -9,7 +9,7 @@ import { getRap2Api } from "./parse/rap2-taobo";
 // ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.1.0
 // @description  使用方式是打开控制台，输入_api你可以看到一些方法，在支持的网站执行对应的方法就ok了，
 // @author       崮生 2234839456@qq.com
 // @include      *://www.showdoc.cc/*
