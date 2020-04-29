@@ -612,44 +612,6 @@ function reduction_tree(table, parlist) {
 
   return hierarchy;
 }
-},{"../util":"util.ts"}],"parse/yapi.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const util_1 = require("../util");
-
-const $$ = util_1.qALL;
-/** 获取Yapi平台的api */
-
-function getYapiApi() {
-  const desNodeList = $$(".interface-title").includes("备注");
-  const describe = desNodeList.length === 0 ? "" : desNodeList[0].nextElementSibling.textContent;
-  const api = {
-    url: $$(".tag-method + span")[0].textContent,
-    name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
-    describe,
-    method: $$(".tag-method")[0].textContent,
-    parList: Array.from($$("table")[0].querySelectorAll("tr")).filter((el, i) => {
-      return i !== 0;
-    }).map(el => {
-      return {
-        name: el.querySelectorAll("td")[0].textContent,
-
-        /** 是否必需 */
-        must: el.querySelectorAll("td")[1].textContent === "是",
-        type: el.querySelectorAll("td")[2].textContent,
-        describe: el.querySelectorAll("td")[3].textContent
-      };
-    }),
-    resList: []
-  };
-  return api;
-}
-
-exports.getYapiApi = getYapiApi;
 },{"../util":"util.ts"}],"parse/rap2-taobo.ts":[function(require,module,exports) {
 "use strict";
 
@@ -688,13 +650,13 @@ function getRap2Api() {
   };
 
   const api = {
-    url: util_1.getElText('.summary li:nth-child(1) a'),
-    name: util_1.getElText('#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span'),
+    url: util_1.getElText(".summary li:nth-child(1) a"),
+    name: util_1.getElText("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span"),
     describe: "",
     method: util_1.getElText("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
     parList: reduction_tree(par_el, par_table.map(str_list => {
       return {
-        name: str_list[0].replace(/BODY$/, '').replace(/QUERY$/, ''),
+        name: str_list[0].replace(/BODY$/, "").replace(/QUERY$/, ""),
         must: str_list[1] === "true",
         type: str_list[2],
         describe: str_list[5]
@@ -716,7 +678,7 @@ function getRap2Api() {
 exports.getRap2Api = getRap2Api;
 /** 根据table 获取到树的结构 */
 
-function reduction_tree(table, parlist, get_level_list) {
+function reduction_tree(table, parList, get_level_list) {
   /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
   const level_list = get_level_list(table);
   /** 最高级 */
@@ -728,7 +690,7 @@ function reduction_tree(table, parlist, get_level_list) {
     const level = level_list[i];
 
     if (i === 0) {
-      current_hierarchy.push(parlist[i]);
+      current_hierarchy.push(parList[i]);
       continue;
     }
     /** 同级元素 */
@@ -766,12 +728,73 @@ function reduction_tree(table, parlist, get_level_list) {
     /** 将元素添加到当前层级 */
 
 
-    current_hierarchy.push(parlist[i]);
+    current_hierarchy.push(parList[i]);
   }
 
   return hierarchy;
 }
-},{"../util":"util.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
+
+exports.reduction_tree = reduction_tree;
+},{"../util":"util.ts"}],"parse/yapi.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const util_1 = require("../util");
+
+const rap2_taobo_1 = require("./rap2-taobo");
+
+const $$ = util_1.qALL;
+/** 获取Yapi平台的api */
+
+function getYapiApi() {
+  const desNodeList = $$(".interface-title").includes("备注");
+  const describe = desNodeList.length === 0 ? "" : desNodeList[0].nextElementSibling.textContent;
+  const res_el = document.querySelector("div.ant-table-wrapper:nth-child(7) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(3)");
+  /** 参数名称 类型 是否必须 默认值 备注 其他信息*/
+
+  const res_table = util_1.getTable(res_el, "tr", "td", [undefined, undefined, el => {
+    return el.textContent !== "非必须" ? "true" : "false";
+  }]);
+  console.log(111111, res_el, res_table);
+  const api = {
+    url: $$(".tag-method + span")[0].textContent,
+    name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
+    describe,
+    method: $$(".tag-method")[0].textContent,
+    parList: Array.from($$("table")[0].querySelectorAll("tr")).filter((el, i) => {
+      return i !== 0;
+    }).map(el => {
+      return {
+        name: el.querySelectorAll("td")[0].textContent,
+
+        /** 是否必需 */
+        must: el.querySelectorAll("td")[1].textContent === "是",
+        type: el.querySelectorAll("td")[2].textContent,
+        describe: el.querySelectorAll("td")[3].textContent
+      };
+    }),
+    resList: rap2_taobo_1.reduction_tree(res_el, res_table.map(str_list => {
+      return {
+        name: str_list[0],
+        must: str_list[2] === "true",
+        type: str_list[1],
+        describe: `${str_list[4]} ${str_list[5]}`
+      };
+    }), el => {
+      const tr = el.querySelectorAll("tr");
+      return Array.from(tr).map(tr => {
+        return Number(tr.className.replace(/.*(\d+)/, "$1"));
+      });
+    })
+  };
+  return api;
+}
+
+exports.getYapiApi = getYapiApi;
+},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
