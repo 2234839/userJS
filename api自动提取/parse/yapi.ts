@@ -21,14 +21,16 @@ export function getYapiApi(): api {
       return el.textContent !== "非必须" ? "true" : "false";
     },
   ]);
-  console.log(111111, res_el, res_table);
-
+  /** body 参数 */
+  const par_table = Array.from($$(".col-title"))
+    .filter((el) => el.textContent.startsWith("Body"))[0]
+    .parentElement.querySelector("table");
   const api: api = {
     url: $$(".tag-method + span")[0].textContent,
     name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
     describe,
     method: $$(".tag-method")[0].textContent,
-    parList: Array.from($$("table")[0].querySelectorAll("tr"))
+    parList: Array.from(par_table.querySelectorAll("tr"))
       .filter((el, i) => {
         return i !== 0;
       })
@@ -36,9 +38,9 @@ export function getYapiApi(): api {
         return {
           name: el.querySelectorAll("td")[0].textContent,
           /** 是否必需 */
-          must: el.querySelectorAll("td")[1].textContent === "是",
-          type: el.querySelectorAll("td")[2].textContent,
-          describe: el.querySelectorAll("td")[3].textContent,
+          must: el.querySelectorAll("td")[2].textContent !== "非必须",
+          type: el.querySelectorAll("td")[1].textContent,
+          describe: el.querySelectorAll("td")[4].textContent,
         };
       }),
 

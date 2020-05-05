@@ -18,11 +18,7 @@ import { getRap2Api } from "./parse/rap2-taobo";
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
-/** 编译命令
-parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
- */
 (async function () {
-  console.log("api 自动提取开始运行");
 
   const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
@@ -39,12 +35,11 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
     get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui),
     get_rap2_taobao_code: getCode(getRap2Api),
   };
-  console.log(util);
 
-  setTimeout(() => {
-    const code = uw._api.getYapiApiCode();
-    console.log(code);
+  // setTimeout(() => {
+  //   const code = uw._api.getYapiApiCode();
+  //   console.log(code);
 
-    util.copyTitle(code);
-  }, 3000);
+  //   util.copyTitle(code);
+  // }, 3000);
 })();

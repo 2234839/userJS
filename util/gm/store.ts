@@ -20,3 +20,14 @@ export async function getLocalItem<T>(/** 键名 */ name: string, /** 没有的�
     return await value;
   }
 }
+/** 读取一条本地存储 */
+export async function deleteLocalItem<T>(/** 键名 */ name: string) {
+  //为了在非油猴环境下存储依旧能起一部分的作用
+  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) {
+    const res = await GM.deleteValue(name);
+    return res;
+  } else {
+    const value = localStorage.removeItem(name);
+    return await value;
+  }
+}

@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"config.ts":[function(require,module,exports) {
+})({"../网页笔记/config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -314,7 +314,7 @@ function log(...arg) {
 }
 
 exports.log = log;
-},{"./config":"config.ts"}],"util.ts":[function(require,module,exports) {
+},{"./config":"../网页笔记/config.ts"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -760,22 +760,24 @@ function getYapiApi() {
   const res_table = util_1.getTable(res_el, "tr", "td", [undefined, undefined, el => {
     return el.textContent !== "非必须" ? "true" : "false";
   }]);
-  console.log(111111, res_el, res_table);
+  /** body 参数 */
+
+  const par_table = Array.from($$(".col-title")).filter(el => el.textContent.startsWith("Body"))[0].parentElement.querySelector("table");
   const api = {
     url: $$(".tag-method + span")[0].textContent,
     name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
     describe,
     method: $$(".tag-method")[0].textContent,
-    parList: Array.from($$("table")[0].querySelectorAll("tr")).filter((el, i) => {
+    parList: Array.from(par_table.querySelectorAll("tr")).filter((el, i) => {
       return i !== 0;
     }).map(el => {
       return {
         name: el.querySelectorAll("td")[0].textContent,
 
         /** 是否必需 */
-        must: el.querySelectorAll("td")[1].textContent === "是",
-        type: el.querySelectorAll("td")[2].textContent,
-        describe: el.querySelectorAll("td")[3].textContent
+        must: el.querySelectorAll("td")[2].textContent !== "非必须",
+        type: el.querySelectorAll("td")[1].textContent,
+        describe: el.querySelectorAll("td")[4].textContent
       };
     }),
     resList: rap2_taobo_1.reduction_tree(res_el, res_table.map(str_list => {
@@ -864,14 +866,9 @@ const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
 // @connect      shenzilong.cn
 // ==/UserScript==
 
-/** 编译命令
-parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
- */
-
 
 (function () {
   return __awaiter(this, void 0, void 0, function* () {
-    console.log("api 自动提取开始运行");
     const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
     function getCode(fun) {
@@ -887,14 +884,11 @@ parcel build --no-minify --no-source-maps .\api自动提取\api自动提取.ts
       getYapiApiCode: getCode(yapi_1.getYapiApi),
       get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui_1.swagger_bootstrap_ui),
       get_rap2_taobao_code: getCode(rap2_taobo_1.getRap2Api)
-    };
-    console.log(util_1.default);
-    setTimeout(() => {
-      const code = uw._api.getYapiApiCode();
-
-      console.log(code);
-      util_1.default.copyTitle(code);
-    }, 3000);
+    }; // setTimeout(() => {
+    //   const code = uw._api.getYapiApiCode();
+    //   console.log(code);
+    //   util.copyTitle(code);
+    // }, 3000);
   });
 })();
 },{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -925,7 +919,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59033" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63528" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

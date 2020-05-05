@@ -10,15 +10,18 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@types/synaptic": "^1.0.3",
     "glob": "^7.1.4",
     "idb": "^5.0.2",
     "parcel-bundler": "^1.12.4",
+    "rrweb": "^0.7.33",
     "rxjs": "^6.5.5",
     "segment": "^0.1.3",
-    "svelte": "^3.20.1"
+    "svelte": "^3.20.1",
+    "synaptic": "^1.1.4"
   },
   "scripts": {
     "网页笔记": "npx parcel  ./网页笔记/网页笔记.user.ts"
   },
-  "browserslist": "last 10 chrome versions"
+  "browserslist": "last 3 chrome versions"
 }
