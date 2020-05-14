@@ -922,7 +922,7 @@ const yapi_1 = require("./parse/yapi");
 const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
+// @version      1.1.2
 // @description  使用方式是打开控制台，输入_api你可以看到一些方法，在支持的网站执行对应的方法就ok了，
 // @author       崮生 2234839456@qq.com
 // @include      *://www.showdoc.cc/*
@@ -945,15 +945,39 @@ const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
       };
     }
 
-    uw._api = {
+    const api = {
       getShowDocApiCode: getCode(showDocApi_1.getShowDocApi),
       getYapiApiCode: getCode(yapi_1.getYapiApi),
       get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui_1.swagger_bootstrap_ui),
       get_rap2_taobao_code: getCode(rap2_taobo_1.getRap2Api)
     };
+    uw._api = api;
+    let get_api = undefined;
 
     if (document.getElementById("yapi")) {
       yapi_1.修改人列表_扩展();
+      set_default(api.getYapiApiCode);
+    }
+    /** 设置当前默认使用的api */
+
+
+    function set_default(f) {
+      get_api = f;
+      复制按钮_扩展();
+    }
+
+    function 复制按钮_扩展() {
+      const btn = document.createElement("button");
+      btn.textContent = "生成代码";
+      btn.style.cssText = `
+      z-index:60;
+      position: fixed;
+      top: 100px;right:20px;
+    `;
+      btn.addEventListener("click", () => {
+        util_1.default.copyTitle(get_api());
+      });
+      document.body.appendChild(btn);
     } // setTimeout(() => {
     //   const code = uw._api.getYapiApiCode();
     //   console.log(code);
