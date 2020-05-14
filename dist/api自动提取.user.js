@@ -737,7 +737,36 @@ function reduction_tree(table, parList, get_level_list) {
 }
 
 exports.reduction_tree = reduction_tree;
-},{"../util":"util.ts"}],"parse/yapi.ts":[function(require,module,exports) {
+},{"../util":"util.ts"}],"../util/elment.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function 检测元素状态(selector, 出现, 变化, 消失) {
+  let status = false;
+  let html = "";
+  setInterval(() => {
+    const el = document.querySelector(selector);
+
+    if (status && el && el.innerHTML !== html) {
+      html = el.innerHTML;
+      变化(el);
+    }
+
+    if (el && !status) {
+      status = true;
+      出现(el);
+    } else if (!el && status) {
+      status = false;
+      消失();
+    }
+  }, 100);
+}
+
+exports.检测元素状态 = 检测元素状态;
+},{}],"parse/yapi.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -747,6 +776,8 @@ Object.defineProperty(exports, "__esModule", {
 const util_1 = require("../util");
 
 const rap2_taobo_1 = require("./rap2-taobo");
+
+const elment_1 = require("../../util/elment");
 
 const $$ = util_1.qALL;
 /** 获取Yapi平台的api */
@@ -798,7 +829,42 @@ function getYapiApi() {
 }
 
 exports.getYapiApi = getYapiApi;
-},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
+
+function 修改人列表_扩展() {
+  const f = ant_row_2 => {
+    const api = location.href.replace(/.*api\/(\d+)/, "$1");
+    const project = location.href.replace(/.*project\/(\d+).*/, "$1");
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+        const data = JSON.parse(this.responseText).data.list;
+        const _edit_list = "_edit_list";
+        const edit_list = document.querySelector("." + _edit_list);
+
+        if (edit_list) {
+          edit_list.remove();
+        }
+
+        const div = document.createElement("div");
+        div.classList.add(_edit_list);
+        div.innerHTML = data.map(el => {
+          return `${new Date(el.add_time * 1000).toLocaleString()} <img src="/api/user/avatar?uid=${el.uid}" style="width: 20px;height: 100%;"/> ${el.content}`;
+        }).join("");
+        ant_row_2.parentElement.appendChild(div);
+      }
+    });
+    xhr.open("GET", `/api/log/list?typeid=${project}&type=project&page=1&limit=10&selectValue=${api}`);
+    xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0");
+    xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
+    xhr.setRequestHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+    xhr.send();
+  };
+
+  elment_1.检测元素状态("div.ant-row:nth-child(1)", f, f, () => {});
+}
+
+exports.修改人列表_扩展 = 修改人列表_扩展;
+},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/elment":"../util/elment.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -856,7 +922,7 @@ const yapi_1 = require("./parse/yapi");
 const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
-// @version      1.1.0
+// @version      1.1.1
 // @description  使用方式是打开控制台，输入_api你可以看到一些方法，在支持的网站执行对应的方法就ok了，
 // @author       崮生 2234839456@qq.com
 // @include      *://www.showdoc.cc/*
@@ -884,11 +950,16 @@ const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
       getYapiApiCode: getCode(yapi_1.getYapiApi),
       get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui_1.swagger_bootstrap_ui),
       get_rap2_taobao_code: getCode(rap2_taobo_1.getRap2Api)
-    }; // setTimeout(() => {
+    };
+
+    if (document.getElementById("yapi")) {
+      yapi_1.修改人列表_扩展();
+    } // setTimeout(() => {
     //   const code = uw._api.getYapiApiCode();
     //   console.log(code);
     //   util.copyTitle(code);
     // }, 3000);
+
   });
 })();
 },{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -919,7 +990,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63528" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50919" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
