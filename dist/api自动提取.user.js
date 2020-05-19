@@ -123,6 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.AllStoreName = exports.isDev = void 0;
 /** 是不是开发环境 */
 
 exports.isDev = false;
@@ -184,6 +185,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.log = exports.ajax_get = exports.getJSon = exports.nodePath = exports.getIndex = exports.getSelectors = exports.copyTitle = void 0;
 
 const config_1 = require("./config");
 /** 用于复制文本的input */
@@ -320,6 +322,7 @@ exports.log = log;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.copyStr = exports.getElText = exports.getTable = exports.getTextConten = exports.qALL = exports.urlToName = void 0;
 /** 将url转为友好的名字 */
 
 function urlToName(url) {
@@ -416,6 +419,7 @@ exports.copyStr = copyStr;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.apiToTypeScriptCode = void 0;
 
 const util_1 = require("../util");
 /** 将api转为ts的代码 */
@@ -458,6 +462,7 @@ function parse_par_List(par, level = 1) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getShowDocApi = void 0;
 
 const util_1 = require("../util");
 /** 获取showDoc平台的api */
@@ -511,6 +516,7 @@ exports.getShowDocApi = getShowDocApi;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.swagger_bootstrap_ui = void 0;
 
 const util_1 = require("../util");
 /** 获取 swagger_bootstrap_ui 页面的ui */
@@ -620,6 +626,7 @@ function reduction_tree(table, parlist) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.reduction_tree = exports.getRap2Api = void 0;
 
 const util_1 = require("../util");
 /** 获取rap2平台的api */
@@ -743,6 +750,7 @@ exports.reduction_tree = reduction_tree;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.检测元素状态 = void 0;
 
 function 检测元素状态(selector, 出现, 变化, 消失) {
   let status = false;
@@ -772,6 +780,7 @@ exports.检测元素状态 = 检测元素状态;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.修改人列表_扩展 = exports.getYapiApi = void 0;
 
 const util_1 = require("../util");
 
@@ -864,7 +873,113 @@ function 修改人列表_扩展() {
 }
 
 exports.修改人列表_扩展 = 修改人列表_扩展;
-},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/elment":"../util/elment.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
+},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/elment":"../util/elment.ts"}],"../util/dom/拖拽多选.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.拖拽多选 = void 0;
+
+function 拖拽多选() {
+  let flag = false;
+  let 选区 = [0, 0, 0, 0];
+  const div = document.createElement("div");
+  div.style.cssText = `position: fixed;background: gray;opacity: .3;`;
+  document.body.appendChild(div);
+  let 选区矩形 = 选区_to_矩形(选区);
+  document.addEventListener("mousedown", event => {
+    console.log("mousedown", event);
+    遮罩.remove();
+
+    if (event.ctrlKey) {
+      flag = true;
+      选区[0] = event.clientX;
+      选区[1] = event.clientY;
+      event.preventDefault(); // 阻止默认行为
+
+      event.stopPropagation(); // 阻止事件冒泡
+    }
+  });
+  document.addEventListener("mousemove", event => {
+    if (!flag) {
+      return;
+    }
+
+    选区[2] = event.clientX;
+    选区[3] = event.clientY;
+    选区矩形 = 选区_to_矩形(选区);
+    div.style.left = 选区矩形[0] + "px";
+    div.style.top = 选区矩形[1] + "px";
+    div.style.width = 选区矩形[2] - 选区矩形[0] + "px";
+    div.style.height = 选区矩形[3] - 选区矩形[1] + "px";
+  });
+  document.addEventListener("mouseup", event => {
+    if (!flag) {
+      return;
+    }
+
+    const td_list = Array.from(document.querySelectorAll("td"));
+    const 选中 = td_list.filter(el => 矩形相交(选区矩形, HtmlElement_to_矩形(el)));
+    console.log(选区矩形, 选中.map(HtmlElement_to_矩形), 选中);
+    选中.map(HtmlElement_to_矩形).forEach(遮罩.add);
+    flag = false;
+  });
+}
+
+exports.拖拽多选 = 拖拽多选;
+
+function HtmlElement_to_矩形(el) {
+  const rect = el.getBoundingClientRect();
+  return [rect.left, rect.top, rect.right, rect.bottom];
+}
+
+function 矩形相交(rect1, rect2) {
+  var a_min_x = rect1[0];
+  var a_min_y = rect1[1];
+  var a_max_x = rect1[2];
+  var a_max_y = rect1[3];
+  var b_min_x = rect2[0];
+  var b_min_y = rect2[1];
+  var b_max_x = rect2[2];
+  var b_max_y = rect2[3];
+  return a_min_x <= b_max_x && a_max_x >= b_min_x && a_min_y <= b_max_y && a_max_y >= b_min_y;
+}
+
+function 选区_to_矩形(选区) {
+  if (选区[0] > 选区[2] || 选区[1] > 选区[3]) {
+    return [选区[2], 选区[3], 选区[0], 选区[1]];
+  } else {
+    return 选区;
+  }
+}
+
+var 遮罩;
+
+(function (遮罩) {
+  let list = [];
+
+  function add(rect) {
+    const div = document.createElement("div");
+    div.style.cssText = `position: fixed;background: gray;opacity: .3;`;
+    div.style.left = rect[0] + "px";
+    div.style.top = rect[1] + "px";
+    div.style.width = rect[2] - rect[0] + "px";
+    div.style.height = rect[3] - rect[1] + "px";
+    list.push(div);
+    document.body.appendChild(div);
+  }
+
+  遮罩.add = add;
+
+  function remove() {
+    list.forEach(el => el.remove());
+    list = [];
+  }
+
+  遮罩.remove = remove;
+})(遮罩 || (遮罩 = {}));
+},{}],"api自动提取.user.ts":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -919,7 +1034,9 @@ const swagger_bootstrap_ui_1 = require("./parse/swagger-bootstrap-ui");
 
 const yapi_1 = require("./parse/yapi");
 
-const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
+const rap2_taobo_1 = require("./parse/rap2-taobo");
+
+const ____1 = require("../util/dom/\u62D6\u62FD\u591A\u9009"); // ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
 // @version      1.1.2
@@ -978,7 +1095,9 @@ const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
         util_1.default.copyTitle(get_api());
       });
       document.body.appendChild(btn);
-    } // setTimeout(() => {
+    }
+
+    ____1.拖拽多选(); // setTimeout(() => {
     //   const code = uw._api.getYapiApiCode();
     //   console.log(code);
     //   util.copyTitle(code);
@@ -986,7 +1105,7 @@ const rap2_taobo_1 = require("./parse/rap2-taobo"); // ==UserScript==
 
   });
 })();
-},{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts","../util/dom/拖拽多选":"../util/dom/拖拽多选.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1014,7 +1133,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50919" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59528" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -5,6 +5,7 @@ import { swagger_bootstrap_ui } from "./parse/swagger-bootstrap-ui";
 import { getYapiApi, 修改人列表_扩展 } from "./parse/yapi";
 import { api } from "./i_api";
 import { getRap2Api } from "./parse/rap2-taobo";
+import { 拖拽多选 } from "../util/dom/拖拽多选";
 
 // ==UserScript==
 // @name         api自动提取
@@ -61,7 +62,7 @@ import { getRap2Api } from "./parse/rap2-taobo";
     });
     document.body.appendChild(btn);
   }
-
+  拖拽多选()
   // setTimeout(() => {
   //   const code = uw._api.getYapiApiCode();
   //   console.log(code);

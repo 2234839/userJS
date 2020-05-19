@@ -21,3 +21,5 @@ export function 检测元素状态(
     }
   }, 100);
 }
+
+export { getSelectors } from "../../网页笔记/util";
