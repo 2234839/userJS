@@ -2,7 +2,7 @@
 // @name         去除顶部遮挡
 // @namespace    http://tampermonkey.net/
 // @version      1.0.0
-// @description  我算法不太行可能通用性不行，自测(简书，google)没问题
+// @description  我算法不太行可能通用性不行，自测(简书，google,知乎)没问题
 // @author       崮生 2234839456@qq.com
 // @match        *
 // @include      *
