@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         去除顶部遮挡
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  我算法不太行可能通用性不行，自测(简书，google,知乎)没问题
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -54,7 +54,7 @@ import { getSelectors } from "../网页笔记/util";
       const top_parent = document.querySelector(top_parent_selector) as HTMLElement;
       if (isHeader(top_parent)) {
         top_parent.classList.add(className);
-        console.log(top_parent_selector, center_selector);
+        // console.log(top_parent_selector, center_selector);
       }
     }, 100),
   );
@@ -62,10 +62,10 @@ import { getSelectors } from "../网页笔记/util";
 
 function isHeader(el: HTMLElement) {
   const rect = el.getBoundingClientRect();
-  console.log("疑似者", {
-    "rect.bottom ": rect.bottom,
-    "rect.top ": rect.top,
-  });
+  // console.log("疑似者", {
+  //   "rect.bottom ": rect.bottom,
+  //   "rect.top ": rect.top,
+  // });
 
   if (/** 高过一百px不再可能是了吧 */ rect.bottom > 100) {
     return false;

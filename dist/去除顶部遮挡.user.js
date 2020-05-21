@@ -339,7 +339,7 @@ exports.log = log;
 "use strict"; // ==UserScript==
 // @name         去除顶部遮挡
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  我算法不太行可能通用性不行，自测(简书，google,知乎)没问题
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -433,19 +433,17 @@ const util_1 = require("../\u7F51\u9875\u7B14\u8BB0/util"); // ==/UserScript==
       const top_parent = document.querySelector(top_parent_selector);
 
       if (isHeader(top_parent)) {
-        top_parent.classList.add(className);
-        console.log(top_parent_selector, center_selector);
+        top_parent.classList.add(className); // console.log(top_parent_selector, center_selector);
       }
     }, 100));
   });
 })();
 
 function isHeader(el) {
-  const rect = el.getBoundingClientRect();
-  console.log("疑似者", {
-    "rect.bottom ": rect.bottom,
-    "rect.top ": rect.top
-  });
+  const rect = el.getBoundingClientRect(); // console.log("疑似者", {
+  //   "rect.bottom ": rect.bottom,
+  //   "rect.top ": rect.top,
+  // });
 
   if (
   /** 高过一百px不再可能是了吧 */
@@ -483,7 +481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51113" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60040" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
