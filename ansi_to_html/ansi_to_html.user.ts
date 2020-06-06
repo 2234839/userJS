@@ -1,6 +1,7 @@
 import { default as AnsiUp } from "ansi_up";
 
 const ansi_up = new AnsiUp();
+`
 // ==UserScript==
 // @name         ansi-to-html
 // @namespace    http://tampermonkey.net/
@@ -11,10 +12,11 @@ const ansi_up = new AnsiUp();
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
+`;
 import "./ansi_to_html.css";
 (async function () {
   const btn = document.createElement("button");
-  btn.textContent="美化输出"
+  btn.textContent = "美化输出";
   btn.classList.add("llej_userjs_ansi-btn");
   document.body.appendChild(btn);
   btn.addEventListener("click", function () {
