@@ -1,0 +1,11 @@
+.llej_userjs_ansi-pre {
+  background-color: #b3b0b0;
+  background-color: #cfcfcf;
+}
+
+.llej_userjs_ansi-btn {
+  position: fixed;
+  z-index: 999;
+  top: 50px;
+  right: 60px;
+}
