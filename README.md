@@ -58,3 +58,7 @@
 [安装地址](https://greasyfork.org/zh-CN/scripts/403713-去除顶部遮挡)
 
 我算法不太行可能通用性不行，自测(简书，google，知乎)没问题
+
+### [ansi_to_html](./ansi_to_html/ansi_to_html.user.ts)
+
+~~[安装地址]()~~ 暂不打算公开到油猴，因为不成熟，也不打算改了 需要使用可以直接 copy [这里的代码执行](https://raw.githubusercontent.com/2234839/userJS/master/dist/ansi_to_html.user.js#bypass=true)
