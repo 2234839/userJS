@@ -1,7 +1,7 @@
 import { default as AnsiUp } from "ansi_up";
-
+import fs from "fs";
 const ansi_up = new AnsiUp();
-`
+
 // ==UserScript==
 // @name         ansi-to-html
 // @namespace    http://tampermonkey.net/
@@ -12,8 +12,11 @@ const ansi_up = new AnsiUp();
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
-`;
-import "./ansi_to_html.css";
+var css = fs.readFileSync("./ansi_to_html/ansi_to_html.css",'utf-8'); // <-- The css reader
+var style = document.createElement("style");
+style.type = "text/css";
+style.appendChild(document.createTextNode(css));
+document.head.appendChild(style);
 (async function () {
   const btn = document.createElement("button");
   btn.textContent = "美化输出";
@@ -22,7 +25,6 @@ import "./ansi_to_html.css";
   btn.addEventListener("click", function () {
     Array.from(document.querySelectorAll(".console-output")).forEach((el) => {
       const html = ansi_up.ansi_to_html(el.innerHTML);
-      console.log(el, html);
       el.classList.add("llej_userjs_ansi-pre");
       el.innerHTML = html;
     });

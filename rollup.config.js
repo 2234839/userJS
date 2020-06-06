@@ -8,6 +8,7 @@ import postcss from "rollup-plugin-postcss";
 // parcel  .\rrweb\rrweb.user.ts
 // parcel  .\文本分类\文本分类.user.ts
 // parcel  .\去除顶部遮挡\去除顶部遮挡.user.ts
+// parcel  .\ansi_to_html\ansi_to_html.user.ts
 export default {
   //   input: "./去除顶部遮挡/去除顶部遮挡.user.ts",
   //   input: "./请求代理/请求代理.user.ts",
