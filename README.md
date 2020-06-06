@@ -61,4 +61,4 @@
 
 ### [ansi_to_html](./ansi_to_html/ansi_to_html.user.ts)
 
-~~[安装地址]()~~ 暂不打算公开到油猴，因为不成熟，也不打算改了 需要使用可以直接 copy [这里的代码执行](https://raw.githubusercontent.com/2234839/userJS/master/dist/ansi_to_html.user.js#bypass=true)
+[安装地址](https://greasyfork.org/zh-CN/scripts/404778-ansi-to-html)

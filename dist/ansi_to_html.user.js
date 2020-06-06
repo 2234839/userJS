@@ -587,10 +587,9 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
 const ansi_up = new _ansi_up.default(); // ==UserScript==
 // @name         ansi-to-html
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
-// @description
+// @version      1.1.3
+// @description  将ansi码转为html美化输出 默认不在任何网站执行，需要自行配置在指定网站执行，目前支持 jenkins,需要支持其他类型网站可以像我发邮件
 // @author       崮生 2234839456@qq.com
-// @include      *://www.showdoc.cc/*
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
