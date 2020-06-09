@@ -22,21 +22,21 @@ import { 拖拽多选 } from "../util/dom/拖拽多选";
 (async function () {
   const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
-  function getCode(fun: () => api) {
-    return () => {
-      const api = apiToTypeScriptCode(fun());
+  async function getCode(fun: () => Promise<api>) {
+    return async () => {
+      const api = apiToTypeScriptCode(await fun());
       util.copyTitle(api);
       return api;
     };
   }
   const api = {
-    getShowDocApiCode: getCode(getShowDocApi),
-    getYapiApiCode: getCode(getYapiApi),
-    get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui),
-    get_rap2_taobao_code: getCode(getRap2Api),
+    getShowDocApiCode: await getCode(getShowDocApi),
+    getYapiApiCode: await getCode(getYapiApi),
+    get_swagger_bootstrap_ui_code: await getCode(swagger_bootstrap_ui),
+    get_rap2_taobao_code: await getCode(getRap2Api),
   };
   uw._api = api;
-  type f = () => string;
+  type f = () => Promise<string>;
   let get_api = undefined as undefined | f;
   if (document.getElementById("yapi")) {
     修改人列表_扩展();
@@ -57,12 +57,13 @@ import { 拖拽多选 } from "../util/dom/拖拽多选";
       position: fixed;
       top: 100px;right:20px;
     `;
-    btn.addEventListener("click", () => {
-      util.copyTitle(get_api());
+    btn.addEventListener("click", async () => {
+      util.copyTitle(await get_api());
+      alert("复制成功")
     });
     document.body.appendChild(btn);
   }
-  拖拽多选()
+  拖拽多选();
   // setTimeout(() => {
   //   const code = uw._api.getYapiApiCode();
   //   console.log(code);

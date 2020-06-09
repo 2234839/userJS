@@ -2,7 +2,7 @@ import { getTable, getTextConten, getElText } from "../util";
 import { api, par } from "../i_api";
 
 /** 获取 swagger_bootstrap_ui 页面的ui */
-export function swagger_bootstrap_ui(): api {
+export async function swagger_bootstrap_ui(): Promise<api> {
     const this_tab = document.querySelector('.layui-tab-item.layui-show .swbu-main')
 
     const par_el=this_tab.querySelectorAll("table")[2]

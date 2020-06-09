@@ -6,7 +6,10 @@ import { 检测元素状态 } from "../../util/dom/elment";
 const $$ = qALL;
 
 /** 获取Yapi平台的api */
-export function getYapiApi(): api {
+export async function getYapiApi(): Promise<api> {
+  await new Promise((s) => {
+    参数全展开(s);
+  });
   const desNodeList = $$(".interface-title").includes("备注");
   const describe = desNodeList.length === 0 ? "" : desNodeList[0].nextElementSibling.textContent;
   const res_el = <HTMLElement>(
@@ -106,4 +109,18 @@ export function 修改人列表_扩展() {
     xhr.send();
   };
   检测元素状态("div.ant-row:nth-child(1)", f, f, () => {});
+}
+
+export function 参数全展开(cb: () => void) {
+  const id = setInterval(() => {
+    const btn = (document.querySelectorAll(".ant-table-row-collapsed") as unknown) as HTMLElement[];
+    if (btn.length) {
+      btn.forEach((b) => {
+        b.click();
+      });
+    } else {
+      clearInterval(id);
+      cb();
+    }
+  }, 350);
 }

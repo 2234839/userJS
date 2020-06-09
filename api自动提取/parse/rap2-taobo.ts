@@ -2,7 +2,7 @@ import { getTable, getTextConten, getElText } from "../util";
 import { api, par } from "../i_api";
 
 /** 获取rap2平台的api */
-export function getRap2Api(): api {
+export async function getRap2Api(): Promise<api> {
   console.log("参数列表=========================");
 
   const par_el = <HTMLElement>(

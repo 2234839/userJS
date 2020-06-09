@@ -123,16 +123,17 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.AllStoreName = exports.isDev = void 0;
-/** 是不是开发环境 */
+exports.default = exports.AllStoreName = exports.isDev = void 0;
 
-exports.isDev = false;
+/** 是不是开发环境 */
+const isDev = false;
+exports.isDev = isDev;
 const config = {
   state: 0,
 
   /** 是否开启编辑 */
   //是开发环境自动开启
-  elementEdit: exports.isDev,
+  elementEdit: isDev,
 
   /** 服务器地址 */
   serverIp: 'https://shenzilong.cn/note/',
@@ -145,12 +146,28 @@ const config = {
 };
 /** 存储命令栈的地方 */
 
-exports.AllStoreName = '_storeName_llej_' + config.locationUrl;
-exports.default = config;
+const AllStoreName = '_storeName_llej_' + config.locationUrl;
+exports.AllStoreName = AllStoreName;
+var _default = config;
+exports.default = _default;
 },{}],"../网页笔记/util.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.copyTitle = copyTitle;
+exports.getSelectors = getSelectors;
+exports.getIndex = getIndex;
+exports.nodePath = nodePath;
+exports.getJSon = getJSon;
+exports.ajax_get = ajax_get;
+exports.log = log;
+exports.default = void 0;
+
+var _config = require("./config");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -182,15 +199,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.log = exports.ajax_get = exports.getJSon = exports.nodePath = exports.getIndex = exports.getSelectors = exports.copyTitle = void 0;
-
-const config_1 = require("./config");
 /** 用于复制文本的input */
-
-
 const input_copy = document.createElement("textarea");
 input_copy.id = "__";
 input_copy.style.display = "none"; //不能设置为none因为会导致没有可访问性
@@ -212,14 +221,15 @@ function copyTitle(el) {
   input_copy.setSelectionRange(0, 9999);
   document.execCommand("copy");
 }
-
-exports.copyTitle = copyTitle;
 /** 工具类 */
 
-exports.default = {
+
+var _default = {
   copyTitle
 };
 /** 获取一个元素的选择器 */
+
+exports.default = _default;
 
 function getSelectors(el) {
   /** 通过path路径来确定元素 */
@@ -241,17 +251,15 @@ function getSelectors(el) {
 
   return `${pathSelectors}${id_className}:nth-child(${index})`;
 }
-
-exports.getSelectors = getSelectors;
 /** 获取元素它在第几位 */
+
 
 function getIndex(el) {
   if (el.nodeName === "HTML") return 1;
   return 1 + Array.from(el.parentElement.children).findIndex(child => child === el);
 }
-
-exports.getIndex = getIndex;
 /** 获取一个元素的所有父节点到html为止  */
+
 
 function nodePath(...path) {
   while (path[path.length - 1].parentElement != null) {
@@ -264,8 +272,6 @@ function nodePath(...path) {
   return HTMLElementPath;
 }
 
-exports.nodePath = nodePath;
-
 function getJSon(url, data) {
   return __awaiter(this, void 0, void 0, function* () {
     const str = yield ajax_get(url, data);
@@ -274,9 +280,8 @@ function getJSon(url, data) {
     return res;
   });
 }
-
-exports.getJSon = getJSon;
 /** 油猴的ajaxget */
+
 
 function ajax_get(url, data) {
   if (data) url += "?" + jsonToURLpar(data);
@@ -299,9 +304,8 @@ function ajax_get(url, data) {
     xhr.send();
   });
 }
-
-exports.ajax_get = ajax_get;
 /** json 转 urlpar 只能转一层 */
+
 
 function jsonToURLpar(json) {
   return Object.keys(json).map(function (key) {
@@ -312,25 +316,26 @@ function jsonToURLpar(json) {
 
 
 function log(...arg) {
-  if (config_1.isDev) console.log(`[dev] `, ...arg);
+  if (_config.isDev) console.log(`[dev] `, ...arg);
 }
-
-exports.log = log;
 },{"./config":"../网页笔记/config.ts"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.copyStr = exports.getElText = exports.getTable = exports.getTextConten = exports.qALL = exports.urlToName = void 0;
-/** 将url转为友好的名字 */
+exports.urlToName = urlToName;
+exports.qALL = qALL;
+exports.getTextConten = getTextConten;
+exports.getTable = getTable;
+exports.getElText = getElText;
+exports.copyStr = copyStr;
 
+/** 将url转为友好的名字 */
 function urlToName(url) {
   // return url.match(/\d+\.\d+\.\d+\.\d+(.*)/)[1].split('/').map(str => str.replace(/\//g, '')).join('_')
   return url.split("/").map(str => str.replace(/[^a-zA-Z0-9]/g, "_")).join("_");
 }
-
-exports.urlToName = urlToName;
 
 function qALL(selector, t) {
   const res = document.querySelectorAll(selector);
@@ -344,8 +349,6 @@ function qALL(selector, t) {
   return res;
 }
 
-exports.qALL = qALL;
-
 function getTextConten(el) {
   if (el !== undefined && "textContent" in el) {
     return el.textContent;
@@ -354,9 +357,8 @@ function getTextConten(el) {
     return "";
   }
 }
-
-exports.getTextConten = getTextConten;
 /** 将table元素解析为字符串二维数组 */
+
 
 function getTable(el, tr_selector = "tr", td_selector = "td",
 /** 特定元素的识别器 */
@@ -385,9 +387,8 @@ recognizer = {}) {
 
   return table;
 }
-
-exports.getTable = getTable;
 /** 获取指定元素的TextContent */
+
 
 function getElText(selector) {
   const el = document.querySelector(selector);
@@ -398,9 +399,8 @@ function getElText(selector) {
 
   return el.textContent;
 }
-
-exports.getElText = getElText;
 /** 复制某个字符串多少次 */
+
 
 function copyStr(el, length) {
   let str = "";
@@ -411,35 +411,31 @@ function copyStr(el, length) {
 
   return str;
 }
-
-exports.copyStr = copyStr;
 },{}],"parse/apiToTypeScriptCode.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.apiToTypeScriptCode = void 0;
+exports.apiToTypeScriptCode = apiToTypeScriptCode;
 
-const util_1 = require("../util");
+var _util = require("../util");
+
 /** 将api转为ts的代码 */
-
-
 function apiToTypeScriptCode(api) {
   console.log(api);
-  const name = util_1.urlToName(api.url);
+  const name = (0, _util.urlToName)(api.url);
   return `
         /** ${api.name} */
         static ${name}(params?:
             ${parse_par_List(api.parList)}
         ):Promise< ${parse_par_List(api.resList)} >{ return ${api.method.toLocaleLowerCase()}('${api.url}', params) }`;
 }
-
-exports.apiToTypeScriptCode = apiToTypeScriptCode;
 /** 解析api的par为字符串 */
 
+
 function parse_par_item(par, level = 0) {
-  return `${util_1.copyStr("\t", level)}/** ${par.type} ${par.describe} */${par.name}${par.must ? "" : "?"}: ${(() => {
+  return `${(0, _util.copyStr)("\t", level)}/** ${par.type} ${par.describe} */${par.name}${par.must ? "" : "?"}: ${(() => {
     if (par.children === undefined) return par.type.replace("string(", "_string(")
     /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
     .replace("number(", "_number(").replace("String", "string")
@@ -462,105 +458,167 @@ function parse_par_List(par, level = 1) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getShowDocApi = void 0;
-
-const util_1 = require("../util");
-/** 获取showDoc平台的api */
-
-
-function getShowDocApi() {
-  const api = {
-    url: util_1.getTextConten(util_1.qALL('main .main-editor li')[1]),
-    name: util_1.getTextConten(util_1.qALL('main div')[0]),
-    describe: util_1.getTextConten(util_1.qALL('main .main-editor li')[1]),
-    method: util_1.getTextConten(util_1.qALL('main .main-editor li')[2]),
-    parList: Array.from(util_1.qALL('table')[0].querySelectorAll('tr')).filter((el, i) => {
-      return i !== 0;
-    }).filter(el => {
-      /** 他有时参数列表不全，通过这个去除空 */
-      if (util_1.getTextConten(el.querySelectorAll('td')[0]) === '' && util_1.getTextConten(el.querySelectorAll('td')[2]) === '') return false;
-      return true;
-    }).map(el => {
-      return {
-        name: util_1.getTextConten(el.querySelectorAll('td')[0]),
-
-        /** 是否必需 */
-        must: util_1.getTextConten(el.querySelectorAll('td')[1]) === '是',
-        type: util_1.getTextConten(el.querySelectorAll('td')[2]),
-        describe: util_1.getTextConten(el.querySelectorAll('td')[3])
-      };
-    }),
-
-    /** 返回结果的列表 */
-    resList: Array.from(util_1.qALL('table')[1].querySelectorAll('tr')).filter((el, i) => {
-      return i !== 0;
-    }).map(el => {
-      return {
-        name: util_1.getTextConten(el.querySelectorAll('td')[0]),
-
-        /** 是否必需 */
-        must: true,
-        type: util_1.getTextConten(el.querySelectorAll('td')[1]),
-        describe: util_1.getTextConten(el.querySelectorAll('td')[2])
-      };
-    })
-  };
-  return api;
-}
-
 exports.getShowDocApi = getShowDocApi;
-;
+
+var _util = require("../util");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+/** 获取showDoc平台的api */
+function getShowDocApi() {
+  return __awaiter(this, void 0, void 0, function* () {
+    const api = {
+      url: (0, _util.getTextConten)((0, _util.qALL)("main .main-editor li")[1]),
+      name: (0, _util.getTextConten)((0, _util.qALL)("main div")[0]),
+      describe: (0, _util.getTextConten)((0, _util.qALL)("main .main-editor li")[1]),
+      method: (0, _util.getTextConten)((0, _util.qALL)("main .main-editor li")[2]),
+      parList: Array.from((0, _util.qALL)("table")[0].querySelectorAll("tr")).filter((el, i) => {
+        return i !== 0;
+      }).filter(el => {
+        /** 他有时参数列表不全，通过这个去除空 */
+        if ((0, _util.getTextConten)(el.querySelectorAll("td")[0]) === "" && (0, _util.getTextConten)(el.querySelectorAll("td")[2]) === "") return false;
+        return true;
+      }).map(el => {
+        return {
+          name: (0, _util.getTextConten)(el.querySelectorAll("td")[0]),
+
+          /** 是否必需 */
+          must: (0, _util.getTextConten)(el.querySelectorAll("td")[1]) === "是",
+          type: (0, _util.getTextConten)(el.querySelectorAll("td")[2]),
+          describe: (0, _util.getTextConten)(el.querySelectorAll("td")[3])
+        };
+      }),
+
+      /** 返回结果的列表 */
+      resList: Array.from((0, _util.qALL)("table")[1].querySelectorAll("tr")).filter((el, i) => {
+        return i !== 0;
+      }).map(el => {
+        return {
+          name: (0, _util.getTextConten)(el.querySelectorAll("td")[0]),
+
+          /** 是否必需 */
+          must: true,
+          type: (0, _util.getTextConten)(el.querySelectorAll("td")[1]),
+          describe: (0, _util.getTextConten)(el.querySelectorAll("td")[2])
+        };
+      })
+    };
+    return api;
+  });
+}
 },{"../util":"util.ts"}],"parse/swagger-bootstrap-ui.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.swagger_bootstrap_ui = void 0;
-
-const util_1 = require("../util");
-/** 获取 swagger_bootstrap_ui 页面的ui */
-
-
-function swagger_bootstrap_ui() {
-  const this_tab = document.querySelector('.layui-tab-item.layui-show .swbu-main');
-  const par_el = this_tab.querySelectorAll("table")[2];
-  const res_el = this_tab.querySelectorAll("table")[6];
-  /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
-
-  const par_table = util_1.getTable(par_el);
-  /** 参数名称 参数说明 类型 schema */
-
-  const res_table = util_1.getTable(res_el);
-  console.log(par_table, res_table);
-  const api = {
-    url: this_tab.querySelector('div p:nth-child(1) code').textContent,
-    name: util_1.getElText('.layui-tab-item.layui-show .tab-pane div:nth-child(2) div'),
-    describe: this_tab.querySelector('div p:nth-child(5) code').textContent,
-    method: this_tab.querySelector('div p:nth-child(2) code').textContent,
-    parList: reduction_tree(par_el, par_table.map(str_list => {
-      return {
-        name: str_list[0],
-        must: str_list[3] === "true",
-        type: str_list[4],
-        describe: str_list[1]
-      };
-    })),
-    resList: reduction_tree(res_el, res_table.map(str_list => {
-      return {
-        name: str_list[0],
-        must: undefined,
-        type: str_list[2],
-        describe: str_list[1]
-      };
-    }))
-  };
-  console.log("最终结果", par_table, res_table, api);
-  return api;
-}
-
 exports.swagger_bootstrap_ui = swagger_bootstrap_ui;
+
+var _util = require("../util");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+/** 获取 swagger_bootstrap_ui 页面的ui */
+function swagger_bootstrap_ui() {
+  return __awaiter(this, void 0, void 0, function* () {
+    const this_tab = document.querySelector('.layui-tab-item.layui-show .swbu-main');
+    const par_el = this_tab.querySelectorAll("table")[2];
+    const res_el = this_tab.querySelectorAll("table")[6];
+    /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
+
+    const par_table = (0, _util.getTable)(par_el);
+    /** 参数名称 参数说明 类型 schema */
+
+    const res_table = (0, _util.getTable)(res_el);
+    console.log(par_table, res_table);
+    const api = {
+      url: this_tab.querySelector('div p:nth-child(1) code').textContent,
+      name: (0, _util.getElText)('.layui-tab-item.layui-show .tab-pane div:nth-child(2) div'),
+      describe: this_tab.querySelector('div p:nth-child(5) code').textContent,
+      method: this_tab.querySelector('div p:nth-child(2) code').textContent,
+      parList: reduction_tree(par_el, par_table.map(str_list => {
+        return {
+          name: str_list[0],
+          must: str_list[3] === "true",
+          type: str_list[4],
+          describe: str_list[1]
+        };
+      })),
+      resList: reduction_tree(res_el, res_table.map(str_list => {
+        return {
+          name: str_list[0],
+          must: undefined,
+          type: str_list[2],
+          describe: str_list[1]
+        };
+      }))
+    };
+    console.log("最终结果", par_table, res_table, api);
+    return api;
+  });
+}
 /** 根据table 获取到树的结构 */
+
 
 function reduction_tree(table, parlist) {
   /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
@@ -626,66 +684,99 @@ function reduction_tree(table, parlist) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reduction_tree = exports.getRap2Api = void 0;
-
-const util_1 = require("../util");
-/** 获取rap2平台的api */
-
-
-function getRap2Api() {
-  console.log("参数列表=========================");
-  const par_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(2) > div.body > div > div.RSortableWrapper.depth-1");
-  /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
-
-  const par_table = util_1.getTable(par_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
-    return el.querySelector("input").checked ? "true" : "false";
-  }]);
-  const res_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(3) > div.body > div > div.RSortableWrapper.depth-1");
-  /** 参数名称 参数说明 类型 schema */
-
-  const res_table = util_1.getTable(res_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
-    return el.querySelector("input").checked ? "true" : "false";
-  }]);
-  console.log("参数和响应", par_el, res_el, par_table, res_table);
-
-  const get_level_list = table => {
-    const tr_list = table.querySelectorAll(".SortableTreeTableRow");
-    return Array.from(tr_list).map(tr => {
-      const match = tr.parentElement.className.match(/depth(\d)/);
-      if (match === null) return 0;else {
-        return Number(match[1]) + 1;
-      }
-    });
-  };
-
-  const api = {
-    url: util_1.getElText(".summary li:nth-child(1) a"),
-    name: util_1.getElText("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span"),
-    describe: "",
-    method: util_1.getElText("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
-    parList: reduction_tree(par_el, par_table.map(str_list => {
-      return {
-        name: str_list[0].replace(/BODY$/, "").replace(/QUERY$/, ""),
-        must: str_list[1] === "true",
-        type: str_list[2],
-        describe: str_list[5]
-      };
-    }), get_level_list),
-    resList: reduction_tree(res_el, res_table.map(str_list => {
-      return {
-        name: str_list[0],
-        must: str_list[1] === "true",
-        type: str_list[2],
-        describe: str_list[5]
-      };
-    }), get_level_list)
-  };
-  console.log("最终结果", par_table, res_table, api);
-  return api;
-}
-
 exports.getRap2Api = getRap2Api;
+exports.reduction_tree = reduction_tree;
+
+var _util = require("../util");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+/** 获取rap2平台的api */
+function getRap2Api() {
+  return __awaiter(this, void 0, void 0, function* () {
+    console.log("参数列表=========================");
+    const par_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(2) > div.body > div > div.RSortableWrapper.depth-1");
+    /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
+
+    const par_table = (0, _util.getTable)(par_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
+      return el.querySelector("input").checked ? "true" : "false";
+    }]);
+    const res_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(3) > div.body > div > div.RSortableWrapper.depth-1");
+    /** 参数名称 参数说明 类型 schema */
+
+    const res_table = (0, _util.getTable)(res_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
+      return el.querySelector("input").checked ? "true" : "false";
+    }]);
+    console.log("参数和响应", par_el, res_el, par_table, res_table);
+
+    const get_level_list = table => {
+      const tr_list = table.querySelectorAll(".SortableTreeTableRow");
+      return Array.from(tr_list).map(tr => {
+        const match = tr.parentElement.className.match(/depth(\d)/);
+        if (match === null) return 0;else {
+          return Number(match[1]) + 1;
+        }
+      });
+    };
+
+    const api = {
+      url: (0, _util.getElText)(".summary li:nth-child(1) a"),
+      name: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span"),
+      describe: "",
+      method: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
+      parList: reduction_tree(par_el, par_table.map(str_list => {
+        return {
+          name: str_list[0].replace(/BODY$/, "").replace(/QUERY$/, ""),
+          must: str_list[1] === "true",
+          type: str_list[2],
+          describe: str_list[5]
+        };
+      }), get_level_list),
+      resList: reduction_tree(res_el, res_table.map(str_list => {
+        return {
+          name: str_list[0],
+          must: str_list[1] === "true",
+          type: str_list[2],
+          describe: str_list[5]
+        };
+      }), get_level_list)
+    };
+    console.log("最终结果", par_table, res_table, api);
+    return api;
+  });
+}
 /** 根据table 获取到树的结构 */
+
 
 function reduction_tree(table, parList, get_level_list) {
   /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
@@ -742,15 +833,21 @@ function reduction_tree(table, parList, get_level_list) {
 
   return hierarchy;
 }
-
-exports.reduction_tree = reduction_tree;
-},{"../util":"util.ts"}],"../util/elment.ts":[function(require,module,exports) {
+},{"../util":"util.ts"}],"../util/dom/elment.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.检测元素状态 = void 0;
+exports.检测元素状态 = 检测元素状态;
+Object.defineProperty(exports, "getSelectors", {
+  enumerable: true,
+  get: function () {
+    return _util.getSelectors;
+  }
+});
+
+var _util = require("../../\u7F51\u9875\u7B14\u8BB0/util");
 
 function 检测元素状态(selector, 出现, 变化, 消失) {
   let status = false;
@@ -772,72 +869,107 @@ function 检测元素状态(selector, 出现, 变化, 消失) {
     }
   }, 100);
 }
-
-exports.检测元素状态 = 检测元素状态;
-},{}],"parse/yapi.ts":[function(require,module,exports) {
+},{"../../网页笔记/util":"../网页笔记/util.ts"}],"parse/yapi.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.修改人列表_扩展 = exports.getYapiApi = void 0;
+exports.getYapiApi = getYapiApi;
+exports.修改人列表_扩展 = 修改人列表_扩展;
+exports.参数全展开 = 参数全展开;
 
-const util_1 = require("../util");
+var _util = require("../util");
 
-const rap2_taobo_1 = require("./rap2-taobo");
+var _rap2Taobo = require("./rap2-taobo");
 
-const elment_1 = require("../../util/elment");
+var _elment = require("../../util/dom/elment");
 
-const $$ = util_1.qALL;
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+const $$ = _util.qALL;
 /** 获取Yapi平台的api */
 
 function getYapiApi() {
-  const desNodeList = $$(".interface-title").includes("备注");
-  const describe = desNodeList.length === 0 ? "" : desNodeList[0].nextElementSibling.textContent;
-  const res_el = document.querySelector("div.ant-table-wrapper:nth-child(7) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(3)");
-  /** 参数名称 类型 是否必须 默认值 备注 其他信息*/
+  return __awaiter(this, void 0, void 0, function* () {
+    yield new Promise(s => {
+      参数全展开(s);
+    });
+    const desNodeList = $$(".interface-title").includes("备注");
+    const describe = desNodeList.length === 0 ? "" : desNodeList[0].nextElementSibling.textContent;
+    const res_el = document.querySelector("div.ant-table-wrapper:nth-child(7) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(3)");
+    /** 参数名称 类型 是否必须 默认值 备注 其他信息*/
 
-  const res_table = util_1.getTable(res_el, "tr", "td", [undefined, undefined, el => {
-    return el.textContent !== "非必须" ? "true" : "false";
-  }]);
-  /** body 参数 */
+    const res_table = (0, _util.getTable)(res_el, "tr", "td", [undefined, undefined, el => {
+      return el.textContent !== "非必须" ? "true" : "false";
+    }]);
+    /** body 参数 */
 
-  const par_table = Array.from($$(".col-title")).filter(el => el.textContent.startsWith("Body"))[0].parentElement.querySelector("table");
-  const api = {
-    url: $$(".tag-method + span")[0].textContent,
-    name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
-    describe,
-    method: $$(".tag-method")[0].textContent,
-    parList: Array.from(par_table.querySelectorAll("tr")).filter((el, i) => {
-      return i !== 0;
-    }).map(el => {
-      return {
-        name: el.querySelectorAll("td")[0].textContent,
+    const par_table = Array.from($$(".col-title")).filter(el => el.textContent.startsWith("Body"))[0].parentElement.querySelector("table");
+    const api = {
+      url: $$(".tag-method + span")[0].textContent,
+      name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
+      describe,
+      method: $$(".tag-method")[0].textContent,
+      parList: Array.from(par_table.querySelectorAll("tr")).filter((el, i) => {
+        return i !== 0;
+      }).map(el => {
+        return {
+          name: el.querySelectorAll("td")[0].textContent,
 
-        /** 是否必需 */
-        must: el.querySelectorAll("td")[2].textContent !== "非必须",
-        type: el.querySelectorAll("td")[1].textContent,
-        describe: el.querySelectorAll("td")[4].textContent
-      };
-    }),
-    resList: rap2_taobo_1.reduction_tree(res_el, res_table.map(str_list => {
-      return {
-        name: str_list[0],
-        must: str_list[2] === "true",
-        type: str_list[1],
-        describe: `${str_list[4]} ${str_list[5]}`
-      };
-    }), el => {
-      const tr = el.querySelectorAll("tr");
-      return Array.from(tr).map(tr => {
-        return Number(tr.className.replace(/.*(\d+)/, "$1"));
-      });
-    })
-  };
-  return api;
+          /** 是否必需 */
+          must: el.querySelectorAll("td")[2].textContent !== "非必须",
+          type: el.querySelectorAll("td")[1].textContent,
+          describe: el.querySelectorAll("td")[4].textContent
+        };
+      }),
+      resList: (0, _rap2Taobo.reduction_tree)(res_el, res_table.map(str_list => {
+        return {
+          name: str_list[0],
+          must: str_list[2] === "true",
+          type: str_list[1],
+          describe: `${str_list[4]} ${str_list[5]}`
+        };
+      }), el => {
+        const tr = el.querySelectorAll("tr");
+        return Array.from(tr).map(tr => {
+          return Number(tr.className.replace(/.*(\d+)/, "$1"));
+        });
+      })
+    };
+    return api;
+  });
 }
-
-exports.getYapiApi = getYapiApi;
 
 function 修改人列表_扩展() {
   const f = ant_row_2 => {
@@ -869,17 +1001,30 @@ function 修改人列表_扩展() {
     xhr.send();
   };
 
-  elment_1.检测元素状态("div.ant-row:nth-child(1)", f, f, () => {});
+  (0, _elment.检测元素状态)("div.ant-row:nth-child(1)", f, f, () => {});
 }
 
-exports.修改人列表_扩展 = 修改人列表_扩展;
-},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/elment":"../util/elment.ts"}],"../util/dom/拖拽多选.ts":[function(require,module,exports) {
+function 参数全展开(cb) {
+  const id = setInterval(() => {
+    const btn = document.querySelectorAll(".ant-table-row-collapsed");
+
+    if (btn.length) {
+      btn.forEach(b => {
+        b.click();
+      });
+    } else {
+      clearInterval(id);
+      cb();
+    }
+  }, 350);
+}
+},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/dom/elment":"../util/dom/elment.ts"}],"../util/dom/拖拽多选.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.拖拽多选 = void 0;
+exports.拖拽多选 = 拖拽多选;
 
 function 拖拽多选() {
   let flag = false;
@@ -926,8 +1071,6 @@ function 拖拽多选() {
     flag = false;
   });
 }
-
-exports.拖拽多选 = 拖拽多选;
 
 function HtmlElement_to_矩形(el) {
   const rect = el.getBoundingClientRect();
@@ -982,7 +1125,23 @@ var 遮罩;
 },{}],"api自动提取.user.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+var _util = _interopRequireDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
+
+var _apiToTypeScriptCode = require("./parse/apiToTypeScriptCode");
+
+var _showDocApi = require("./parse/showDocApi");
+
+var _swaggerBootstrapUi = require("./parse/swagger-bootstrap-ui");
+
+var _yapi = require("./parse/yapi");
+
+var _rap2Taobo = require("./parse/rap2-taobo");
+
+var _ = require("../util/dom/\u62D6\u62FD\u591A\u9009");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -1014,29 +1173,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const util_1 = __importDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
-
-const apiToTypeScriptCode_1 = require("./parse/apiToTypeScriptCode");
-
-const showDocApi_1 = require("./parse/showDocApi");
-
-const swagger_bootstrap_ui_1 = require("./parse/swagger-bootstrap-ui");
-
-const yapi_1 = require("./parse/yapi");
-
-const rap2_taobo_1 = require("./parse/rap2-taobo");
-
-const ____1 = require("../util/dom/\u62D6\u62FD\u591A\u9009"); // ==UserScript==
+// ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
 // @version      1.1.2
@@ -1048,31 +1185,33 @@ const ____1 = require("../util/dom/\u62D6\u62FD\u591A\u9009"); // ==UserScript==
 // @grant        unsafeWindow
 // @connect      shenzilong.cn
 // ==/UserScript==
-
-
 (function () {
   return __awaiter(this, void 0, void 0, function* () {
     const uw = window.unsafeWindow ? window.unsafeWindow : window;
 
     function getCode(fun) {
-      return () => {
-        const api = apiToTypeScriptCode_1.apiToTypeScriptCode(fun());
-        util_1.default.copyTitle(api);
-        return api;
-      };
+      return __awaiter(this, void 0, void 0, function* () {
+        return () => __awaiter(this, void 0, void 0, function* () {
+          const api = (0, _apiToTypeScriptCode.apiToTypeScriptCode)(yield fun());
+
+          _util.default.copyTitle(api);
+
+          return api;
+        });
+      });
     }
 
     const api = {
-      getShowDocApiCode: getCode(showDocApi_1.getShowDocApi),
-      getYapiApiCode: getCode(yapi_1.getYapiApi),
-      get_swagger_bootstrap_ui_code: getCode(swagger_bootstrap_ui_1.swagger_bootstrap_ui),
-      get_rap2_taobao_code: getCode(rap2_taobo_1.getRap2Api)
+      getShowDocApiCode: yield getCode(_showDocApi.getShowDocApi),
+      getYapiApiCode: yield getCode(_yapi.getYapiApi),
+      get_swagger_bootstrap_ui_code: yield getCode(_swaggerBootstrapUi.swagger_bootstrap_ui),
+      get_rap2_taobao_code: yield getCode(_rap2Taobo.getRap2Api)
     };
     uw._api = api;
     let get_api = undefined;
 
     if (document.getElementById("yapi")) {
-      yapi_1.修改人列表_扩展();
+      (0, _yapi.修改人列表_扩展)();
       set_default(api.getYapiApiCode);
     }
     /** 设置当前默认使用的api */
@@ -1091,18 +1230,19 @@ const ____1 = require("../util/dom/\u62D6\u62FD\u591A\u9009"); // ==UserScript==
       position: fixed;
       top: 100px;right:20px;
     `;
-      btn.addEventListener("click", () => {
-        util_1.default.copyTitle(get_api());
-      });
+      btn.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+        _util.default.copyTitle(yield get_api());
+
+        alert("复制成功");
+      }));
       document.body.appendChild(btn);
     }
 
-    ____1.拖拽多选(); // setTimeout(() => {
+    (0, _.拖拽多选)(); // setTimeout(() => {
     //   const code = uw._api.getYapiApiCode();
     //   console.log(code);
     //   util.copyTitle(code);
     // }, 3000);
-
   });
 })();
 },{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts","../util/dom/拖拽多选":"../util/dom/拖拽多选.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -1133,7 +1273,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59528" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63807" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
