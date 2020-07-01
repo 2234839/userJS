@@ -66,3 +66,15 @@
 ### [ansi_to_html](./ansi_to_html/ansi_to_html.user.ts)
 
 [安装地址](https://greasyfork.org/zh-CN/scripts/404778-ansi-to-html)
+
+### [请求代理](./请求代理/请求代理.user.ts)
+
+[安装地址](https://greasyfork.org/zh-CN/scripts/406284-%E8%AF%B7%E6%B1%82%E4%BB%A3%E7%90%86)
+
+可以对页面发起的 xhr 请求进行重定向 ![效果图](./请求代理/doc/效果图.jpg)
+
+通过在这里写 js 代码，插件内部会调用该代码来处理请求的 url，从而实现像生产的网站访问自己本地服务这样的效果
+
+#### 实现思路
+
+使用 [ajax-hook](https://github.com/wendux/Ajax-hook) 这个库可以很容易的在请求发起前修改请求参数，具体见 [请求代理.user.ts](./请求代理/请求代理.user.ts) 这里的代码
