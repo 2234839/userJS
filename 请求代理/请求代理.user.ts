@@ -9,7 +9,7 @@ const { proxy, unProxy, hook } = require("ajax-hook");
 // ==UserScript==
 // @name         请求代理
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  请求代理,可以对请求的url进行重定向
 // @author       崮生 2234839456@qq.com
 // @include      *
