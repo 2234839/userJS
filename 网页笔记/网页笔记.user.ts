@@ -1,13 +1,14 @@
-import App from "./app.svelte";
+import App from "./layout_div.svelte";
 import { saveChanges, loadChanges } from "./function/fun";
-import { editElement } from "./state";
+import { editElement } from "./state/index";
 import { getLocalItem } from "./lib/store";
 import { AllStoreName } from "./config";
+import { CommandControl } from "./function/command";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -15,11 +16,17 @@ import { AllStoreName } from "./config";
 // @connect      shenzilong.cn
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        unsafeWindow
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
-(async function() {
+(async function () {
+  if (typeof unsafeWindow === "undefined") {
+    window.unsafeWindow = window;
+  } else {
+    window = unsafeWindow;
+  }
   /** 调试用 */
-  // (<any>window).CommandControl = CommandControl;
+  (<any>window).CommandControl = CommandControl;
   // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
   /** 自动加载本地暂存更改 */
   (async () => {
@@ -29,7 +36,7 @@ import { AllStoreName } from "./config";
     if (document.readyState === "complete") {
       loadChanges(allStore);
     } else {
-      window.addEventListener("load", function() {
+      window.addEventListener("load", function () {
         loadChanges(allStore);
       });
     }
@@ -41,7 +48,7 @@ import { AllStoreName } from "./config";
   });
 
   /** 自动保存修改后的html */
-  setInterval(function() {
+  setInterval(function () {
     saveChanges(editElement);
   }, 1000 * 60);
 })();

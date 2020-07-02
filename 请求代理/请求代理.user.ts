@@ -43,6 +43,7 @@ const { proxy, unProxy, hook } = require("ajax-hook");
   });
   /** 替换 XMLHttpRequest */
   window.XMLHttpRequest = XMLHttpRequest;
+  document.createElementNS("http://www.w3.org/1999/xhtml","div")
   const app_div = document.createElement("div");
   setTimeout(() => {
     document.body.appendChild(app_div);

@@ -194,6 +194,7 @@ exports.handle_promise = handle_promise;
 exports.init = init;
 exports.insert = insert;
 exports.insert_dev = insert_dev;
+exports.is_crossorigin = is_crossorigin;
 exports.is_function = is_function;
 exports.is_promise = is_promise;
 exports.listen = listen;
@@ -247,6 +248,7 @@ exports.toggle_class = toggle_class;
 exports.transition_in = transition_in;
 exports.transition_out = transition_out;
 exports.update_keyed_each = update_keyed_each;
+exports.update_slot = update_slot;
 exports.validate_component = validate_component;
 exports.validate_each_argument = validate_each_argument;
 exports.validate_each_keys = validate_each_keys;
@@ -366,6 +368,15 @@ function get_slot_changes(definition, $$scope, dirty, fn) {
   }
 
   return $$scope.dirty;
+}
+
+function update_slot(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_context_fn) {
+  const slot_changes = get_slot_changes(slot_definition, $$scope, dirty, get_slot_changes_fn);
+
+  if (slot_changes) {
+    const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
+    slot.p(slot_context, slot_changes);
+  }
 }
 
 function exclude_internal_props(props) {
@@ -569,7 +580,9 @@ function set_attributes(node, attributes) {
       node.removeAttribute(key);
     } else if (key === 'style') {
       node.style.cssText = attributes[key];
-    } else if (key === '__value' || descriptors[key] && descriptors[key].set) {
+    } else if (key === '__value') {
+      node.value = node[key] = attributes[key];
+    } else if (descriptors[key] && descriptors[key].set) {
       node[key] = attributes[key];
     } else {
       attr(node, key, attributes[key]);
@@ -595,14 +608,18 @@ function xlink_attr(node, attribute, value) {
   node.setAttributeNS('http://www.w3.org/1999/xlink', attribute, value);
 }
 
-function get_binding_group_value(group) {
-  const value = [];
+function get_binding_group_value(group, __value, checked) {
+  const value = new Set();
 
   for (let i = 0; i < group.length; i += 1) {
-    if (group[i].checked) value.push(group[i].__value);
+    if (group[i].checked) value.add(group[i].__value);
   }
 
-  return value;
+  if (!checked) {
+    value.delete(__value);
+  }
+
+  return Array.from(value);
 }
 
 function to_number(value) {
@@ -632,15 +649,18 @@ function claim_element(nodes, name, attributes, svg) {
 
     if (node.nodeName === name) {
       let j = 0;
+      const remove = [];
 
       while (j < node.attributes.length) {
-        const attribute = node.attributes[j];
+        const attribute = node.attributes[j++];
 
-        if (attributes[attribute.name]) {
-          j++;
-        } else {
-          node.removeAttribute(attribute.name);
+        if (!attributes[attribute.name]) {
+          remove.push(attribute.name);
         }
+      }
+
+      for (let k = 0; k < remove.length; k++) {
+        node.removeAttribute(remove[k]);
       }
 
       return nodes.splice(i, 1)[0];
@@ -673,9 +693,7 @@ function set_data(text, data) {
 }
 
 function set_input_value(input, value) {
-  if (value != null || input.value) {
-    input.value = value;
-  }
+  input.value = value == null ? '' : value;
 }
 
 function set_input_type(input, type) {
@@ -714,38 +732,65 @@ function select_value(select) {
 
 function select_multiple_value(select) {
   return [].map.call(select.querySelectorAll(':checked'), option => option.__value);
+} // unfortunately this can't be a constant as that wouldn't be tree-shakeable
+// so we cache the result instead
+
+
+let crossorigin;
+
+function is_crossorigin() {
+  if (crossorigin === undefined) {
+    crossorigin = false;
+
+    try {
+      if (typeof window !== 'undefined' && window.parent) {
+        void window.parent.document;
+      }
+    } catch (error) {
+      crossorigin = true;
+    }
+  }
+
+  return crossorigin;
 }
 
-function add_resize_listener(element, fn) {
-  if (getComputedStyle(element).position === 'static') {
-    element.style.position = 'relative';
+function add_resize_listener(node, fn) {
+  const computed_style = getComputedStyle(node);
+  const z_index = (parseInt(computed_style.zIndex) || 0) - 1;
+
+  if (computed_style.position === 'static') {
+    node.style.position = 'relative';
   }
 
-  const object = document.createElement('object');
-  object.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
-  object.setAttribute('aria-hidden', 'true');
-  object.type = 'text/html';
-  object.tabIndex = -1;
-  let win;
+  const iframe = element('iframe');
+  iframe.setAttribute('style', `display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; ` + `overflow: hidden; border: 0; opacity: 0; pointer-events: none; z-index: ${z_index};`);
+  iframe.setAttribute('aria-hidden', 'true');
+  iframe.tabIndex = -1;
+  const crossorigin = is_crossorigin();
+  let unsubscribe;
 
-  object.onload = () => {
-    win = object.contentDocument.defaultView;
-    win.addEventListener('resize', fn);
-  };
-
-  if (/Trident/.test(navigator.userAgent)) {
-    element.appendChild(object);
-    object.data = 'about:blank';
+  if (crossorigin) {
+    iframe.src = `data:text/html,<script>onresize=function(){parent.postMessage(0,'*')}</script>`;
+    unsubscribe = listen(window, 'message', event => {
+      if (event.source === iframe.contentWindow) fn();
+    });
   } else {
-    object.data = 'about:blank';
-    element.appendChild(object);
+    iframe.src = 'about:blank';
+
+    iframe.onload = () => {
+      unsubscribe = listen(iframe.contentWindow, 'resize', fn);
+    };
   }
 
-  return {
-    cancel: () => {
-      win && win.removeEventListener && win.removeEventListener('resize', fn);
-      element.removeChild(object);
+  append(node, iframe);
+  return () => {
+    if (crossorigin) {
+      unsubscribe();
+    } else if (unsubscribe && iframe.contentWindow) {
+      unsubscribe();
     }
+
+    detach(iframe);
   };
 }
 
@@ -764,29 +809,36 @@ function query_selector_all(selector, parent = document.body) {
 }
 
 class HtmlTag {
-  constructor(html, anchor = null) {
-    this.e = element('div');
+  constructor(anchor = null) {
     this.a = anchor;
-    this.u(html);
+    this.e = this.n = null;
   }
 
-  m(target, anchor = null) {
-    for (let i = 0; i < this.n.length; i += 1) {
-      insert(target, this.n[i], anchor);
+  m(html, target, anchor = null) {
+    if (!this.e) {
+      this.e = element(target.nodeName);
+      this.t = target;
+      this.h(html);
     }
 
-    this.t = target;
+    this.i(anchor);
   }
 
-  u(html) {
+  h(html) {
     this.e.innerHTML = html;
     this.n = Array.from(this.e.childNodes);
   }
 
+  i(anchor) {
+    for (let i = 0; i < this.n.length; i += 1) {
+      insert(this.t, this.n[i], anchor);
+    }
+  }
+
   p(html) {
     this.d();
-    this.u(html);
-    this.m(this.t, this.a);
+    this.h(html);
+    this.i(this.a);
   }
 
   d() {
@@ -1502,7 +1554,7 @@ function handle_promise(promise, info) {
   }
 }
 
-const globals = typeof window !== 'undefined' ? window : global;
+const globals = typeof window !== 'undefined' ? window : typeof globalThis !== 'undefined' ? globalThis : global;
 exports.globals = globals;
 
 function destroy_block(block, lookup) {
@@ -1560,7 +1612,7 @@ function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, looku
 
   function insert(block) {
     transition_in(block, 1);
-    block.m(node, next, lookup.has(block.key));
+    block.m(node, next);
     lookup.set(block.key, block);
     next = block.first;
     n--;
@@ -1984,7 +2036,7 @@ exports.SvelteComponent = SvelteComponent;
 
 function dispatch_dev(type, detail) {
   document.dispatchEvent(custom_event(type, Object.assign({
-    version: '3.20.1'
+    version: '3.23.2'
   }, detail)));
 }
 
@@ -2710,13 +2762,16 @@ function derived(stores, fn, initial_value) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.note_list_store = exports.msg = void 0;
 
-const store_1 = require("svelte/store");
+var _store = require("svelte/store");
 
-exports.msg = store_1.writable("");
+const msg = (0, _store.writable)("");
 /** 用来显示笔记的地方 */
 
-exports.note_list_store = store_1.writable([]);
+exports.msg = msg;
+const note_list_store = (0, _store.writable)([]);
+exports.note_list_store = note_list_store;
 },{"svelte/store":"../node_modules/svelte/store/index.mjs"}],"svelte/msg.svelte":[function(require,module,exports) {
 "use strict";
 
@@ -2727,7 +2782,7 @@ exports.default = void 0;
 
 var _internal = require("svelte/internal");
 
-/* svelte/msg.svelte generated by Svelte v3.20.1 */
+/* svelte/msg.svelte generated by Svelte v3.23.2 */
 const {
   console: console_1
 } = _internal.globals;
@@ -2812,7 +2867,7 @@ class Msg extends _internal.SvelteComponentDev {
 
 var _default = Msg;
 exports.default = _default;
-},{"svelte/internal":"../node_modules/svelte/internal/index.mjs"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"svelte/internal":"../node_modules/svelte/internal/index.mjs"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -2844,7 +2899,7 @@ function getBaseURL(url) {
 
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
-},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+},{}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
 var bundle = require('./bundle-url');
 
 function updateLink(link) {
@@ -2879,7 +2934,7 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"svelte/Note.svelte":[function(require,module,exports) {
+},{"./bundle-url":"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/bundle-url.js"}],"svelte/Note.svelte":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2889,7 +2944,7 @@ exports.default = void 0;
 
 var _internal = require("svelte/internal");
 
-/* svelte/Note.svelte generated by Svelte v3.20.1 */
+/* svelte/Note.svelte generated by Svelte v3.23.2 */
 const {
   console: console_1
 } = _internal.globals;
@@ -2897,8 +2952,8 @@ const file = "svelte/Note.svelte";
 
 function add_css() {
   var style = (0, _internal.element)("style");
-  style.id = "svelte-3m7ba7-style";
-  style.textContent = ".c-note.svelte-3m7ba7{outline:rgb(187, 181, 181) 2px solid;background:rgba(red, green, blue, 0.6);padding:0.3rem 0.4rem;position:absolute;z-index:60}\n";
+  style.id = "svelte-dn4h7-style";
+  style.textContent = ".c-note.svelte-dn4h7{outline:rgb(187, 181, 181) 2px solid;background:rgba(red, green, blue, 0.6);padding:0.3rem 0.4rem;position:absolute;z-index:60}\n";
   (0, _internal.append_dev)(document.head, style);
 }
 
@@ -2912,7 +2967,7 @@ function create_fragment(ctx) {
     c: function create() {
       div = (0, _internal.element)("div");
       t = (0, _internal.text)(t_value);
-      (0, _internal.attr_dev)(div, "class", "c-note svelte-3m7ba7");
+      (0, _internal.attr_dev)(div, "class", "c-note svelte-dn4h7");
       (0, _internal.set_style)(div, "top", p(
       /*note*/
       ctx[0]).top + p(
@@ -3019,7 +3074,7 @@ function instance($$self, $$props, $$invalidate) {
 class Note extends _internal.SvelteComponentDev {
   constructor(options) {
     super(options);
-    if (!document.getElementById("svelte-3m7ba7-style")) add_css();
+    if (!document.getElementById("svelte-dn4h7-style")) add_css();
     (0, _internal.init)(this, options, instance, create_fragment, _internal.safe_not_equal, {
       note: 0
     });
@@ -3053,21 +3108,23 @@ class Note extends _internal.SvelteComponentDev {
 
 var _default = Note;
 exports.default = _default;
-},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"config.ts":[function(require,module,exports) {
+},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","_css_loader":"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/css-loader.js"}],"config.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-/** 是不是开发环境 */
+exports.default = exports.AllStoreName = exports.isDev = void 0;
 
-exports.isDev = false;
+/** 是不是开发环境 */
+const isDev = false;
+exports.isDev = isDev;
 const config = {
   state: 0,
 
   /** 是否开启编辑 */
   //是开发环境自动开启
-  elementEdit: exports.isDev,
+  elementEdit: isDev,
 
   /** 服务器地址 */
   serverIp: 'https://shenzilong.cn/note/',
@@ -3080,12 +3137,20 @@ const config = {
 };
 /** 存储命令栈的地方 */
 
-exports.AllStoreName = '_storeName_llej_' + config.locationUrl;
-exports.default = config;
+const AllStoreName = '_storeName_llej_' + config.locationUrl;
+exports.AllStoreName = AllStoreName;
+var _default = config;
+exports.default = _default;
 },{}],"lib/store.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setLocalItem = setLocalItem;
+exports.getLocalItem = getLocalItem;
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3116,11 +3181,8 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 /** 设置一条本地存储 */
+
 
 function setLocalItem(name, value) {
   return __awaiter(this, void 0, void 0, function* () {
@@ -3132,9 +3194,8 @@ function setLocalItem(name, value) {
     }
   });
 }
-
-exports.setLocalItem = setLocalItem;
 /** 读取一条本地存储 */
+
 
 function getLocalItem(
 /** 键名 */
@@ -3153,14 +3214,13 @@ defaultValue) {
     }
   });
 }
-
-exports.getLocalItem = getLocalItem;
 },{}],"ui/style.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Style = void 0;
 
 class Style {}
 
@@ -3209,11 +3269,11 @@ document.head.appendChild(keyframes);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Message = void 0;
 
-const style_1 = require("./style");
+var _style = require("./style");
+
 /** 消息的基类 扩展类记得重写 thatMessage 以免公用出现bug */
-
-
 class Message {
   constructor(par) {
     this.el = document.createElement('msg-llej');
@@ -3226,7 +3286,7 @@ class Message {
 
 
   setThis({
-    style = style_1.Style.message,
+    style = _style.Style.message,
     msg
   }) {
     this.el.innerHTML = `
@@ -3270,7 +3330,21 @@ exports.Message = Message;
 },{"./style":"ui/style.ts"}],"util.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.copyTitle = copyTitle;
+exports.getSelectors = getSelectors;
+exports.getIndex = getIndex;
+exports.nodePath = nodePath;
+exports.getJSon = getJSon;
+exports.ajax_get = ajax_get;
+exports.log = log;
+exports.default = void 0;
+
+var _config = require("./config");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3302,14 +3376,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const config_1 = require("./config");
 /** 用于复制文本的input */
-
-
 const input_copy = document.createElement("textarea");
 input_copy.id = "__";
 input_copy.style.display = "none"; //不能设置为none因为会导致没有可访问性
@@ -3319,23 +3386,27 @@ input_copy.setAttribute("style", `
         top: -9999px;
         left: -9999px;`);
 document.body.appendChild(input_copy);
+/** 复制一个元素的titil 或者一段字符串到剪贴板 */
+
+function copyTitle(el) {
+  let title;
+  if (typeof el === "string") title = el;else title = el.getAttribute("title");
+  input_copy.setAttribute("readonly", "readonly");
+  input_copy.setAttribute("value", title);
+  input_copy.value = title;
+  input_copy.select();
+  input_copy.setSelectionRange(0, 9999);
+  document.execCommand("copy");
+}
 /** 工具类 */
 
-exports.default = {
-  /** 复制一个元素的titil 或者一段字符串到剪贴板 */
-  copyTitle(el) {
-    let title;
-    if (typeof el === "string") title = el;else title = el.getAttribute("title");
-    input_copy.setAttribute("readonly", "readonly");
-    input_copy.setAttribute("value", title);
-    input_copy.value = title;
-    input_copy.select();
-    input_copy.setSelectionRange(0, 9999);
-    document.execCommand("copy");
-  }
 
+var _default = {
+  copyTitle
 };
 /** 获取一个元素的选择器 */
+
+exports.default = _default;
 
 function getSelectors(el) {
   /** 通过path路径来确定元素 */
@@ -3357,17 +3428,15 @@ function getSelectors(el) {
 
   return `${pathSelectors}${id_className}:nth-child(${index})`;
 }
-
-exports.getSelectors = getSelectors;
 /** 获取元素它在第几位 */
+
 
 function getIndex(el) {
   if (el.nodeName === "HTML") return 1;
   return 1 + Array.from(el.parentElement.children).findIndex(child => child === el);
 }
-
-exports.getIndex = getIndex;
 /** 获取一个元素的所有父节点到html为止  */
+
 
 function nodePath(...path) {
   while (path[path.length - 1].parentElement != null) {
@@ -3380,8 +3449,6 @@ function nodePath(...path) {
   return HTMLElementPath;
 }
 
-exports.nodePath = nodePath;
-
 function getJSon(url, data) {
   return __awaiter(this, void 0, void 0, function* () {
     const str = yield ajax_get(url, data);
@@ -3390,9 +3457,8 @@ function getJSon(url, data) {
     return res;
   });
 }
-
-exports.getJSon = getJSon;
 /** 油猴的ajaxget */
+
 
 function ajax_get(url, data) {
   if (data) url += "?" + jsonToURLpar(data);
@@ -3415,9 +3481,8 @@ function ajax_get(url, data) {
     xhr.send();
   });
 }
-
-exports.ajax_get = ajax_get;
 /** json 转 urlpar 只能转一层 */
+
 
 function jsonToURLpar(json) {
   return Object.keys(json).map(function (key) {
@@ -3428,14 +3493,30 @@ function jsonToURLpar(json) {
 
 
 function log(...arg) {
-  if (config_1.isDev) console.log(`[dev] `, ...arg);
+  if (_config.isDev) console.log(`[dev] `, ...arg);
 }
-
-exports.log = log;
 },{"./config":"config.ts"}],"function/ajax.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.au_getJSON = au_getJSON;
+exports._login = _login;
+exports.remote_register = remote_register;
+exports.remote_getStore = remote_getStore;
+exports.remote_setStore = remote_setStore;
+exports.remote_getAllStore = remote_getAllStore;
+
+var _config = _interopRequireDefault(require("../config"));
+
+var _store = require("../lib/store");
+
+var _util = require("../util");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3467,99 +3548,75 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const config_1 = __importDefault(require("../config"));
-
-const store_1 = require("../lib/store");
-
-const util_1 = require("../util");
 /** 用来识别身份的key */
-
-
 let key = '';
 /** 附带登录信息的ajax */
 
 function au_getJSON(url, data) {
   return __awaiter(this, void 0, void 0, function* () {
     if (data === undefined) data = {};
-    data.key = key ? key : yield store_1.getLocalItem(config_1.default.loginCredentials);
-    return util_1.getJSon(url, data);
+    data.key = key ? key : yield (0, _store.getLocalItem)(_config.default.loginCredentials);
+    return (0, _util.getJSon)(url, data);
   });
 }
-
-exports.au_getJSON = au_getJSON;
 /** 登录 */
+
 
 function _login(par) {
   return __awaiter(this, void 0, void 0, function* () {
-    const res = yield util_1.getJSon(config_1.default.serverIp + 'login', par);
+    const res = yield (0, _util.getJSon)(_config.default.serverIp + 'login', par);
     if (res.body && res.body.length > 0) key = res.body;
-    store_1.setLocalItem(config_1.default.loginCredentials, key);
+    (0, _store.setLocalItem)(_config.default.loginCredentials, key);
     return res;
   });
 }
-
-exports._login = _login;
 /** 注册 */
+
 
 function remote_register(par) {
   return __awaiter(this, void 0, void 0, function* () {
-    return yield util_1.getJSon(config_1.default.serverIp + 'register', par);
+    return yield (0, _util.getJSon)(_config.default.serverIp + 'register', par);
   });
 }
-
-exports.remote_register = remote_register;
 /** 获取存储库 */
+
 
 function remote_getStore(par) {
   return __awaiter(this, void 0, void 0, function* () {
-    return yield au_getJSON(config_1.default.serverIp + 'getStore', par);
+    return yield au_getJSON(_config.default.serverIp + 'getStore', par);
   });
 }
-
-exports.remote_getStore = remote_getStore;
 /** 设置存储库 */
+
 
 function remote_setStore(par) {
   return __awaiter(this, void 0, void 0, function* () {
-    return yield au_getJSON(config_1.default.serverIp + 'setStore', par);
+    return yield au_getJSON(_config.default.serverIp + 'setStore', par);
   });
 }
-
-exports.remote_setStore = remote_setStore;
 /** 获取存储库 */
+
 
 function remote_getAllStore() {
   return __awaiter(this, void 0, void 0, function* () {
-    return yield au_getJSON(config_1.default.serverIp + 'getAllStore');
+    return yield au_getJSON(_config.default.serverIp + 'getAllStore');
   });
 }
-
-exports.remote_getAllStore = remote_getAllStore;
 },{"../config":"config.ts","../lib/store":"lib/store.ts","../util":"util.ts"}],"function/command.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.CommandControl = exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = exports.Command = void 0;
 
-const message_1 = require("../ui/message");
+var _message = require("../ui/message");
 
-const util_1 = require("../util");
+var _util = require("../util");
 
-const store_1 = require("../state/store");
+var _store = require("../state/store");
+
 /** 每一个命令都应该实现的东西 */
-
-
 class Command {
   constructor(
   /** 命令执行的元素 */
@@ -3589,7 +3646,7 @@ class Command {
 
   toJSON() {
     return {
-      selectEL: util_1.getSelectors(this.selectEL),
+      selectEL: (0, _util.getSelectors)(this.selectEL),
       constructor: this.__proto__.constructor.name
     };
   }
@@ -3601,9 +3658,10 @@ class Command {
   }
 
 }
+/** 删除一个元素 */
+
 
 exports.Command = Command;
-/** 删除一个元素 */
 
 class deleteSelect extends Command {
   do() {
@@ -3618,9 +3676,10 @@ class deleteSelect extends Command {
   }
 
 }
+/** 使元素可编辑 */
+
 
 exports.deleteSelect = deleteSelect;
-/** 使元素可编辑 */
 
 class editSelect extends Command {
   do() {
@@ -3635,9 +3694,10 @@ class editSelect extends Command {
   }
 
 }
+/** 使元素不可编辑 */
+
 
 exports.editSelect = editSelect;
-/** 使元素不可编辑 */
 
 class closeEditSelect extends Command {
   do() {
@@ -3652,20 +3712,23 @@ class closeEditSelect extends Command {
   }
 
 }
+/** 新增一个笔记 */
+
 
 exports.closeEditSelect = closeEditSelect;
-/** 新增一个笔记 */
 
 class addNote extends Command {
   do() {
     this.selectEL;
-    store_1.note_list_store.update(list => {
+
+    _store.note_list_store.update(list => {
       list.push({
         point: this.selectEL,
         content: "6666666"
       });
       return list;
     });
+
     return this;
   }
 
@@ -3678,11 +3741,11 @@ class addNote extends Command {
   }
 
 }
-
-exports.addNote = addNote;
 /** 命令控制器 */
 
-exports.CommandControl = {
+
+exports.addNote = addNote;
+const CommandControl = {
   commandStack: [],
   backOutStack: [],
 
@@ -3704,9 +3767,11 @@ exports.CommandControl = {
   backOut() {
     if (this.commandStack.length === 0) {
       console.warn("命令栈已空，无法进行撤销");
-      message_1.Message.getMessage({
+
+      _message.Message.getMessage({
         msg: "命令栈已空，无法进行撤销"
       }).autoHide();
+
       return;
     }
 
@@ -3717,9 +3782,11 @@ exports.CommandControl = {
   reform() {
     if (this.backOutStack.length === 0) {
       console.warn("撤销栈已空，无法进行重做");
-      message_1.Message.getMessage({
+
+      _message.Message.getMessage({
         msg: "撤销栈已空，无法进行重做"
       }).autoHide();
+
       return;
     }
 
@@ -3728,7 +3795,7 @@ exports.CommandControl = {
   },
 
   loadCommandJSON(obj) {
-    util_1.log("-执行命令-", obj.constructor);
+    (0, _util.log)("-执行命令-", obj.constructor);
     if (obj.constructor === "deleteSelect") return Command.load(obj, deleteSelect);
     if (obj.constructor === "editSelect") return Command.load(obj, editSelect);
     if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
@@ -3745,42 +3812,52 @@ exports.CommandControl = {
   }
 
 };
+exports.CommandControl = CommandControl;
 },{"../ui/message":"ui/message.ts","../util":"util.ts","../state/store":"state/store.ts"}],"state/index.ts":[function(require,module,exports) {
 "use strict";
-/** 当前被选中的元素 */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.setPath = setPath;
+exports.editElement = exports.path = exports.currentElement = void 0;
+
+/** 当前被选中的元素 */
+let currentElement;
+exports.currentElement = currentElement;
+let path;
 /** 修改当前指向的元素和路径 */
 
-function setPath(elList) {
-  exports.path = elList;
-  exports.currentElement = elList[0];
-}
+exports.path = path;
 
-exports.setPath = setPath;
+function setPath(elList) {
+  exports.path = path = elList;
+  exports.currentElement = currentElement = elList[0];
+}
 /** 标记被修改后的元素，以便保存修改的内容 */
 
-exports.editElement = new Set();
+
+const editElement = new Set();
+exports.editElement = editElement;
 },{}],"ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Warning = void 0;
 
-const message_1 = require("./message");
+var _message = require("./message");
 
-const style_1 = require("./style");
+var _style = require("./style");
 
-class Warning extends message_1.Message {
+class Warning extends _message.Message {
   constructor({
     msg
   }) {
     super({
       msg,
-      style: style_1.Style.warning
+      style: _style.Style.warning
     });
   }
 
@@ -3790,7 +3867,39 @@ exports.Warning = Warning;
 },{"./message":"ui/message.ts","./style":"ui/style.ts"}],"function/fun.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.saveChanges = saveChanges;
+exports.loadChanges = loadChanges;
+exports.outline = outline;
+exports.on_mouse = on_mouse;
+exports.on_keydown = on_keydown;
+exports.on_input = on_input;
+exports.switchState = switchState;
+exports.KeyMap = exports.fun = void 0;
+
+var _config = _interopRequireWildcard(require("../config"));
+
+var _store = require("../lib/store");
+
+var _message = require("../ui/message");
+
+var _ajax = require("./ajax");
+
+var _command = require("./command");
+
+var _index = require("../state/index");
+
+var _warning = require("../ui/warning");
+
+var _util = _interopRequireWildcard(require("../util"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3822,81 +3931,53 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-  result["default"] = mod;
-  return result;
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const config_1 = __importStar(require("../config"));
-
-const store_1 = require("../lib/store");
-
-const message_1 = require("../ui/message");
-
-const ajax_1 = require("./ajax");
-
-const command_1 = require("./command");
-
-const index_1 = require("../state/index");
-
-const warning_1 = require("../ui/warning");
-
-const util_1 = __importStar(require("../util"));
 /** ════════════════════════🏳‍🌈 提供给用户使用的功能 🏳‍🌈════════════════════════
  *
  ** ════════════════════════🚧 提供给用户使用的功能 🚧════════════════════════ */
-
-
-exports.fun = {
+const fun = {
   /** 使元素可编辑 */
   editElement() {
-    if (index_1.currentElement.innerHTML.length > 10 * 1000) return new warning_1.Warning({
+    if (_index.currentElement.innerHTML.length > 10 * 1000) return new _warning.Warning({
       msg: "该元素内容过大，请选择更确定的文本元素。"
     }).autoHide();
-    command_1.CommandControl.run(new command_1.editSelect(index_1.currentElement));
+
+    _command.CommandControl.run(new _command.editSelect(_index.currentElement));
   },
 
   /** 删除元素 */
   deleteElement() {
-    command_1.CommandControl.run(new command_1.deleteSelect(index_1.currentElement));
+    _command.CommandControl.run(new _command.deleteSelect(_index.currentElement));
   },
 
   /** 复制title */
   copyTitle() {
-    util_1.default.copyTitle(index_1.currentElement);
+    _util.default.copyTitle(_index.currentElement);
   },
 
   /** 关闭可编辑 */
   closeEdit() {
-    command_1.CommandControl.run(new command_1.closeEditSelect(index_1.currentElement));
+    _command.CommandControl.run(new _command.closeEditSelect(_index.currentElement));
   },
 
   /** 撤销 */
   backOut() {
-    command_1.CommandControl.backOut();
+    _command.CommandControl.backOut();
   },
 
   /** 重做 */
   undo() {
-    command_1.CommandControl.reform();
+    _command.CommandControl.reform();
   },
 
   /** 新增笔记 */
   addNote() {
-    command_1.CommandControl.run(new command_1.addNote(index_1.currentElement));
+    _command.CommandControl.run(new _command.addNote(_index.currentElement));
   },
 
   /** 保存所有的修改 */
   saveChanges() {
-    saveChanges(index_1.editElement);
-    new message_1.Message({
+    saveChanges(_index.editElement);
+    new _message.Message({
       msg: "保存成功"
     }).autoHide();
   },
@@ -3904,11 +3985,11 @@ exports.fun = {
   /** 将修改上传到云端 */
   uploadThe() {
     return __awaiter(this, void 0, void 0, function* () {
-      ajax_1.remote_setStore({
-        url: config_1.default.locationUrl,
-        store: yield saveChanges(index_1.editElement)
+      (0, _ajax.remote_setStore)({
+        url: _config.default.locationUrl,
+        store: yield saveChanges(_index.editElement)
       }).then(r => {
-        new message_1.Message({
+        new _message.Message({
           msg: "云端存储:" + r.message
         }).autoHide();
       });
@@ -3917,18 +3998,18 @@ exports.fun = {
 
   /** 从云端下载修改 */
   downloadThe() {
-    new message_1.Message({
+    new _message.Message({
       msg: "正在读取云端存储"
     }).autoHide();
-    ajax_1.remote_getStore({
-      url: config_1.default.locationUrl
+    (0, _ajax.remote_getStore)({
+      url: _config.default.locationUrl
     }).then(r => {
-      if (r.body === undefined || r.body.length === 0) return new message_1.Message({
+      if (r.body === undefined || r.body.length === 0) return new _message.Message({
         msg: "云端存储:" + r.message
       }).autoHide();
       const allStore = JSON.parse(r.body[0].store);
       loadChanges(allStore);
-      new message_1.Message({
+      new _message.Message({
         msg: "云端存储:" + r.message
       }).autoHide();
     });
@@ -3947,40 +4028,42 @@ exports.fun = {
 };
 /** 按键和函数的映射关系 */
 
-exports.KeyMap = {
-  KeyQ: [exports.fun.editElement],
-  KeyD: [exports.fun.deleteElement],
-  KeyC: [exports.fun.copyTitle],
-  KeyW: [exports.fun.closeEdit],
-  KeyZ: [exports.fun.backOut],
-  KeyY: [exports.fun.undo],
-  KeyN: [exports.fun.addNote],
-  KeyS: [exports.fun.saveChanges],
-  KeyO: [exports.fun.uploadThe],
-  KeyP: [exports.fun.downloadThe, exports.fun.saveChanges],
-  KeyK: [exports.fun.register],
-  KeyL: [exports.fun.login]
+exports.fun = fun;
+const KeyMap = {
+  KeyQ: [fun.editElement],
+  KeyD: [fun.deleteElement],
+  KeyC: [fun.copyTitle],
+  KeyW: [fun.closeEdit],
+  KeyZ: [fun.backOut],
+  KeyY: [fun.undo],
+  KeyN: [fun.addNote],
+  KeyS: [fun.saveChanges],
+  KeyO: [fun.uploadThe],
+  KeyP: [fun.downloadThe, fun.saveChanges],
+  KeyK: [fun.register],
+  KeyL: [fun.login]
 };
 /** 保存修改 */
+
+exports.KeyMap = KeyMap;
 
 function saveChanges(editElement) {
   return __awaiter(this, void 0, void 0, function* () {
     const data = {
       element_List: {},
-      CommandStack: command_1.CommandControl.commandStack
+      CommandStack: _command.CommandControl.commandStack
     };
     editElement.forEach(el => {
-      const selectors = util_1.getSelectors(el);
+      const selectors = (0, _util.getSelectors)(el);
       data.element_List[selectors] = el.innerHTML;
     });
     const data_str = JSON.stringify(data);
-    yield store_1.setLocalItem(config_1.AllStoreName, JSON.stringify(data));
+    yield (0, _store.setLocalItem)(_config.AllStoreName, JSON.stringify(data));
     return data_str;
   });
 }
-
-exports.saveChanges = saveChanges;
 /** 加载修改 */
+
 
 function loadChanges(allStore) {
   return __awaiter(this, void 0, void 0, function* () {
@@ -3995,20 +4078,19 @@ function loadChanges(allStore) {
         if (el === null) {
           console.error(`${selectors} 的元素无法找到，无法重写`);
         } else {
-          index_1.editElement.add(el);
+          _index.editElement.add(el);
+
           el.innerHTML = html;
-          util_1.log("-重写-", el);
+          (0, _util.log)("-重写-", el);
         }
       }
     }
     /** 重新执行命令栈 */
 
 
-    command_1.CommandControl.loadCommandJsonAndRun(allStore.CommandStack);
+    _command.CommandControl.loadCommandJsonAndRun(allStore.CommandStack);
   });
 }
-
-exports.loadChanges = loadChanges;
 
 function login() {
   const title = ">>>网页笔记<<<\n";
@@ -4016,12 +4098,11 @@ function login() {
   if (user === null) return;
   const secret_key = prompt(title + "请输入密钥。");
   if (secret_key === null) return;
-
-  ajax_1._login({
+  (0, _ajax._login)({
     user,
     secret_key
   }).then(r => {
-    new message_1.Message({
+    new _message.Message({
       msg: r.message
     }).autoHide();
   });
@@ -4033,11 +4114,11 @@ function register() {
   if (user === null) return;
   const secret_key = prompt(title + "请输入密钥。要记住哦，没有提供找回功能");
   if (secret_key === null) return;
-  ajax_1.remote_register({
+  (0, _ajax.remote_register)({
     user,
     secret_key
   }).then(r => {
-    new message_1.Message({
+    new _message.Message({
       msg: r.message
     }).autoHide();
   });
@@ -4050,7 +4131,7 @@ function outline(el) {
   setTimeout(reduction, 400);
 
   function reduction() {
-    if (el == index_1.currentElement) {
+    if (el == _index.currentElement) {
       outline(el);
       /** 鼠标还在这个元素上，再等会 */
 
@@ -4060,22 +4141,20 @@ function outline(el) {
     el.classList.remove("user_js_llej_outline");
   }
 }
-
-exports.outline = outline;
 /** 监听鼠标移动 */
+
 
 function on_mouse(event) {
   if (event.target instanceof HTMLElement) {
-    index_1.setPath(util_1.nodePath(event.target));
+    (0, _index.setPath)((0, _util.nodePath)(event.target));
 
-    if (config_1.default.elementEdit) {
+    if (_config.default.elementEdit) {
       outline(event.target);
     }
   }
 }
-
-exports.on_mouse = on_mouse;
 /** 监测按键事件 */
+
 
 function on_keydown(event) {
   return __awaiter(this, void 0, void 0, function* () {
@@ -4093,45 +4172,41 @@ function on_keydown(event) {
     /** 没有开启编辑功能 */
 
 
-    if (config_1.default.elementEdit === false) {
+    if (_config.default.elementEdit === false) {
       return;
     }
 
-    if (code in exports.KeyMap) {
+    if (code in KeyMap) {
       /** 执行按键绑定的函数 */
-      const func_list = exports.KeyMap[code];
-      util_1.log(`[按下了] ${code},执行了:`, func_list.map(f => f.name));
+      const func_list = KeyMap[code];
+      (0, _util.log)(`[按下了] ${code},执行了:`, func_list.map(f => f.name));
       func_list.forEach(func => {
         func();
       });
     }
   });
 }
-
-exports.on_keydown = on_keydown;
 /** 编辑事件 */
+
 
 function on_input(event) {
   if (event.target instanceof HTMLElement) {
     const el = event.target;
-    if (el.innerHTML.length > 10 * 1000) new warning_1.Warning({
+    if (el.innerHTML.length > 10 * 1000) new _warning.Warning({
       msg: "该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。"
-    }).autoHide();else index_1.editElement.add(el);
+    }).autoHide();else _index.editElement.add(el);
   }
 }
-
-exports.on_input = on_input;
 /** 切换状态 */
 
+
 function switchState(event) {
-  config_1.default.elementEdit = !config_1.default.elementEdit;
+  _config.default.elementEdit = !_config.default.elementEdit;
   event.preventDefault();
   event.returnValue = false;
   return false;
 }
-
-exports.switchState = switchState;
-},{"../config":"config.ts","../lib/store":"lib/store.ts","../ui/message":"ui/message.ts","./ajax":"function/ajax.ts","./command":"function/command.ts","../state/index":"state/index.ts","../ui/warning":"ui/warning.ts","../util":"util.ts"}],"app.svelte":[function(require,module,exports) {
+},{"../config":"config.ts","../lib/store":"lib/store.ts","../ui/message":"ui/message.ts","./ajax":"function/ajax.ts","./command":"function/command.ts","../state/index":"state/index.ts","../ui/warning":"ui/warning.ts","../util":"util.ts"}],"layout_div.svelte":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4153,16 +4228,16 @@ var _fun = require("./function/fun");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* app.svelte generated by Svelte v3.20.1 */
+/* layout_div.svelte generated by Svelte v3.23.2 */
 const {
   console: console_1
 } = _internal.globals;
-const file = "app.svelte";
+const file = "layout_div.svelte";
 
 function add_css() {
   var style = (0, _internal.element)("style");
-  style.id = "svelte-crm84r-style";
-  style.textContent = ".root.svelte-crm84r{z-index:60;position:absolute;top:3rem}\n";
+  style.id = "svelte-t1o6s3-style";
+  style.textContent = ".root.svelte-t1o6s3{z-index:60;position:absolute;top:3rem}\n";
   (0, _internal.append_dev)(document.head, style);
 }
 
@@ -4176,12 +4251,13 @@ function get_each_context(ctx, list, i) {
 
 
 function create_each_block(ctx) {
+  let note;
   let updating_note;
   let current;
 
   function note_note_binding(value) {
     /*note_note_binding*/
-    ctx[3].call(null, value,
+    ctx[2].call(null, value,
     /*note*/
     ctx[4],
     /*each_value*/
@@ -4200,7 +4276,7 @@ function create_each_block(ctx) {
     ctx[4];
   }
 
-  const note = new _Note.default({
+  note = new _Note.default({
     props: note_props,
     $$inline: true
   });
@@ -4256,14 +4332,12 @@ function create_each_block(ctx) {
 
 function create_fragment(ctx) {
   let div;
-  let input;
   let t0;
-  let html_tag;
   let t1;
-  let t2;
-  let html_tag_1;
+  let html_tag;
   let raw1_value = "<style>.user_js_llej_outline{outline:2px solid red}</style>" + "";
   let current;
+  let mounted;
   let dispose;
   let each_value =
   /*note_list*/
@@ -4282,52 +4356,47 @@ function create_fragment(ctx) {
   const block = {
     c: function create() {
       div = (0, _internal.element)("div");
-      input = (0, _internal.element)("input");
       t0 = (0, _internal.space)();
-      t1 = (0, _internal.space)();
 
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
 
-      t2 = (0, _internal.space)();
-      (0, _internal.attr_dev)(input, "placeholder", "111111111111111");
-      (0, _internal.add_location)(input, file, 43, 2, 817);
-      html_tag = new _internal.HtmlTag(
-      /*html*/
-      ctx[1], null);
-      (0, _internal.attr_dev)(div, "class", "root svelte-crm84r");
+      t1 = (0, _internal.space)();
+      (0, _internal.attr_dev)(div, "class", "root svelte-t1o6s3");
       (0, _internal.add_location)(div, file, 42, 0, 795);
-      html_tag_1 = new _internal.HtmlTag(raw1_value, null);
+      html_tag = new _internal.HtmlTag(null);
     },
     l: function claim(nodes) {
       throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     },
-    m: function mount(target, anchor, remount) {
+    m: function mount(target, anchor) {
       (0, _internal.insert_dev)(target, div, anchor);
-      (0, _internal.append_dev)(div, input);
-      (0, _internal.append_dev)(div, t0);
-      html_tag.m(div);
-      (0, _internal.insert_dev)(target, t1, anchor);
+      div.innerHTML =
+      /*html*/
+      ctx[1];
+      (0, _internal.insert_dev)(target, t0, anchor);
 
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].m(target, anchor);
       }
 
-      (0, _internal.insert_dev)(target, t2, anchor);
-      html_tag_1.m(target, anchor);
+      (0, _internal.insert_dev)(target, t1, anchor);
+      html_tag.m(raw1_value, target, anchor);
       current = true;
-      if (remount) (0, _internal.run_all)(dispose);
-      dispose = [(0, _internal.listen_dev)(window, "keydown", _fun.on_keydown, false, false, false), (0, _internal.listen_dev)(window, "input", _fun.on_input, false, false, false), (0, _internal.listen_dev)(window, "mouseover", _fun.on_mouse, false, false, false), (0, _internal.listen_dev)(input, "paste",
-      /*paste*/
-      ctx[2], false, false, false)];
+
+      if (!mounted) {
+        dispose = [(0, _internal.listen_dev)(window, "keydown", _fun.on_keydown, false, false, false), (0, _internal.listen_dev)(window, "input", _fun.on_input, false, false, false), (0, _internal.listen_dev)(window, "mouseover", _fun.on_mouse, false, false, false)];
+        mounted = true;
+      }
     },
     p: function update(ctx, [dirty]) {
       if (!current || dirty &
       /*html*/
-      2) html_tag.p(
+      2) div.innerHTML =
       /*html*/
-      ctx[1]);
+      ctx[1];
+      ;
 
       if (dirty &
       /*note_list*/
@@ -4348,7 +4417,7 @@ function create_fragment(ctx) {
             each_blocks[i] = create_each_block(child_ctx);
             each_blocks[i].c();
             (0, _internal.transition_in)(each_blocks[i], 1);
-            each_blocks[i].m(t2.parentNode, t2);
+            each_blocks[i].m(t1.parentNode, t1);
           }
         }
 
@@ -4381,10 +4450,11 @@ function create_fragment(ctx) {
     },
     d: function destroy(detaching) {
       if (detaching) (0, _internal.detach_dev)(div);
-      if (detaching) (0, _internal.detach_dev)(t1);
+      if (detaching) (0, _internal.detach_dev)(t0);
       (0, _internal.destroy_each)(each_blocks, detaching);
-      if (detaching) (0, _internal.detach_dev)(t2);
-      if (detaching) html_tag_1.d();
+      if (detaching) (0, _internal.detach_dev)(t1);
+      if (detaching) html_tag.d();
+      mounted = false;
       (0, _internal.run_all)(dispose);
     }
   };
@@ -4415,13 +4485,13 @@ function instance($$self, $$props, $$invalidate) {
 
   const writable_props = [];
   Object.keys($$props).forEach(key => {
-    if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<App> was created with unknown prop '${key}'`);
+    if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<Layout_div> was created with unknown prop '${key}'`);
   });
   let {
     $$slots = {},
     $$scope
   } = $$props;
-  (0, _internal.validate_slots)("App", $$slots, []);
+  (0, _internal.validate_slots)("Layout_div", $$slots, []);
 
   function note_note_binding(value, note, each_value, note_index) {
     each_value[note_index] = value;
@@ -4457,17 +4527,17 @@ function instance($$self, $$props, $$invalidate) {
     $$self.$inject_state($$props.$$inject);
   }
 
-  return [note_list, html, paste, note_note_binding];
+  return [note_list, html, note_note_binding];
 }
 
-class App extends _internal.SvelteComponentDev {
+class Layout_div extends _internal.SvelteComponentDev {
   constructor(options) {
     super(options);
-    if (!document.getElementById("svelte-crm84r-style")) add_css();
+    if (!document.getElementById("svelte-t1o6s3-style")) add_css();
     (0, _internal.init)(this, options, instance, create_fragment, _internal.safe_not_equal, {});
     (0, _internal.dispatch_dev)("SvelteRegisterComponent", {
       component: this,
-      tagName: "App",
+      tagName: "Layout_div",
       options,
       id: create_fragment.name
     });
@@ -4475,12 +4545,26 @@ class App extends _internal.SvelteComponentDev {
 
 }
 
-var _default = App;
+var _default = Layout_div;
 exports.default = _default;
-},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","svelte/transition":"../node_modules/svelte/transition/index.mjs","./state/store":"state/store.ts","./svelte/msg":"svelte/msg.svelte","./svelte/Note":"svelte/Note.svelte","./function/fun":"function/fun.ts","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"网页笔记.user.ts":[function(require,module,exports) {
+},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","svelte/transition":"../node_modules/svelte/transition/index.mjs","./state/store":"state/store.ts","./svelte/msg":"svelte/msg.svelte","./svelte/Note":"svelte/Note.svelte","./function/fun":"function/fun.ts","_css_loader":"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/css-loader.js"}],"网页笔记.user.ts":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+var _layout_div = _interopRequireDefault(require("./layout_div.svelte"));
+
+var _fun = require("./function/fun");
+
+var _index = require("./state/index");
+
+var _store = require("./lib/store");
+
+var _config = require("./config");
+
+var _command = require("./function/command");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -4512,28 +4596,10 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const app_svelte_1 = __importDefault(require("./app.svelte"));
-
-const fun_1 = require("./function/fun");
-
-const state_1 = require("./state");
-
-const store_1 = require("./lib/store");
-
-const config_1 = require("./config"); // ==UserScript==
+// ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -4541,44 +4607,50 @@ const config_1 = require("./config"); // ==UserScript==
 // @connect      shenzilong.cn
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        unsafeWindow
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
-
-
 (function () {
   return __awaiter(this, void 0, void 0, function* () {
+    if (typeof unsafeWindow === "undefined") {
+      window.unsafeWindow = window;
+    } else {
+      window = unsafeWindow;
+    }
     /** 调试用 */
-    // (<any>window).CommandControl = CommandControl;
-    // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
+
+
+    window.CommandControl = _command.CommandControl; // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
 
     /** 自动加载本地暂存更改 */
+
     (() => __awaiter(this, void 0, void 0, function* () {
-      const AllStoreStr = yield store_1.getLocalItem(config_1.AllStoreName, undefined);
+      const AllStoreStr = yield (0, _store.getLocalItem)(_config.AllStoreName, undefined);
       if (AllStoreStr === undefined) return console.warn("没有可用的存储库");
       const allStore = JSON.parse(AllStoreStr);
 
       if (document.readyState === "complete") {
-        fun_1.loadChanges(allStore);
+        (0, _fun.loadChanges)(allStore);
       } else {
         window.addEventListener("load", function () {
-          fun_1.loadChanges(allStore);
+          (0, _fun.loadChanges)(allStore);
         });
       }
     }))();
 
     const app_div = document.createElement("div");
     document.body.appendChild(app_div);
-    const app = new app_svelte_1.default({
+    const app = new _layout_div.default({
       target: app_div
     });
     /** 自动保存修改后的html */
 
     setInterval(function () {
-      fun_1.saveChanges(state_1.editElement);
+      (0, _fun.saveChanges)(_index.editElement);
     }, 1000 * 60);
   });
 })();
-},{"./app.svelte":"app.svelte","./function/fun":"function/fun.ts","./state":"state/index.ts","./lib/store":"lib/store.ts","./config":"config.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./layout_div.svelte":"layout_div.svelte","./function/fun":"function/fun.ts","./state/index":"state/index.ts","./lib/store":"lib/store.ts","./config":"config.ts","./function/command":"function/command.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -4606,7 +4678,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52106" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63476" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -4782,5 +4854,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","网页笔记.user.ts"], null)
+},{}]},{},["C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js","网页笔记.user.ts"], null)
 //# sourceMappingURL=/网页笔记.user.js.map
