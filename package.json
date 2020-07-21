@@ -33,7 +33,7 @@
   },
   "scripts": {
     "网页笔记": "npx parcel  ./网页笔记/网页笔记.user.ts",
-    "build":"build.sh"
+    "build":"node ./build.js"
   },
   "browserslist": "last 3 chrome versions"
 }
