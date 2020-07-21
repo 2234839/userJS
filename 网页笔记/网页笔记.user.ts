@@ -1,9 +1,9 @@
 import App from "./layout_div.svelte";
-import { saveChanges, loadChanges } from "./function/fun";
+import { saveChanges, loadChanges } from "./fun/fun";
 import { editElement } from "./state/index";
 import { getLocalItem } from "./lib/store";
 import { AllStoreName } from "./config";
-import { CommandControl } from "./function/command";
+import { CommandControl } from "./fun/command";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择

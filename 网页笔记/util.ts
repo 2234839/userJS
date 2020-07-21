@@ -1,4 +1,3 @@
-import { async } from "q";
 import { isDev } from "./config";
 
 /** 用于复制文本的input */

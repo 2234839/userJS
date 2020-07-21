@@ -1,4 +1,4 @@
-import { Command } from "../function/command";
+import { Command } from "../fun/command";
 
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {
