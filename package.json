@@ -32,7 +32,8 @@
     "synaptic": "^1.1.4"
   },
   "scripts": {
-    "网页笔记": "npx parcel  ./网页笔记/网页笔记.user.ts"
+    "网页笔记": "npx parcel  ./网页笔记/网页笔记.user.ts",
+    "build":"build.sh"
   },
   "browserslist": "last 3 chrome versions"
 }
