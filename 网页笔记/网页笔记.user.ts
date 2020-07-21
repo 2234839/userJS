@@ -47,8 +47,14 @@ import { CommandControl } from "./function/command";
     target: app_div,
   });
 
-  /** 自动保存修改后的html */
-  setInterval(function () {
-    saveChanges(editElement);
-  }, 1000 * 60);
+  /** 自动保存修改后的html  */
+  setInterval(
+    /**
+     *  **一分钟保存一次**
+     */
+    function () {
+      saveChanges(editElement);
+    },
+    1000 * 60,
+  );
 })();

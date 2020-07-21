@@ -63,7 +63,7 @@ import { 拖拽多选 } from "../util/dom/拖拽多选";
     });
     document.body.appendChild(btn);
   }
-  拖拽多选();
+  // 拖拽多选();
   // setTimeout(() => {
   //   const code = uw._api.getYapiApiCode();
   //   console.log(code);

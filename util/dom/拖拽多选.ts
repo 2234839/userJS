@@ -1,13 +1,12 @@
-export function 拖拽多选() {
+
+export function 拖拽多选(Options: { targetSelector: string; 选择完毕: (els: HTMLElement[]) => void }) {
   let flag = false;
   let 选区 = [0, 0, 0, 0] as 选区;
   const div = document.createElement("div");
   div.style.cssText = `position: fixed;background: gray;opacity: .3;`;
-
   document.body.appendChild(div);
   let 选区矩形 = 选区_to_矩形(选区);
   document.addEventListener("mousedown", (event) => {
-    console.log("mousedown", event);
     遮罩.remove();
     if (event.ctrlKey) {
       flag = true;
@@ -33,12 +32,14 @@ export function 拖拽多选() {
     if (!flag) {
       return;
     }
-    const td_list = Array.from(document.querySelectorAll("td")) as HTMLElement[];
+    const td_list = Array.from(document.querySelectorAll(Options.targetSelector)) as HTMLElement[];
     const 选中 = td_list.filter((el) => 矩形相交(选区矩形, HtmlElement_to_矩形(el)));
-    console.log(选区矩形, 选中.map(HtmlElement_to_矩形), 选中);
+    // console.log(选区矩形, 选中.map(HtmlElement_to_矩形), 选中);
+    Options.选择完毕(选中);
     选中.map(HtmlElement_to_矩形).forEach(遮罩.add);
     flag = false;
   });
+  return event;
 }
 
 type 矩形 = [/** 左上角x */ number, /** 左上角y */ number, /** 右上角x */ number, /** 右上角y */ number];
