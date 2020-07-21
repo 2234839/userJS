@@ -11,7 +11,7 @@
   import { msg,note_list_store } from "./state/store";
   import Msg from "./svelte/msg";
   import Note from "./svelte/Note";
-  import { on_mouse, on_keydown, on_input } from "./function/fun";
+  import { on_mouse, on_keydown, on_input } from "./fun/fun";
 
   let note_list=[]
 
