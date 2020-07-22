@@ -1,4 +1,4 @@
-import util from "../网页笔记/util";
+import * as util from "../网页笔记/util";
 import { api } from "./i_api";
 import { apiToTypeScriptCode } from "./parse/apiToTypeScriptCode";
 import { getRap2Api } from "./parse/rap2-taobo";
