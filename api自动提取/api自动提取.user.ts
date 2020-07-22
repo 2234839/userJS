@@ -1,11 +1,10 @@
 import util from "../网页笔记/util";
+import { api } from "./i_api";
 import { apiToTypeScriptCode } from "./parse/apiToTypeScriptCode";
+import { getRap2Api } from "./parse/rap2-taobo";
 import { getShowDocApi } from "./parse/showDocApi";
 import { swagger_bootstrap_ui } from "./parse/swagger-bootstrap-ui";
 import { getYapiApi, 修改人列表_扩展 } from "./parse/yapi";
-import { api } from "./i_api";
-import { getRap2Api } from "./parse/rap2-taobo";
-import { 拖拽多选 } from "../util/dom/拖拽多选";
 
 // ==UserScript==
 // @name         api自动提取
@@ -59,7 +58,7 @@ import { 拖拽多选 } from "../util/dom/拖拽多选";
     `;
     btn.addEventListener("click", async () => {
       util.copyTitle(await get_api());
-      alert("复制成功")
+      alert("复制成功");
     });
     document.body.appendChild(btn);
   }

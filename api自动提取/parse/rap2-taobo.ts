@@ -81,7 +81,14 @@ export async function getRap2Api(): Promise<api> {
 }
 
 /** 根据table 获取到树的结构 */
-export function reduction_tree(table: HTMLElement, parList: par[], get_level_list: (table: HTMLElement) => number[]) {
+export function reduction_tree(
+  /** table 元素 */
+  table: HTMLElement,
+  /** 参数列表 */
+  parList: par[],
+  /** 提取等级的函数，用于生成等级数组 */
+  get_level_list: (table: HTMLElement) => number[],
+) {
   /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
   const level_list = get_level_list(table);
 

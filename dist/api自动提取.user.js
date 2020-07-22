@@ -363,8 +363,11 @@ function getTextConten(el) {
 function getTable(el, tr_selector = "tr", td_selector = "td",
 /** 特定元素的识别器 */
 recognizer = {}) {
-  console.log("getTable", el);
   const table = [];
+
+  if (el === null) {
+    return table;
+  }
 
   for (let i = 0; i < el.querySelectorAll(tr_selector).length; i++) {
     /** tr */
@@ -435,22 +438,201 @@ function apiToTypeScriptCode(api) {
 
 
 function parse_par_item(par, level = 0) {
-  return `${(0, _util.copyStr)("\t", level)}/** ${par.type} ${par.describe} */${par.name}${par.must ? "" : "?"}: ${(() => {
-    if (par.children === undefined) return par.type.replace("string(", "_string(")
-    /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
-    .replace("number(", "_number(").replace("String", "string")
-    /** 基元类型不要用 */
-    .replace("Number", "number").replace("Boolean", "boolean").replace("(", "<").replace(")", ">").replace("-", "_");
+  if (!par.children && !par.name) {
+    return par.type;
+  }
+
+  if (par.type === "Array") {
     return `${parse_par_List(par.children, level + 1)}${
     /** 处理数组类型 */
-    par.type.includes("[]") ? "[]" : ""}`;
+    par.type.includes("[]") || par.type === "Array" ? "[]" : ""}`;
+  }
+
+  return `${(0, _util.copyStr)("\t", level)}/** ${par.type} ${par.describe} */${par.name}${par.must ? "" : "?"}: ${(() => {
+    if (par.children === undefined) {
+      return par.type.replace("string(", "_string(")
+      /** string 这种基本类型不能够使用引用的方式解决，所以加上一个_来区分 */
+      .replace("number(", "_number(").replace("String", "string")
+      /** 基元类型不要用 */
+      .replace("Number", "number").replace("Boolean", "boolean").replace("(", "<").replace(")", ">").replace("-", "_");
+    } else {
+      return `${parse_par_List(par.children, level + 1)}${
+      /** 处理数组类型 */
+      par.type.includes("[]") || par.type === "Array" ? "[]" : ""}`;
+    }
   })()}`;
 }
 /** 解析api的par数组为字符串 */
 
 
 function parse_par_List(par, level = 1) {
-  return `{\r${par.map(el => parse_par_item(el, level)).join(",\n")}}`;
+  if (par.find(el => el.name !== "") === undefined) {
+    /** 属性全都是没有名字的，断定外层为数组 */
+    return `(\r${par.map(el => parse_par_item(el, level)).join(",\n")})`;
+  } else {
+    return `{\r${par.map(el => parse_par_item(el, level)).join(",\n")}}`;
+  }
+}
+},{"../util":"util.ts"}],"parse/rap2-taobo.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getRap2Api = getRap2Api;
+exports.reduction_tree = reduction_tree;
+
+var _util = require("../util");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+/** 获取rap2平台的api */
+function getRap2Api() {
+  return __awaiter(this, void 0, void 0, function* () {
+    console.log("参数列表=========================");
+    const par_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(2) > div.body > div > div.RSortableWrapper.depth-1");
+    /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
+
+    const par_table = (0, _util.getTable)(par_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
+      return el.querySelector("input").checked ? "true" : "false";
+    }]);
+    const res_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(3) > div.body > div > div.RSortableWrapper.depth-1");
+    /** 参数名称 参数说明 类型 schema */
+
+    const res_table = (0, _util.getTable)(res_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
+      return el.querySelector("input").checked ? "true" : "false";
+    }]);
+    console.log("参数和响应", par_el, res_el, par_table, res_table);
+
+    const get_level_list = table => {
+      const tr_list = table.querySelectorAll(".SortableTreeTableRow");
+      return Array.from(tr_list).map(tr => {
+        const match = tr.parentElement.className.match(/depth(\d)/);
+        if (match === null) return 0;else {
+          return Number(match[1]) + 1;
+        }
+      });
+    };
+
+    const api = {
+      url: (0, _util.getElText)(".summary li:nth-child(1) a"),
+      name: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span"),
+      describe: "",
+      method: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
+      parList: reduction_tree(par_el, par_table.map(str_list => {
+        return {
+          name: str_list[0].replace(/BODY$/, "").replace(/QUERY$/, ""),
+          must: str_list[1] === "true",
+          type: str_list[2],
+          describe: str_list[5]
+        };
+      }), get_level_list),
+      resList: reduction_tree(res_el, res_table.map(str_list => {
+        return {
+          name: str_list[0],
+          must: str_list[1] === "true",
+          type: str_list[2],
+          describe: str_list[5]
+        };
+      }), get_level_list)
+    };
+    console.log("最终结果", par_table, res_table, api);
+    return api;
+  });
+}
+/** 根据table 获取到树的结构 */
+
+
+function reduction_tree(
+/** table 元素 */
+table,
+/** 参数列表 */
+parList,
+/** 提取等级的函数，用于生成等级数组 */
+get_level_list) {
+  /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
+  const level_list = get_level_list(table);
+  /** 最高级 */
+
+  const hierarchy = [];
+  let current_hierarchy = hierarchy;
+
+  for (let i = 0; i < level_list.length; i++) {
+    const level = level_list[i];
+
+    if (i === 0) {
+      current_hierarchy.push(parList[i]);
+      continue;
+    }
+    /** 同级元素 */
+
+
+    if (level > level_list[i - 1]) {
+      /** 按一般规律来说它就是 当前层级数组最后一个元素的 子级 */
+      const parent = current_hierarchy[current_hierarchy.length - 1];
+
+      if (parent.children === undefined) {
+        parent.children = [];
+      }
+      /** 指向下一级 */
+
+
+      current_hierarchy = parent.children;
+    } else if (level === level_list[i - 1]) {
+      /** 同级的 */
+    } else {
+      /** 小于的要提升当前层级 */
+
+      /** 从最高的0级开始降级,直到它所在的等级 */
+      let demotion_temp = hierarchy;
+      /** 开始降级 */
+
+      for (let i = 0; i < level; i++) {
+        /** 按一般规律来说 它一定生成在最后一个元素的子级 */
+        demotion_temp = demotion_temp[demotion_temp.length - 1].children;
+      }
+      /** 指向将到的级别 */
+
+
+      current_hierarchy = demotion_temp;
+    }
+    /** 将元素添加到当前层级 */
+
+
+    current_hierarchy.push(parList[i]);
+  }
+
+  return hierarchy;
 }
 },{"../util":"util.ts"}],"parse/showDocApi.ts":[function(require,module,exports) {
 "use strict";
@@ -678,161 +860,6 @@ function reduction_tree(table, parlist) {
 
   return hierarchy;
 }
-},{"../util":"util.ts"}],"parse/rap2-taobo.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getRap2Api = getRap2Api;
-exports.reduction_tree = reduction_tree;
-
-var _util = require("../util");
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-/** 获取rap2平台的api */
-function getRap2Api() {
-  return __awaiter(this, void 0, void 0, function* () {
-    console.log("参数列表=========================");
-    const par_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(2) > div.body > div > div.RSortableWrapper.depth-1");
-    /** 参数名称 参数说明 请求类型 是否必须 数据类型 schema */
-
-    const par_table = (0, _util.getTable)(par_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
-      return el.querySelector("input").checked ? "true" : "false";
-    }]);
-    const res_el = document.querySelector("#root > article > div.body > article > div.body > div > article.InterfaceEditor > section:nth-child(3) > div.body > div > div.RSortableWrapper.depth-1");
-    /** 参数名称 参数说明 类型 schema */
-
-    const res_table = (0, _util.getTable)(res_el, ".SortableTreeTableRow", ".td.payload", [undefined, el => {
-      return el.querySelector("input").checked ? "true" : "false";
-    }]);
-    console.log("参数和响应", par_el, res_el, par_table, res_table);
-
-    const get_level_list = table => {
-      const tr_list = table.querySelectorAll(".SortableTreeTableRow");
-      return Array.from(tr_list).map(tr => {
-        const match = tr.parentElement.className.match(/depth(\d)/);
-        if (match === null) return 0;else {
-          return Number(match[1]) + 1;
-        }
-      });
-    };
-
-    const api = {
-      url: (0, _util.getElText)(".summary li:nth-child(1) a"),
-      name: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > div > span"),
-      describe: "",
-      method: (0, _util.getElText)("#root > article > div.body > article > div.body > div > article.InterfaceEditor > div > ul > li:nth-child(2) > span > span:nth-child(2)"),
-      parList: reduction_tree(par_el, par_table.map(str_list => {
-        return {
-          name: str_list[0].replace(/BODY$/, "").replace(/QUERY$/, ""),
-          must: str_list[1] === "true",
-          type: str_list[2],
-          describe: str_list[5]
-        };
-      }), get_level_list),
-      resList: reduction_tree(res_el, res_table.map(str_list => {
-        return {
-          name: str_list[0],
-          must: str_list[1] === "true",
-          type: str_list[2],
-          describe: str_list[5]
-        };
-      }), get_level_list)
-    };
-    console.log("最终结果", par_table, res_table, api);
-    return api;
-  });
-}
-/** 根据table 获取到树的结构 */
-
-
-function reduction_tree(table, parList, get_level_list) {
-  /** 等级数组 [0,1,1,1,2,2,1,1] 这样的 */
-  const level_list = get_level_list(table);
-  /** 最高级 */
-
-  const hierarchy = [];
-  let current_hierarchy = hierarchy;
-
-  for (let i = 0; i < level_list.length; i++) {
-    const level = level_list[i];
-
-    if (i === 0) {
-      current_hierarchy.push(parList[i]);
-      continue;
-    }
-    /** 同级元素 */
-
-
-    if (level > level_list[i - 1]) {
-      /** 按一般规律来说它就是 当前层级数组最后一个元素的 子级 */
-      const parent = current_hierarchy[current_hierarchy.length - 1];
-
-      if (parent.children === undefined) {
-        parent.children = [];
-      }
-      /** 指向下一级 */
-
-
-      current_hierarchy = parent.children;
-    } else if (level === level_list[i - 1]) {
-      /** 同级的 */
-    } else {
-      /** 小于的要提升当前层级 */
-
-      /** 从最高的0级开始降级,直到它所在的等级 */
-      let demotion_temp = hierarchy;
-      /** 开始降级 */
-
-      for (let i = 0; i < level; i++) {
-        /** 按一般规律来说 它一定生成在最后一个元素的子级 */
-        demotion_temp = demotion_temp[demotion_temp.length - 1].children;
-      }
-      /** 指向将到的级别 */
-
-
-      current_hierarchy = demotion_temp;
-    }
-    /** 将元素添加到当前层级 */
-
-
-    current_hierarchy.push(parList[i]);
-  }
-
-  return hierarchy;
-}
 },{"../util":"util.ts"}],"../util/dom/elment.ts":[function(require,module,exports) {
 "use strict";
 
@@ -941,30 +968,42 @@ function getYapiApi() {
       name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
       describe,
       method: $$(".tag-method")[0].textContent,
-      parList: Array.from(par_table.querySelectorAll("tr")).filter((el, i) => {
-        return i !== 0;
+      parList: (0, _rap2Taobo.reduction_tree)(par_table, Array.from(par_table.querySelectorAll("tr")).filter((el, i) => {
+        // console.log("[        el]", el, el.querySelectorAll("td")[0].textContent);
+        return (
+          /** 第一行是标题 */
+          i !== 0
+        );
       }).map(el => {
         return {
           name: el.querySelectorAll("td")[0].textContent,
 
           /** 是否必需 */
           must: el.querySelectorAll("td")[2].textContent !== "非必须",
-          type: el.querySelectorAll("td")[1].textContent,
+          type: yapTypePar(el),
           describe: el.querySelectorAll("td")[4].textContent
         };
+      }), el => {
+        const tr = el.querySelectorAll("tbody tr");
+        const level = Array.from(tr).map(tr => {
+          return Number(tr.className.replace(/.*(\d+)/, "$1"));
+        });
+        return level;
       }),
-      resList: (0, _rap2Taobo.reduction_tree)(res_el, res_table.map(str_list => {
+      resList: (0, _rap2Taobo.reduction_tree)(res_el, res_table.map((str_list, i) => {
         return {
           name: str_list[0],
           must: str_list[2] === "true",
-          type: str_list[1],
+          type: yapTypeRes(res_table, i),
           describe: `${str_list[4]} ${str_list[5]}`
         };
       }), el => {
         const tr = el.querySelectorAll("tr");
-        return Array.from(tr).map(tr => {
+        const level = Array.from(tr).map(tr => {
           return Number(tr.className.replace(/.*(\d+)/, "$1"));
         });
+        console.log(level, el, tr);
+        return level;
       })
     };
     return api;
@@ -1018,126 +1057,48 @@ function 参数全展开(cb) {
     }
   }, 350);
 }
-},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/dom/elment":"../util/dom/elment.ts"}],"../util/dom/拖拽多选.ts":[function(require,module,exports) {
-"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.拖拽多选 = 拖拽多选;
+function yapTypePar(row) {
+  const type_text = row.querySelectorAll("td")[1].textContent;
 
-function 拖拽多选() {
-  let flag = false;
-  let 选区 = [0, 0, 0, 0];
-  const div = document.createElement("div");
-  div.style.cssText = `position: fixed;background: gray;opacity: .3;`;
-  document.body.appendChild(div);
-  let 选区矩形 = 选区_to_矩形(选区);
-  document.addEventListener("mousedown", event => {
-    console.log("mousedown", event);
-    遮罩.remove();
-
-    if (event.ctrlKey) {
-      flag = true;
-      选区[0] = event.clientX;
-      选区[1] = event.clientY;
-      event.preventDefault(); // 阻止默认行为
-
-      event.stopPropagation(); // 阻止事件冒泡
-    }
-  });
-  document.addEventListener("mousemove", event => {
-    if (!flag) {
-      return;
-    }
-
-    选区[2] = event.clientX;
-    选区[3] = event.clientY;
-    选区矩形 = 选区_to_矩形(选区);
-    div.style.left = 选区矩形[0] + "px";
-    div.style.top = 选区矩形[1] + "px";
-    div.style.width = 选区矩形[2] - 选区矩形[0] + "px";
-    div.style.height = 选区矩形[3] - 选区矩形[1] + "px";
-  });
-  document.addEventListener("mouseup", event => {
-    if (!flag) {
-      return;
-    }
-
-    const td_list = Array.from(document.querySelectorAll("td"));
-    const 选中 = td_list.filter(el => 矩形相交(选区矩形, HtmlElement_to_矩形(el)));
-    console.log(选区矩形, 选中.map(HtmlElement_to_矩形), 选中);
-    选中.map(HtmlElement_to_矩形).forEach(遮罩.add);
-    flag = false;
-  });
-}
-
-function HtmlElement_to_矩形(el) {
-  const rect = el.getBoundingClientRect();
-  return [rect.left, rect.top, rect.right, rect.bottom];
-}
-
-function 矩形相交(rect1, rect2) {
-  var a_min_x = rect1[0];
-  var a_min_y = rect1[1];
-  var a_max_x = rect1[2];
-  var a_max_y = rect1[3];
-  var b_min_x = rect2[0];
-  var b_min_y = rect2[1];
-  var b_max_x = rect2[2];
-  var b_max_y = rect2[3];
-  return a_min_x <= b_max_x && a_max_x >= b_min_x && a_min_y <= b_max_y && a_max_y >= b_min_y;
-}
-
-function 选区_to_矩形(选区) {
-  if (选区[0] > 选区[2] || 选区[1] > 选区[3]) {
-    return [选区[2], 选区[3], 选区[0], 选区[1]];
+  if (type_text) {
+    return type_text;
   } else {
-    return 选区;
+    if (row.querySelectorAll("td")[5].textContent) {
+      return "Array";
+    } else {
+      return row.previousElementSibling.querySelectorAll("td")[5].textContent.split(": ")[1];
+    }
   }
 }
 
-var 遮罩;
+function yapTypeRes(table, i) {
+  const row = table[i];
 
-(function (遮罩) {
-  let list = [];
-
-  function add(rect) {
-    const div = document.createElement("div");
-    div.style.cssText = `position: fixed;background: gray;opacity: .3;`;
-    div.style.left = rect[0] + "px";
-    div.style.top = rect[1] + "px";
-    div.style.width = rect[2] - rect[0] + "px";
-    div.style.height = rect[3] - rect[1] + "px";
-    list.push(div);
-    document.body.appendChild(div);
+  if (row[1]) {
+    return row[1];
+  } else {
+    if (row[5]) {
+      return "Array";
+    } else {
+      return table[i - 1][5].split(": ")[1];
+    }
   }
-
-  遮罩.add = add;
-
-  function remove() {
-    list.forEach(el => el.remove());
-    list = [];
-  }
-
-  遮罩.remove = remove;
-})(遮罩 || (遮罩 = {}));
-},{}],"api自动提取.user.ts":[function(require,module,exports) {
+}
+},{"../util":"util.ts","./rap2-taobo":"parse/rap2-taobo.ts","../../util/dom/elment":"../util/dom/elment.ts"}],"api自动提取.user.ts":[function(require,module,exports) {
 "use strict";
 
 var _util = _interopRequireDefault(require("../\u7F51\u9875\u7B14\u8BB0/util"));
 
 var _apiToTypeScriptCode = require("./parse/apiToTypeScriptCode");
 
+var _rap2Taobo = require("./parse/rap2-taobo");
+
 var _showDocApi = require("./parse/showDocApi");
 
 var _swaggerBootstrapUi = require("./parse/swagger-bootstrap-ui");
 
 var _yapi = require("./parse/yapi");
-
-var _rap2Taobo = require("./parse/rap2-taobo");
-
-var _ = require("../util/dom/\u62D6\u62FD\u591A\u9009");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1236,16 +1197,16 @@ var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P
         alert("复制成功");
       }));
       document.body.appendChild(btn);
-    }
-
-    (0, _.拖拽多选)(); // setTimeout(() => {
+    } // 拖拽多选();
+    // setTimeout(() => {
     //   const code = uw._api.getYapiApiCode();
     //   console.log(code);
     //   util.copyTitle(code);
     // }, 3000);
+
   });
 })();
-},{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts","../util/dom/拖拽多选":"../util/dom/拖拽多选.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../网页笔记/util":"../网页笔记/util.ts","./parse/apiToTypeScriptCode":"parse/apiToTypeScriptCode.ts","./parse/rap2-taobo":"parse/rap2-taobo.ts","./parse/showDocApi":"parse/showDocApi.ts","./parse/swagger-bootstrap-ui":"parse/swagger-bootstrap-ui.ts","./parse/yapi":"parse/yapi.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1273,7 +1234,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63807" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55215" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

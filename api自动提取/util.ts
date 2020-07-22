@@ -39,9 +39,11 @@ export function getTable(
     [i: number]: (el: HTMLElement) => string;
   } = {},
 ) {
-  console.log("getTable", el);
-
   const table: string[][] = [];
+
+  if (el === null) {
+    return table;
+  }
   for (let i = 0; i < el.querySelectorAll(tr_selector).length; i++) {
     /** tr */
     const tr_el = el.querySelectorAll(tr_selector)[i];

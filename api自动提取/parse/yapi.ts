@@ -1,4 +1,4 @@
-import { api } from "../i_api";
+import { api, par } from "../i_api";
 import { qALL, getTable } from "../util";
 import { reduction_tree } from "./rap2-taobo";
 import { 检测元素状态 } from "../../util/dom/elment";
@@ -34,35 +34,49 @@ export async function getYapiApi(): Promise<api> {
     name: $$(".interface-title + div div div:nth-child(2)")[0].textContent,
     describe,
     method: $$(".tag-method")[0].textContent,
-    parList: Array.from(par_table.querySelectorAll("tr"))
-      .filter((el, i) => {
-        return i !== 0;
-      })
-      .map((el) => {
-        return {
-          name: el.querySelectorAll("td")[0].textContent,
-          /** 是否必需 */
-          must: el.querySelectorAll("td")[2].textContent !== "非必须",
-          type: el.querySelectorAll("td")[1].textContent,
-          describe: el.querySelectorAll("td")[4].textContent,
-        };
-      }),
+    parList: reduction_tree(
+      par_table,
+      Array.from(par_table.querySelectorAll("tr"))
+        .filter((el, i) => {
+          // console.log("[        el]", el, el.querySelectorAll("td")[0].textContent);
+          return /** 第一行是标题 */ i !== 0;
+        })
+        .map((el) => {
+          return {
+            name: el.querySelectorAll("td")[0].textContent,
+            /** 是否必需 */
+            must: el.querySelectorAll("td")[2].textContent !== "非必须",
+            type: yapTypePar(el),
+            describe: el.querySelectorAll("td")[4].textContent,
+          };
+        }),
+      (el) => {
+        const tr = el.querySelectorAll("tbody tr");
+        const level = Array.from(tr).map((tr) => {
+          return Number(tr.className.replace(/.*(\d+)/, "$1"));
+        });
+        return level;
+      },
+    ),
 
     resList: reduction_tree(
       res_el,
-      res_table.map((str_list) => {
+      res_table.map((str_list, i) => {
         return {
           name: str_list[0],
           must: str_list[2] === "true",
-          type: str_list[1],
+          type: yapTypeRes(res_table, i),
           describe: `${str_list[4]} ${str_list[5]}`,
         };
       }),
       (el) => {
         const tr = el.querySelectorAll("tr");
-        return Array.from(tr).map((tr) => {
+        const level = Array.from(tr).map((tr) => {
           return Number(tr.className.replace(/.*(\d+)/, "$1"));
         });
+        console.log(level, el, tr);
+
+        return level;
       },
     ),
   };
@@ -123,4 +137,30 @@ export function 参数全展开(cb: () => void) {
       cb();
     }
   }, 350);
+}
+
+function yapTypePar(row: HTMLElement) {
+  const type_text = row.querySelectorAll("td")[1].textContent;
+  if (type_text) {
+    return type_text;
+  } else {
+    if (row.querySelectorAll("td")[5].textContent) {
+      return "Array";
+    } else {
+      return row.previousElementSibling.querySelectorAll("td")[5].textContent.split(": ")[1];
+    }
+  }
+}
+
+function yapTypeRes(table: string[][], i: number) {
+  const row = table[i];
+  if (row[1]) {
+    return row[1];
+  } else {
+    if (row[5]) {
+      return "Array";
+    } else {
+      return table[i - 1][5].split(": ")[1];
+    }
+  }
 }
