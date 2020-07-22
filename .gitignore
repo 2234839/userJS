@@ -87,3 +87,5 @@ typings/
 .map
 
 node_modules
+
+.parcel-cache
