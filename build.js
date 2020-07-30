@@ -15,5 +15,5 @@ const project = [
   "./高级复制/高级复制.user.ts",
 ];
 project.forEach((el) => {
-  run(`npx parcel build --no-minify --no-source-maps ${el}`);
+  run(`npx parcel@next build --no-minify --no-source-maps ${el}`);
 });
