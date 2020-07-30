@@ -1,5 +1,5 @@
 import { api, par } from "../i_api";
-import { urlToName, copyStr } from "../util";
+import { urlToName, copyStr } from "../api_util";
 
 /** 将api转为ts的代码 */
 export function apiToTypeScriptCode(api: api) {
@@ -13,7 +13,7 @@ export function apiToTypeScriptCode(api: api) {
 }
 
 /** 解析api的par为字符串 */
-function parse_par_item(par: par, level = 0) {
+function parse_par_item(par: par, level = 0):any {
   if (!par.children && !par.name) {
     return par.type;
   }

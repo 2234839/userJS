@@ -1,4 +1,4 @@
-import { getTable, getTextConten, getElText } from "../util";
+import { getTable, getTextConten, getElText } from "../api_util";
 import { api, par } from "../i_api";
 
 /** 获取 swagger_bootstrap_ui 页面的ui */

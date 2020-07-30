@@ -1,5 +1,5 @@
 import { api } from "../i_api";
-import { qALL, getTextConten } from "../util";
+import { qALL, getTextConten } from "../api_util";
 
 /** 获取showDoc平台的api */
 export async function getShowDocApi(): Promise<api> {
