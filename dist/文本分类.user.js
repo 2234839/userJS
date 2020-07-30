@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/synaptic/dist/synaptic.js":[function(require,module,exports) {
+})({"TOfq":[function(require,module,exports) {
 var define;
 /*!
  * The MIT License (MIT)
@@ -3562,10 +3562,17 @@ var define;
     ])
   );
 });
-},{}],"../util/gm/store.ts":[function(require,module,exports) {
+},{}],"pPZY":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setLocalItem = setLocalItem;
+exports.getLocalItem = getLocalItem;
+exports.deleteLocalItem = deleteLocalItem;
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3596,11 +3603,8 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 /** 设置一条本地存储 */
+
 
 function setLocalItem(name, value) {
   return __awaiter(this, void 0, void 0, function* () {
@@ -3612,9 +3616,8 @@ function setLocalItem(name, value) {
     }
   });
 }
-
-exports.setLocalItem = setLocalItem;
 /** 读取一条本地存储 */
+
 
 function getLocalItem(
 /** 键名 */
@@ -3633,9 +3636,8 @@ defaultValue) {
     }
   });
 }
-
-exports.getLocalItem = getLocalItem;
 /** 读取一条本地存储 */
+
 
 function deleteLocalItem(
 /** 键名 */
@@ -3651,12 +3653,14 @@ name) {
     }
   });
 }
-
-exports.deleteLocalItem = deleteLocalItem;
-},{}],"文本分类.user.ts":[function(require,module,exports) {
+},{}],"jpem":[function(require,module,exports) {
 "use strict";
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+var _synaptic = require("synaptic");
+
+var _store = require("../util/gm/store");
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -3688,13 +3692,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const synaptic_1 = require("synaptic");
-
-const store_1 = require("../util/gm/store"); // ==UserScript==
+// ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
 // @version      1.38
@@ -3708,15 +3706,13 @@ const store_1 = require("../util/gm/store"); // ==UserScript==
 // @grant        GM.deleteValue
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
-
-
 (function () {
   return __awaiter(this, void 0, void 0, function* () {
-    class 感知机 extends synaptic_1.Network {
+    class 感知机 extends _synaptic.Network {
       constructor(input, hidden, output) {
-        const inputLayer = new synaptic_1.Layer(input);
-        const hiddenLayer = new synaptic_1.Layer(hidden);
-        const outputLayer = new synaptic_1.Layer(output);
+        const inputLayer = new _synaptic.Layer(input);
+        const hiddenLayer = new _synaptic.Layer(hidden);
+        const outputLayer = new _synaptic.Layer(output);
         /** 连接层 */
 
         inputLayer.project(hiddenLayer);
@@ -3732,13 +3728,13 @@ const store_1 = require("../util/gm/store"); // ==UserScript==
 
     const s_key = "rgzn_t1"; //   deleteLocalItem(s_key);
 
-    const data = yield store_1.getLocalItem(s_key);
+    const data = yield (0, _store.getLocalItem)(s_key);
     let p1;
 
     if (data) {
       const json = JSON.parse(data);
       console.log(json);
-      p1 = synaptic_1.Network.fromJSON(json);
+      p1 = _synaptic.Network.fromJSON(json);
     } else {
       p1 = new 感知机(2, 5, 1);
     }
@@ -3753,11 +3749,11 @@ const store_1 = require("../util/gm/store"); // ==UserScript==
       train(input, output) {
         return __awaiter(this, void 0, void 0, function* () {
           /** 训练器 */
-          const t = new synaptic_1.Trainer(this.p);
-          console.log((yield t.trainAsync([{
+          const t = new _synaptic.Trainer(this.p);
+          console.log(yield t.trainAsync([{
             input,
             output
-          }])));
+          }]));
         });
       },
 
@@ -3769,7 +3765,7 @@ const store_1 = require("../util/gm/store"); // ==UserScript==
       },
 
       save() {
-        store_1.setLocalItem(s_key, JSON.stringify(this.p.toJSON()));
+        (0, _store.setLocalItem)(s_key, JSON.stringify(this.p.toJSON()));
       }
 
     };
@@ -3781,209 +3777,4 @@ const store_1 = require("../util/gm/store"); // ==UserScript==
     console.log("------------------");
   });
 })();
-},{"synaptic":"../node_modules/synaptic/dist/synaptic.js","../util/gm/store":"../util/gm/store.ts"}],"C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
-var OVERLAY_ID = '__parcel__error__overlay__';
-var OldModule = module.bundle.Module;
-
-function Module(moduleName) {
-  OldModule.call(this, moduleName);
-  this.hot = {
-    data: module.bundle.hotData,
-    _acceptCallbacks: [],
-    _disposeCallbacks: [],
-    accept: function (fn) {
-      this._acceptCallbacks.push(fn || function () {});
-    },
-    dispose: function (fn) {
-      this._disposeCallbacks.push(fn);
-    }
-  };
-  module.bundle.hotData = null;
-}
-
-module.bundle.Module = Module;
-var checkedAssets, assetsToAccept;
-var parent = module.bundle.parent;
-
-if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
-  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61807" + '/');
-
-  ws.onmessage = function (event) {
-    checkedAssets = {};
-    assetsToAccept = [];
-    var data = JSON.parse(event.data);
-
-    if (data.type === 'update') {
-      var handled = false;
-      data.assets.forEach(function (asset) {
-        if (!asset.isNew) {
-          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
-
-          if (didAccept) {
-            handled = true;
-          }
-        }
-      }); // Enable HMR for CSS by default.
-
-      handled = handled || data.assets.every(function (asset) {
-        return asset.type === 'css' && asset.generated.js;
-      });
-
-      if (handled) {
-        console.clear();
-        data.assets.forEach(function (asset) {
-          hmrApply(global.parcelRequire, asset);
-        });
-        assetsToAccept.forEach(function (v) {
-          hmrAcceptRun(v[0], v[1]);
-        });
-      } else if (location.reload) {
-        // `location` global exists in a web worker context but lacks `.reload()` function.
-        location.reload();
-      }
-    }
-
-    if (data.type === 'reload') {
-      ws.close();
-
-      ws.onclose = function () {
-        location.reload();
-      };
-    }
-
-    if (data.type === 'error-resolved') {
-      console.log('[parcel] ✨ Error resolved');
-      removeErrorOverlay();
-    }
-
-    if (data.type === 'error') {
-      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
-      removeErrorOverlay();
-      var overlay = createErrorOverlay(data);
-      document.body.appendChild(overlay);
-    }
-  };
-}
-
-function removeErrorOverlay() {
-  var overlay = document.getElementById(OVERLAY_ID);
-
-  if (overlay) {
-    overlay.remove();
-  }
-}
-
-function createErrorOverlay(data) {
-  var overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID; // html encode message and stack trace
-
-  var message = document.createElement('div');
-  var stackTrace = document.createElement('pre');
-  message.innerText = data.error.message;
-  stackTrace.innerText = data.error.stack;
-  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
-  return overlay;
-}
-
-function getParents(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return [];
-  }
-
-  var parents = [];
-  var k, d, dep;
-
-  for (k in modules) {
-    for (d in modules[k][1]) {
-      dep = modules[k][1][d];
-
-      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
-        parents.push(k);
-      }
-    }
-  }
-
-  if (bundle.parent) {
-    parents = parents.concat(getParents(bundle.parent, id));
-  }
-
-  return parents;
-}
-
-function hmrApply(bundle, asset) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (modules[asset.id] || !bundle.parent) {
-    var fn = new Function('require', 'module', 'exports', asset.generated.js);
-    asset.isNew = !modules[asset.id];
-    modules[asset.id] = [fn, asset.deps];
-  } else if (bundle.parent) {
-    hmrApply(bundle.parent, asset);
-  }
-}
-
-function hmrAcceptCheck(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (!modules[id] && bundle.parent) {
-    return hmrAcceptCheck(bundle.parent, id);
-  }
-
-  if (checkedAssets[id]) {
-    return;
-  }
-
-  checkedAssets[id] = true;
-  var cached = bundle.cache[id];
-  assetsToAccept.push([bundle, id]);
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    return true;
-  }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAcceptCheck(global.parcelRequire, id);
-  });
-}
-
-function hmrAcceptRun(bundle, id) {
-  var cached = bundle.cache[id];
-  bundle.hotData = {};
-
-  if (cached) {
-    cached.hot.data = bundle.hotData;
-  }
-
-  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
-    cached.hot._disposeCallbacks.forEach(function (cb) {
-      cb(bundle.hotData);
-    });
-  }
-
-  delete bundle.cache[id];
-  bundle(id);
-  cached = bundle.cache[id];
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    cached.hot._acceptCallbacks.forEach(function (cb) {
-      cb();
-    });
-
-    return true;
-  }
-}
-},{}]},{},["C:/Users/llej/AppData/Roaming/npm/node_modules/parcel/src/builtins/hmr-runtime.js","文本分类.user.ts"], null)
-//# sourceMappingURL=/文本分类.user.js.map
+},{"synaptic":"TOfq","../util/gm/store":"pPZY"}]},{},["jpem"], null)
