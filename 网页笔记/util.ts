@@ -1,5 +1,5 @@
+import { derived, get, writable } from "svelte/store";
 import { isDev } from "./config";
-
 /** 用于复制文本的input   */
 const input_copy = document.createElement("textarea");
 input_copy.id = "__";
@@ -117,4 +117,43 @@ function jsonToURLpar(json: any) {
 /** 开发时的调试log */
 export function log(...arg: any[]) {
   if (isDev) console.log(`[dev] `, ...arg);
+}
+
+/** 用户选中事件 */
+export namespace SelectionEvent {
+  /** 用户选中的对象，唯一的。 */
+  const s = window.getSelection();
+  /** 是否处于 range 的选中状态 */
+  export const isRange = writable(false);
+  /** 选区开始位置的元素的 rect */
+  export const anchorRect = derived(isRange, ($isRange) => {
+    if (!$isRange) return;
+    const node = s.anchorNode;
+    const el = node instanceof Element ? node : node.parentElement;
+    const rect = el.getBoundingClientRect();
+    return rect;
+  });
+
+  export function 高亮(options: { textDecoration?: string; color?: string; backgroundColor?: string } = {}) {
+    const tagName = options.textDecoration ? "u" : "span";
+
+    if (s.anchorNode !== s.focusNode) {
+      return console.warn("目前还没有实现跨元素高亮的功能，之后会做的");
+    }
+    const cur = s.anchorNode;
+    if (cur instanceof Text) {
+      const t2 = cur.splitText(s.anchorOffset);
+      const t3 = t2.splitText(s.focusOffset);
+      const wrap = document.createElement(tagName);
+      wrap.appendChild(t2);
+      cur.parentNode.insertBefore(wrap, t3);
+
+      wrap.style.color = options.color;
+      wrap.style.backgroundColor = options.backgroundColor;
+      wrap.style.textDecoration = options.textDecoration;
+    }
+  }
+  document.addEventListener("selectionchange", () => {
+    isRange.set(s.type === "Range");
+  });
 }

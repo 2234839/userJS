@@ -216,7 +216,7 @@ export function on_input(event: InputEvent) {
     const el = event.target;
     if (el.innerHTML.length > 10 * 1000)
       new Warning({
-        msg: "该元素文本过大，将不会保存这里的修改，请选择更确定的文本元素。",
+        msg: "该元素html内容过大，将不会保存这里的修改，请选择更确定的文本元素。",
       }).autoHide();
     else editElement.add(el);
   }

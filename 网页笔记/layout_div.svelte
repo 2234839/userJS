@@ -11,8 +11,10 @@
   import { msg,note_list_store } from "./state/store";
   import Msg from "./svelte/msg";
   import Note from "./svelte/Note";
+  import Toolbar from "./svelte/Toolbar";
   import { on_mouse, on_keydown, on_input } from "./fun/fun";
-
+  import { SelectionEvent } from "./util"
+  import { elementEdit } from "./config";
   let note_list=[]
 
   note_list_store.subscribe(list=>{
@@ -20,10 +22,10 @@
   })
   let html=""
   function paste(e) {
-    console.log(e,html)
     html=e.clipboardData.getData('text/html')
-    console.log(e,html)
   }
+
+  const { isRange , anchorRect } = SelectionEvent;
 </script>
 
 <style>
@@ -44,6 +46,13 @@
   <!-- <input on:paste="{paste}" placeholder="111111111111111"/> -->
   {@html html}
 </div>
+
+{#if $isRange && $elementEdit}
+  <div style="position:fixed;top:{$anchorRect.top}px;left:{$anchorRect.left}px;transform:translateY(-100%);user-select: none;">
+    <Toolbar bind:highlighted={SelectionEvent.高亮}/>
+  </div>
+{/if}
+
 {#each note_list as note}
     <Note bind:note={note} ></Note>
 {/each}
