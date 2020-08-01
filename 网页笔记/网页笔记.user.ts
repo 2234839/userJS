@@ -1,14 +1,14 @@
 import App from "./layout_div.svelte";
 import { saveChanges, loadChanges } from "./fun/fun";
 import { editElement } from "./state/index";
-import { getLocalItem } from "./lib/store";
+import { getLocalItem, setLocalItem } from "./lib/store";
 import { AllStoreName } from "./config";
 import { CommandControl } from "./fun/command";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.39
+// @version      1.40
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -27,11 +27,16 @@ import { CommandControl } from "./fun/command";
   }
   /** 调试用 */
   (<any>window).CommandControl = CommandControl;
+  (<any>window).llej_pageNotes_clearCurrentStore = () => {
+    setLocalItem(AllStoreName, undefined);
+    location.reload();
+  };
   // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
   /** 自动加载本地暂存更改 */
   (async () => {
     const AllStoreStr = await getLocalItem(AllStoreName, undefined);
-    if (AllStoreStr === undefined) return console.warn("没有可用的存储库");
+    if (AllStoreStr === undefined || AllStoreStr === "undefined") return console.warn("没有可用的存储库");
+
     const allStore = JSON.parse(AllStoreStr);
     if (document.readyState === "complete") {
       loadChanges(allStore);

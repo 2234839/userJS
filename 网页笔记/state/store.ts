@@ -11,3 +11,4 @@ type Note = {
   /** 内容 */
   content: string;
 };
+

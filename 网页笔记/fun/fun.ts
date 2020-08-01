@@ -1,5 +1,5 @@
 import config, { AllStoreName } from "../config";
-import { AllStore, setLocalItem } from "../lib/store";
+import { AllStore, curStore, setLocalItem } from "../lib/store";
 import { Message } from "../ui/message";
 import { remote_getStore, remote_setStore, remote_register, _login } from "./ajax";
 import { CommandControl, editSelect, deleteSelect, closeEditSelect, addNote } from "./command";
@@ -94,24 +94,22 @@ export const KeyMap = {
 };
 
 /** 保存修改 */
-export async function saveChanges(editElement: Set<HTMLElement>) {
-  const data: AllStore = {
-    element_List: {},
+export async function saveChanges(editElement: Set<Element>) {
+  const data = {
+    element_List: {} as AllStore["element_List"],
     CommandStack: CommandControl.commandStack,
   };
   editElement.forEach((el) => {
     const selectors = getSelectors(el);
     data.element_List[selectors] = el.innerHTML;
   });
-  const data_str = JSON.stringify(data);
+  const data_str = JSON.stringify(Object.assign(curStore, data));
   await setLocalItem(AllStoreName, JSON.stringify(data));
   return data_str;
 }
 
 /** 加载修改 */
 export async function loadChanges(allStore: AllStore) {
-  console.log(allStore);
-
   /** 将修改过的 html 写回去 */
   for (const selectors in allStore.element_List) {
     if (allStore.element_List.hasOwnProperty(selectors)) {

@@ -3156,19 +3156,19 @@ function create_fragment(ctx) {
       input1 = (0, _internal.element)("input");
       t3 = (0, _internal.space)();
       div1 = (0, _internal.element)("div");
-      div1.textContent = "高亮";
+      div1.textContent = "下划线";
       (0, _internal.attr_dev)(input0, "type", "color");
-      (0, _internal.add_location)(input0, file, 38, 4, 797);
+      (0, _internal.add_location)(input0, file, 37, 4, 795);
       (0, _internal.attr_dev)(label, "class", "llej-toolbar-btn svelte-au5nxg");
-      (0, _internal.add_location)(label, file, 36, 2, 749);
+      (0, _internal.add_location)(label, file, 35, 2, 747);
       (0, _internal.attr_dev)(input1, "type", "color");
-      (0, _internal.add_location)(input1, file, 42, 4, 941);
+      (0, _internal.add_location)(input1, file, 46, 4, 993);
       (0, _internal.attr_dev)(div0, "class", "llej-toolbar-btn svelte-au5nxg");
-      (0, _internal.add_location)(div0, file, 40, 2, 895);
+      (0, _internal.add_location)(div0, file, 44, 2, 947);
       (0, _internal.attr_dev)(div1, "class", "llej-toolbar-btn svelte-au5nxg");
-      (0, _internal.add_location)(div1, file, 45, 2, 1059);
+      (0, _internal.add_location)(div1, file, 54, 2, 1176);
       (0, _internal.attr_dev)(div2, "class", "llej-toolbar svelte-au5nxg");
-      (0, _internal.add_location)(div2, file, 35, 0, 719);
+      (0, _internal.add_location)(div2, file, 34, 0, 717);
     },
     l: function claim(nodes) {
       throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3265,7 +3265,9 @@ function instance($$self, $$props, $$invalidate) {
   }
 
   const change_handler = () => highlighted({
-    color
+    style: `
+      color:${color};
+    `
   });
 
   function input1_input_handler() {
@@ -3274,11 +3276,15 @@ function instance($$self, $$props, $$invalidate) {
   }
 
   const change_handler_1 = () => highlighted({
-    backgroundColor
+    style: `
+      background-color:${backgroundColor};
+    `
   });
 
   const click_handler = () => highlighted({
-    textDecoration: "underline"
+    style: `
+      text-decoration: underline;
+    `
   });
 
   $$self.$set = $$props => {
@@ -14233,89 +14239,7 @@ const compile = () => {
 };
 
 exports.compile = compile;
-},{"@vue/runtime-dom":"../node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js","@vue/shared":"../node_modules/@vue/shared/dist/shared.esm-bundler.js"}],"config.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.AllStoreName = exports.config = exports.elementEdit = exports.isDev = void 0;
-
-var _store = require("svelte/store");
-
-var _vue = require("vue");
-
-/** 是不是开发环境 */
-const isDev = false;
-/** 是否开启编辑 */
-
-exports.isDev = isDev;
-const elementEdit = (0, _store.writable)(false);
-exports.elementEdit = elementEdit;
-const config = (0, _vue.reactive)({
-  state: 0,
-
-  /** 是否开启编辑 */
-  elementEdit: isDev,
-
-  /** 服务器地址 */
-  serverIp: "https://shenzilong.cn/note/",
-
-  /** 页面的url */
-  locationUrl: decodeURIComponent(location.origin + location.pathname),
-
-  /** 存储登录凭证的 */
-  loginCredentials: "loginCredentials"
-});
-exports.config = config;
-(0, _vue.watchEffect)(() => {
-  /** 同步是否开启编辑的状态给 writable  */
-  elementEdit.set(config.elementEdit);
-  console.log("[编辑状态变更]", config.elementEdit);
-});
-/** 存储命令栈的地方 */
-
-const AllStoreName = "_storeName_llej_" + config.locationUrl;
-exports.AllStoreName = AllStoreName;
-var _default = config;
-exports.default = _default;
-},{"svelte/store":"../node_modules/svelte/store/index.mjs","vue":"../node_modules/vue/dist/vue.runtime.esm-bundler.js"}],"lib/store.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setLocalItem = setLocalItem;
-exports.getLocalItem = getLocalItem;
-
-/** 设置一条本地存储 */
-async function setLocalItem(name, value) {
-  //为了在非油猴环境下存储依旧能起一部分的作用
-  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) {
-    return await GM.setValue(name, value);
-  } else {
-    return await localStorage.setItem(name, String(value));
-  }
-}
-/** 读取一条本地存储 */
-
-
-async function getLocalItem(
-/** 键名 */
-name,
-/** 没有的时候的默认值 */
-defaultValue) {
-  //为了在非油猴环境下存储依旧能起一部分的作用
-  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) {
-    const res = await GM.getValue(name, defaultValue);
-    return res;
-  } else {
-    const value = localStorage.getItem(name);
-    if (value === null) return await defaultValue;
-    return await value;
-  }
-}
-},{}],"ui/style.ts":[function(require,module,exports) {
+},{"@vue/runtime-dom":"../node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js","@vue/shared":"../node_modules/@vue/shared/dist/shared.esm-bundler.js"}],"ui/style.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14428,266 +14352,103 @@ class Message {
 }
 
 exports.Message = Message;
-},{"./style":"ui/style.ts"}],"util.ts":[function(require,module,exports) {
+},{"./style":"ui/style.ts"}],"state/highlighted_style.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.copyTitle = copyTitle;
-exports.getSelectors = getSelectors;
-exports.getIndex = getIndex;
-exports.nodePath = nodePath;
-exports.getJSon = getJSon;
-exports.ajax_get = ajax_get;
-exports.log = log;
-exports.SelectionEvent = exports.default = void 0;
+exports.styleText = exports.styleList = void 0;
 
 var _store = require("svelte/store");
 
-var _config = require("./config");
+const styleList = (0, _store.writable)([]);
+/** 根据 styleList 计算出来的 css 片段 */
 
-/** 用于复制文本的input   */
-const input_copy = document.createElement("textarea");
-input_copy.id = "__";
-input_copy.style.display = "none"; //不能设置为none因为会导致没有可访问性
-
-input_copy.setAttribute("style", `
-        position: absolute;
-        top: -9999px;
-        left: -9999px;`);
-document.body.appendChild(input_copy);
-/** 复制一个元素的titil 或者一段字符串到剪贴板 */
-
-function copyTitle(el) {
-  let title;
-  if (typeof el === "string") title = el;else title = el.getAttribute("title");
-  input_copy.setAttribute("readonly", "readonly");
-  input_copy.setAttribute("value", title);
-  input_copy.value = title;
-  input_copy.select();
-  input_copy.setSelectionRange(0, 9999);
-  document.execCommand("copy");
-}
-/** 工具类 */
-
-
-var _default = {
-  copyTitle
-};
-/** 获取一个元素的选择器 */
-
-exports.default = _default;
-
-function getSelectors(el) {
-  /** 通过path路径来确定元素 */
-  let pathSelectors = nodePath(el).reverse().map(el => {
-    return el.nodeName + `:nth-child(${getIndex(el)})`;
-  }).join(">");
-  /** 通过id以及class来确定元素 */
-
-  let id_className = "";
-  const id = el.id;
-  if (id) id_className += `#${id}`;
-  el.classList.forEach(className => {
-    id_className += `.${className}`;
-  });
-  /** nth-child 选择 看它是第几个元素 */
-
-  const index = getIndex(el);
-  /** 最终构造出来的选择器 */
-
-  return `${pathSelectors}${id_className}:nth-child(${index})`;
-}
-/** 获取元素它在第几位 */
-
-
-function getIndex(el) {
-  if (el.nodeName === "HTML") return 1;
-  return 1 + Array.from(el.parentElement.children).findIndex(child => child === el);
-}
-/** 获取一个元素的所有父节点到html为止  */
-
-
-function nodePath(...path) {
-  while (path[path.length - 1].parentElement != null) {
-    path.push(path[path.length - 1].parentElement);
-  }
-  /** 只需要是HTMLElement的 */
-
-
-  const HTMLElementPath = path.filter(el => el instanceof HTMLElement);
-  return HTMLElementPath;
-}
-
-async function getJSon(url, data) {
-  const str = await ajax_get(url, data);
-  const res = JSON.parse(str);
-  console.log(url, data, res);
-  return res;
-}
-/** 油猴的ajaxget */
-
-
-function ajax_get(url, data) {
-  if (data) url += "?" + jsonToURLpar(data);
-  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) return new Promise((resolve, reject) => {
-    GM.xmlHttpRequest({
-      method: "GET",
-      url,
-      onload: function (response) {
-        resolve(response.responseText);
-      },
-      onerror: reject
-    });
-  });else return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener("load", function () {
-      resolve(xhr.responseText);
-    });
-    xhr.addEventListener("error", reject);
-    xhr.open("get", url);
-    xhr.send();
-  });
-}
-/** json 转 urlpar 只能转一层 */
-
-
-function jsonToURLpar(json) {
-  return Object.keys(json).map(function (key) {
-    return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
-  }).join("&");
-}
-/** 开发时的调试log */
-
-
-function log(...arg) {
-  if (_config.isDev) console.log(`[dev] `, ...arg);
-}
-/** 用户选中事件 */
-
-
-var SelectionEvent;
-exports.SelectionEvent = SelectionEvent;
-
-(function (SelectionEvent) {
-  /** 用户选中的对象，唯一的。 */
-  const s = window.getSelection();
-  /** 是否处于 range 的选中状态 */
-
-  SelectionEvent.isRange = (0, _store.writable)(false);
-  /** 选区开始位置的元素的 rect */
-
-  SelectionEvent.anchorRect = (0, _store.derived)(SelectionEvent.isRange, $isRange => {
-    if (!$isRange) return;
-    const node = s.anchorNode;
-    const el = node instanceof Element ? node : node.parentElement;
-    const rect = el.getBoundingClientRect();
-    return rect;
-  });
-
-  function 高亮(options = {}) {
-    const tagName = options.textDecoration ? "u" : "span";
-
-    if (s.anchorNode !== s.focusNode) {
-      return console.warn("目前还没有实现跨元素高亮的功能，之后会做的");
-    }
-
-    const cur = s.anchorNode;
-
-    if (cur instanceof Text) {
-      const t2 = cur.splitText(s.anchorOffset);
-      const t3 = t2.splitText(s.focusOffset);
-      const wrap = document.createElement(tagName);
-      wrap.appendChild(t2);
-      cur.parentNode.insertBefore(wrap, t3);
-      wrap.style.color = options.color;
-      wrap.style.backgroundColor = options.backgroundColor;
-      wrap.style.textDecoration = options.textDecoration;
-    }
-  }
-
-  SelectionEvent.高亮 = 高亮;
-  document.addEventListener("selectionchange", () => {
-    SelectionEvent.isRange.set(s.type === "Range");
-  });
-})(SelectionEvent || (exports.SelectionEvent = SelectionEvent = {}));
-},{"svelte/store":"../node_modules/svelte/store/index.mjs","./config":"config.ts"}],"fun/ajax.ts":[function(require,module,exports) {
+exports.styleList = styleList;
+const styleText = (0, _store.derived)(styleList, $styleList => {
+  return `<style>
+  ${(0, _store.get)(styleList).join("\n")}
+  </style>`;
+});
+exports.styleText = styleText;
+},{"svelte/store":"../node_modules/svelte/store/index.mjs"}],"lib/store.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.au_getJSON = au_getJSON;
-exports._login = _login;
-exports.remote_register = remote_register;
-exports.remote_getStore = remote_getStore;
-exports.remote_setStore = remote_setStore;
-exports.remote_getAllStore = remote_getAllStore;
+exports.setLocalItem = setLocalItem;
+exports.getLocalItem = getLocalItem;
+exports.curStore = void 0;
 
-var _config = _interopRequireDefault(require("../config"));
-
-var _store = require("../lib/store");
+var _vue = require("vue");
 
 var _util = require("../util");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _config = require("../config");
 
-/** 用来识别身份的key */
-let key = '';
-/** 附带登录信息的ajax */
+const w = (0, _util.getWindow)();
+/** 设置一条本地存储 */
 
-async function au_getJSON(url, data) {
-  if (data === undefined) data = {};
-  data.key = key ? key : await (0, _store.getLocalItem)(_config.default.loginCredentials);
-  return (0, _util.getJSon)(url, data);
+async function setLocalItem(name, value) {
+  //为了在非油猴环境下存储依旧能起一部分的作用
+  if (w.hasOwnProperty("GM") && w.hasOwnProperty("GM")) {
+    return await GM.setValue(name, value);
+  } else {
+    return await localStorage.setItem(name, String(value));
+  }
 }
-/** 登录 */
+/** 读取一条本地存储 */
 
 
-async function _login(par) {
-  const res = await (0, _util.getJSon)(_config.default.serverIp + 'login', par);
-  if (res.body && res.body.length > 0) key = res.body;
-  (0, _store.setLocalItem)(_config.default.loginCredentials, key);
-  return res;
+async function getLocalItem(
+/** 键名 */
+name,
+/** 没有的时候的默认值 */
+defaultValue) {
+  if (w.hasOwnProperty("GM") && w.hasOwnProperty("GM")) {
+    const res = await GM.getValue(name, defaultValue);
+    return res;
+  } else {
+    //为了在非油猴环境下存储依旧能起一部分的作用
+    const value = localStorage.getItem(name);
+    if (value === null) return await defaultValue;
+    return await value;
+  }
 }
-/** 注册 */
 
+const curStore = (0, _vue.reactive)({
+  CommandStack: [],
+  element_List: {},
 
-async function remote_register(par) {
-  return await (0, _util.getJSon)(_config.default.serverIp + 'register', par);
-}
-/** 获取存储库 */
-
-
-async function remote_getStore(par) {
-  return await au_getJSON(_config.default.serverIp + 'getStore', par);
-}
-/** 设置存储库 */
-
-
-async function remote_setStore(par) {
-  return await au_getJSON(_config.default.serverIp + 'setStore', par);
-}
-/** 获取存储库 */
-
-
-async function remote_getAllStore() {
-  return await au_getJSON(_config.default.serverIp + 'getAllStore');
-}
-},{"../config":"config.ts","../lib/store":"lib/store.ts","../util":"util.ts"}],"fun/command.ts":[function(require,module,exports) {
+  /** 用于记录高亮 id 避免新高亮出现重复 */
+  Highlighted_count: 0
+});
+exports.curStore = curStore;
+getLocalItem(_config.AllStoreName, "{}").then(s => {
+  Object.assign(curStore, JSON.parse(s));
+});
+(0, _vue.watchEffect)(() => {
+  (0, _util.log)("存储变更", curStore);
+});
+},{"vue":"../node_modules/vue/dist/vue.runtime.esm-bundler.js","../util":"util.ts","../config":"config.ts"}],"fun/command.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CommandControl = exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = exports.Command = void 0;
+exports.CommandControl = exports.Highlighted = exports.addNote = exports.closeEditSelect = exports.editSelect = exports.deleteSelect = exports.Command = void 0;
 
 var _message = require("../ui/message");
 
 var _util = require("../util");
 
 var _store = require("../state/store");
+
+var _highlighted_style = require("../state/highlighted_style");
+
+var _store2 = require("../lib/store");
 
 /** 每一个命令都应该实现的东西 */
 class Command {
@@ -14723,11 +14484,17 @@ class Command {
       constructor: this.__proto__.constructor.name
     };
   }
+  /** 用于可以使用 toJSON 生成的数据重建功能效果 */
+
+
+  static 重建(obj) {
+    return new this(document.querySelector(obj.selectEL));
+  }
   /** 加载commandJSON转变为命令,通过泛型来构造对象的方式 */
 
 
   static load(obj, CLASS) {
-    return new CLASS(document.querySelector(obj.selectEL));
+    return CLASS.重建(obj);
   }
 
 }
@@ -14814,10 +14581,64 @@ class addNote extends Command {
   }
 
 }
-/** 命令控制器 */
+/** 高亮功能 */
 
 
 exports.addNote = addNote;
+
+class Highlighted extends Command {
+  constructor(styleText) {
+    super();
+    this.styleText = styleText;
+    /** css 类名 */
+
+    this.className = `llej-page_notes-style-${_store2.curStore.Highlighted_count++}`;
+  }
+
+  do() {
+    _highlighted_style.styleList.update(r => {
+      return [...r, this.getRawStyleText()];
+    });
+
+    return this;
+  }
+
+  getRawStyleText() {
+    return `
+    .${this.className}{
+      ${this.styleText}
+    }
+    `;
+  }
+
+  undo() {
+    _highlighted_style.styleList.update(r => {
+      return r.filter(el => el !== this.getRawStyleText());
+    });
+
+    return this;
+  }
+
+  static 重建(obj) {
+    const r = new this(obj.styleText);
+    r.className = obj.className;
+    return r;
+  }
+
+  toJSON() {
+    return {
+      selectEL: "",
+      className: this.className,
+      styleText: this.styleText,
+      constructor: this.__proto__.constructor.name
+    };
+  }
+
+}
+/** 命令控制器 */
+
+
+exports.Highlighted = Highlighted;
 const CommandControl = {
   commandStack: [],
   backOutStack: [],
@@ -14839,8 +14660,6 @@ const CommandControl = {
 
   backOut() {
     if (this.commandStack.length === 0) {
-      console.warn("命令栈已空，无法进行撤销");
-
       _message.Message.getMessage({
         msg: "命令栈已空，无法进行撤销"
       }).autoHide();
@@ -14854,8 +14673,6 @@ const CommandControl = {
 
   reform() {
     if (this.backOutStack.length === 0) {
-      console.warn("撤销栈已空，无法进行重做");
-
       _message.Message.getMessage({
         msg: "撤销栈已空，无法进行重做"
       }).autoHide();
@@ -14867,12 +14684,14 @@ const CommandControl = {
     return this.commandStack.push(command.redo());
   },
 
+  /** 从json重建命令栈 */
   loadCommandJSON(obj) {
     (0, _util.log)("-执行命令-", obj.constructor);
     if (obj.constructor === "deleteSelect") return Command.load(obj, deleteSelect);
     if (obj.constructor === "editSelect") return Command.load(obj, editSelect);
     if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
     if (obj.constructor === "addNote") return Command.load(obj, addNote);
+    if (obj.constructor === "Highlighted") return Command.load(obj, Highlighted);
   },
 
   getCommandStackJSON() {
@@ -14886,7 +14705,7 @@ const CommandControl = {
 
 };
 exports.CommandControl = CommandControl;
-},{"../ui/message":"ui/message.ts","../util":"util.ts","../state/store":"state/store.ts"}],"state/index.ts":[function(require,module,exports) {
+},{"../ui/message":"ui/message.ts","../util":"util.ts","../state/store":"state/store.ts","../state/highlighted_style":"state/highlighted_style.ts","../lib/store":"lib/store.ts"}],"state/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14907,12 +14726,519 @@ function setPath(elList) {
   exports.path = path = elList;
   exports.currentElement = currentElement = elList[0];
 }
-/** 标记被修改后的元素，以便保存修改的内容 */
+/** 标记被修改后的元素(被污染了的元素)，以便保存修改的内容 */
 
 
 const editElement = new Set();
 exports.editElement = editElement;
-},{}],"ui/warning.ts":[function(require,module,exports) {
+},{}],"util.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.copyTitle = copyTitle;
+exports.getSelectors = getSelectors;
+exports.getIndex = getIndex;
+exports.nodePath = nodePath;
+exports.getJSon = getJSon;
+exports.ajax_get = ajax_get;
+exports.log = log;
+exports.getWindow = getWindow;
+exports.SelectionEvent = exports.default = void 0;
+
+var _store = require("svelte/store");
+
+var _config = require("./config");
+
+var _command = require("./fun/command");
+
+var _state = require("./state");
+
+/** 用于复制文本的input   */
+const input_copy = document.createElement("textarea");
+input_copy.id = "__";
+input_copy.style.display = "none"; //不能设置为none因为会导致没有可访问性
+
+input_copy.setAttribute("style", `
+        position: absolute;
+        top: -9999px;
+        left: -9999px;`);
+document.body.appendChild(input_copy);
+/** 复制一个元素的titil 或者一段字符串到剪贴板 */
+
+function copyTitle(el) {
+  let title;
+  if (typeof el === "string") title = el;else title = el.getAttribute("title");
+  input_copy.setAttribute("readonly", "readonly");
+  input_copy.setAttribute("value", title);
+  input_copy.value = title;
+  input_copy.select();
+  input_copy.setSelectionRange(0, 9999);
+  document.execCommand("copy");
+}
+/** 工具类 */
+
+
+var _default = {
+  copyTitle
+};
+/** 获取一个元素的选择器 */
+
+exports.default = _default;
+
+function getSelectors(el) {
+  /** 通过path路径来确定元素 */
+  let pathSelectors = nodePath(el).reverse().map(el => {
+    return el.nodeName + `:nth-child(${getIndex(el)})`;
+  }).join(">");
+  /** 通过id以及class来确定元素 */
+
+  let id_className = "";
+  const id = el.id;
+  if (id) id_className += `#${id}`;
+  el.classList.forEach(className => {
+    id_className += `.${className}`;
+  });
+  /** nth-child 选择 看它是第几个元素 */
+
+  const index = getIndex(el);
+  /** 最终构造出来的选择器 */
+
+  return `${pathSelectors}${id_className}:nth-child(${index})`;
+}
+/** 获取元素它在第几位 */
+
+
+function getIndex(el) {
+  if (el.nodeName === "HTML") return 1;
+
+  if (el.parentElement === null) {
+    return 1;
+  }
+
+  return 1 + Array.from(el.parentElement.children).findIndex(child => child === el);
+}
+/** 获取一个元素的所有父节点到html为止  */
+
+
+function nodePath(...path) {
+  while (path[path.length - 1].parentElement != null) {
+    path.push(path[path.length - 1].parentElement);
+  }
+  /** 只需要是HTMLElement的 */
+
+
+  const HTMLElementPath = path.filter(el => el instanceof HTMLElement);
+  return HTMLElementPath;
+}
+
+async function getJSon(url, data) {
+  const str = await ajax_get(url, data);
+  const res = JSON.parse(str);
+  console.log(url, data, res);
+  return res;
+}
+/** 油猴的ajaxget */
+
+
+function ajax_get(url, data) {
+  if (data) url += "?" + jsonToURLpar(data);
+  if (window.hasOwnProperty("GM") && window.hasOwnProperty("GM")) return new Promise((resolve, reject) => {
+    GM.xmlHttpRequest({
+      method: "GET",
+      url,
+      onload: function (response) {
+        resolve(response.responseText);
+      },
+      onerror: reject
+    });
+  });else return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", function () {
+      resolve(xhr.responseText);
+    });
+    xhr.addEventListener("error", reject);
+    xhr.open("get", url);
+    xhr.send();
+  });
+}
+/** json 转 urlpar 只能转一层 */
+
+
+function jsonToURLpar(json) {
+  return Object.keys(json).map(function (key) {
+    return encodeURIComponent(key) + "=" + encodeURIComponent(json[key]);
+  }).join("&");
+}
+/** 开发时的调试log */
+
+
+function log(...arg) {
+  if (_config.isDev) console.log(`[dev] `, ...arg);
+}
+/** 用户选中事件 */
+
+
+var SelectionEvent;
+exports.SelectionEvent = SelectionEvent;
+
+(function (SelectionEvent) {
+  /** 表示用户选中的对象，唯一的。不用每次去获取 */
+  const s = window.getSelection();
+  /** 是否处于 range 的选中状态 */
+
+  SelectionEvent.isRange = (0, _store.writable)(false);
+  /** 选区开始位置的元素的 rect */
+
+  SelectionEvent.anchorRect = (0, _store.derived)(SelectionEvent.isRange, $isRange => {
+    if (!$isRange) return;
+    const node = s.anchorNode;
+    const el = node instanceof Element ? node : node.parentElement;
+    const rect = el.getBoundingClientRect();
+    return rect;
+  });
+
+  function 高亮(options = {}) {
+    const h = new _command.Highlighted(options.style);
+
+    _command.CommandControl.run(h);
+
+    const className = h.className;
+    const tagName = "span";
+    let 选中的所有节点 = [];
+
+    if (
+    /** 跨元素了 */
+    s.anchorNode !== s.focusNode) {
+      const startRange = s.getRangeAt(0);
+      const endRange = s.getRangeAt(s.rangeCount - 1);
+      let startNode = startRange.startContainer;
+      let endNode = endRange.endContainer;
+      let cur = startNode;
+
+      if (cur instanceof Text) {
+        const s = startRange;
+        const t2 = cur.splitText(s.startOffset);
+        const t3 = t2.nextSibling;
+        const wrap = document.createElement(tagName);
+        wrap.appendChild(t2);
+        cur.parentNode.insertBefore(wrap, t3);
+      }
+
+      cur = endNode;
+
+      if (cur instanceof Text) {
+        const s = endRange;
+        const t2 = cur.splitText(s.endOffset);
+        const wrap = document.createElement(tagName);
+        wrap.appendChild(cur);
+        t2.parentNode.insertBefore(wrap, t2);
+        endNode = t2;
+      }
+
+      选中的所有节点 = getIntermediateNodes(startNode, endNode);
+    } else {
+      /** 单元素类 */
+      const cur = s.anchorNode;
+
+      if (cur instanceof Text) {
+        const t2 = cur.splitText(s.anchorOffset);
+        const t3 = t2.splitText(s.focusOffset);
+        选中的所有节点.push(t2);
+      } else {
+        选中的所有节点.push(cur);
+      }
+    }
+
+    console.log("选中的所有节点", 选中的所有节点);
+    选中的所有节点.forEach(node => {
+      let el;
+
+      if (node instanceof Element) {
+        el = node;
+      } else {
+        /** 对纯文本节点进行包装，因为纯文本节点无法附加样式等属性 */
+        const wrap = document.createElement(tagName);
+        const t2 = node.nextSibling;
+        const parent = node.parentNode;
+        wrap.appendChild(node);
+        parent.insertBefore(wrap, t2);
+        el = wrap;
+      }
+
+      el.classList.add(className);
+    });
+    /** 这些元素被添加了类名，甚至被包裹了一层。属于被污染的元素,直接标记他们的父亲 */
+
+    const 共存层 = getIntermediateNodes.寻找共存层(...选中的所有节点);
+    console.log("[共存层]", 共存层);
+    let parent = 共存层[0].parentElement;
+    /** 避免标记的是不够大的元素，实际上也是因为寻找元素的方法不够好否则也用不着这个 */
+
+    while (parent.className.includes("llej-page_notes-style")) {
+      parent = parent.parentElement;
+    }
+
+    _state.editElement.add(parent);
+  }
+
+  SelectionEvent.高亮 = 高亮;
+  document.addEventListener("selectionchange", () => {
+    SelectionEvent.isRange.set(s.type === "Range");
+  });
+})(SelectionEvent || (exports.SelectionEvent = SelectionEvent = {}));
+
+function getIntermediateNodes(a, b) {
+  return getIntermediateNodes.获取两元素之间的元素(a, b);
+}
+
+(function (getIntermediateNodes) {
+  function 寻找共存层(...args) {
+    if (args.length === 1) {
+      return args;
+    }
+
+    const parentList = args.map(el => 获取父链路(el).reverse()).sort((a, b) => {
+      return a.length - b.length;
+    });
+    const 最短链路 = parentList[0];
+
+    for (let i = 0; i < 最短链路.length; i++) {
+      const element = 最短链路[i];
+      const 此层是否全相似 = parentList.map(el => el[i]).every(el => el === element);
+
+      if (此层是否全相似 === false) {
+        return Array.from(最短链路[i - 1].childNodes);
+      }
+    }
+  }
+
+  getIntermediateNodes.寻找共存层 = 寻找共存层;
+  /** 越接近node的元素越在前面 */
+
+  function 获取父链路(node) {
+    const list = [];
+    list.push(node);
+    let cur = node;
+
+    while (cur.parentNode) {
+      list.push(cur.parentNode);
+      cur = cur.parentNode;
+    }
+
+    return list;
+  }
+
+  getIntermediateNodes.获取父链路 = 获取父链路;
+
+  function 后面的兄弟元素(node) {
+    const list = [];
+    let cur = node;
+
+    while (cur.nextSibling) {
+      list.push(cur.nextSibling);
+      cur = cur.nextSibling;
+    }
+
+    return list;
+  }
+
+  getIntermediateNodes.后面的兄弟元素 = 后面的兄弟元素;
+
+  function 前面的兄弟元素(node) {
+    const list = [];
+    let cur = node;
+
+    while (cur.previousSibling) {
+      list.push(cur.previousSibling);
+      cur = cur.previousSibling;
+    }
+
+    return list;
+  }
+
+  getIntermediateNodes.前面的兄弟元素 = 前面的兄弟元素;
+
+  function 获取两元素之间的元素(a, b) {
+    const list = [];
+    const aParentList = 获取父链路(a).reverse();
+    const bParentList = 获取父链路(b).reverse();
+    /** 找出 a 与 b 在共存层的父元素 */
+
+    const 短链路 = aParentList.length > bParentList.length ? bParentList : aParentList;
+    let n1 = 短链路[0];
+    let n2 = 短链路[0];
+
+    for (let i = 0; i < 短链路.length; i++) {
+      n1 = aParentList[i];
+      n2 = bParentList[i];
+
+      if (n1 !== n2) {
+        break;
+      }
+    }
+    /** 获取共存层中间的元素 */
+
+
+    let cur = n1.nextSibling;
+
+    while (cur !== n2 && cur.nextSibling !== null) {
+      list.push(cur);
+      cur = cur.nextSibling;
+    }
+    /** 判断 a 是否在 b前面 */
+
+
+    cur = n1;
+    let n1在前 = false;
+
+    while (cur.nextSibling) {
+      if (n2 === cur) {
+        n1在前 = true;
+        break;
+      }
+
+      cur = cur.nextSibling;
+    }
+
+    const [pre, next] = n1在前 ? [a, b] : [b, a];
+    const 共存层 = 寻找共存层(a, b);
+    cur = pre;
+
+    while (!共存层.includes(cur)) {
+      list.push(...后面的兄弟元素(cur));
+      cur = cur.parentNode;
+    }
+
+    cur = next;
+
+    while (!共存层.includes(cur)) {
+      list.push(...前面的兄弟元素(cur));
+      cur = cur.parentNode;
+    }
+
+    return list;
+  }
+
+  getIntermediateNodes.获取两元素之间的元素 = 获取两元素之间的元素;
+})(getIntermediateNodes || (getIntermediateNodes = {}));
+
+function getWindow() {
+  return typeof unsafeWindow === "undefined" ? window : unsafeWindow;
+}
+},{"svelte/store":"../node_modules/svelte/store/index.mjs","./config":"config.ts","./fun/command":"fun/command.ts","./state":"state/index.ts"}],"config.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.AllStoreName = exports.config = exports.elementEdit = exports.isDev = void 0;
+
+var _store = require("svelte/store");
+
+var _vue = require("vue");
+
+var _util = require("./util");
+
+/** 是不是开发环境 */
+const isDev = window.__llej__userjs__dev__ === true;
+/** 是否开启编辑 */
+
+exports.isDev = isDev;
+const elementEdit = (0, _store.writable)(false);
+exports.elementEdit = elementEdit;
+const config = (0, _vue.reactive)({
+  state: 0,
+
+  /** 是否开启编辑 */
+  elementEdit: isDev,
+
+  /** 服务器地址 */
+  serverIp: "https://shenzilong.cn/note/",
+
+  /** 页面的url */
+  locationUrl: decodeURIComponent(location.origin + location.pathname),
+
+  /** 存储登录凭证的 */
+  loginCredentials: "loginCredentials"
+});
+exports.config = config;
+(0, _vue.watchEffect)(() => {
+  /** 同步是否开启编辑的状态给 writable  */
+  elementEdit.set(config.elementEdit);
+  (0, _util.log)("[编辑状态变更]", config.elementEdit);
+});
+/** 存储命令栈的地方 */
+
+const AllStoreName = "_storeName_llej_" + config.locationUrl;
+exports.AllStoreName = AllStoreName;
+var _default = config;
+exports.default = _default;
+},{"svelte/store":"../node_modules/svelte/store/index.mjs","vue":"../node_modules/vue/dist/vue.runtime.esm-bundler.js","./util":"util.ts"}],"fun/ajax.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.au_getJSON = au_getJSON;
+exports._login = _login;
+exports.remote_register = remote_register;
+exports.remote_getStore = remote_getStore;
+exports.remote_setStore = remote_setStore;
+exports.remote_getAllStore = remote_getAllStore;
+
+var _config = _interopRequireDefault(require("../config"));
+
+var _store = require("../lib/store");
+
+var _util = require("../util");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/** 用来识别身份的key */
+let key = '';
+/** 附带登录信息的ajax */
+
+async function au_getJSON(url, data) {
+  if (data === undefined) data = {};
+  data.key = key ? key : await (0, _store.getLocalItem)(_config.default.loginCredentials);
+  return (0, _util.getJSon)(url, data);
+}
+/** 登录 */
+
+
+async function _login(par) {
+  const res = await (0, _util.getJSon)(_config.default.serverIp + 'login', par);
+  if (res.body && res.body.length > 0) key = res.body;
+  (0, _store.setLocalItem)(_config.default.loginCredentials, key);
+  return res;
+}
+/** 注册 */
+
+
+async function remote_register(par) {
+  return await (0, _util.getJSon)(_config.default.serverIp + 'register', par);
+}
+/** 获取存储库 */
+
+
+async function remote_getStore(par) {
+  return await au_getJSON(_config.default.serverIp + 'getStore', par);
+}
+/** 设置存储库 */
+
+
+async function remote_setStore(par) {
+  return await au_getJSON(_config.default.serverIp + 'setStore', par);
+}
+/** 获取存储库 */
+
+
+async function remote_getAllStore() {
+  return await au_getJSON(_config.default.serverIp + 'getAllStore');
+}
+},{"../config":"config.ts","../lib/store":"lib/store.ts","../util":"util.ts"}],"ui/warning.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15095,7 +15421,7 @@ async function saveChanges(editElement) {
     const selectors = (0, _util.getSelectors)(el);
     data.element_List[selectors] = el.innerHTML;
   });
-  const data_str = JSON.stringify(data);
+  const data_str = JSON.stringify(Object.assign(_store.curStore, data));
   await (0, _store.setLocalItem)(_config.AllStoreName, JSON.stringify(data));
   return data_str;
 }
@@ -15103,9 +15429,7 @@ async function saveChanges(editElement) {
 
 
 async function loadChanges(allStore) {
-  console.log(allStore);
   /** 将修改过的 html 写回去 */
-
   for (const selectors in allStore.element_List) {
     if (allStore.element_List.hasOwnProperty(selectors)) {
       const html = allStore.element_List[selectors];
@@ -15265,6 +15589,8 @@ var _util = require("./util");
 
 var _config = require("./config");
 
+var _highlighted_style = require("./state/highlighted_style");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* layout_div.svelte generated by Svelte v3.24.0 */
@@ -15279,11 +15605,11 @@ function add_css() {
 
 function get_each_context(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[11] = list[i];
-  child_ctx[12] = list;
-  child_ctx[13] = i;
+  child_ctx[12] = list[i];
+  child_ctx[13] = list;
+  child_ctx[14] = i;
   return child_ctx;
-} // (50:0) {#if $isRange && $elementEdit}
+} // (52:0) {#if $isRange && $elementEdit}
 
 
 function create_if_block(ctx) {
@@ -15294,7 +15620,7 @@ function create_if_block(ctx) {
 
   function toolbar_highlighted_binding(value) {
     /*toolbar_highlighted_binding*/
-    ctx[8].call(null, value);
+    ctx[9].call(null, value);
   }
 
   let toolbar_props = {};
@@ -15321,13 +15647,13 @@ function create_if_block(ctx) {
       (0, _internal.set_style)(div, "position", "fixed");
       (0, _internal.set_style)(div, "top",
       /*$anchorRect*/
-      ctx[5].top + "px");
+      ctx[6].top + "px");
       (0, _internal.set_style)(div, "left",
       /*$anchorRect*/
-      ctx[5].left + "px");
+      ctx[6].left + "px");
       (0, _internal.set_style)(div, "transform", "translateY(-100%)");
       (0, _internal.set_style)(div, "user-select", "none");
-      (0, _internal.add_location)(div, file, 50, 2, 1071);
+      (0, _internal.add_location)(div, file, 52, 2, 1151);
     },
     m: function mount(target, anchor) {
       (0, _internal.insert_dev)(target, div, anchor);
@@ -15351,18 +15677,18 @@ function create_if_block(ctx) {
 
       if (!current || dirty &
       /*$anchorRect*/
-      32) {
+      64) {
         (0, _internal.set_style)(div, "top",
         /*$anchorRect*/
-        ctx[5].top + "px");
+        ctx[6].top + "px");
       }
 
       if (!current || dirty &
       /*$anchorRect*/
-      32) {
+      64) {
         (0, _internal.set_style)(div, "left",
         /*$anchorRect*/
-        ctx[5].left + "px");
+        ctx[6].left + "px");
       }
     },
     i: function intro(local) {
@@ -15383,11 +15709,11 @@ function create_if_block(ctx) {
     block,
     id: create_if_block.name,
     type: "if",
-    source: "(50:0) {#if $isRange && $elementEdit}",
+    source: "(52:0) {#if $isRange && $elementEdit}",
     ctx
   });
   return block;
-} // (56:0) {#each note_list as note}
+} // (58:0) {#each note_list as note}
 
 
 function create_each_block(ctx) {
@@ -15397,23 +15723,23 @@ function create_each_block(ctx) {
 
   function note_note_binding(value) {
     /*note_note_binding*/
-    ctx[9].call(null, value,
+    ctx[10].call(null, value,
     /*note*/
-    ctx[11],
-    /*each_value*/
     ctx[12],
+    /*each_value*/
+    ctx[13],
     /*note_index*/
-    ctx[13]);
+    ctx[14]);
   }
 
   let note_props = {};
 
   if (
   /*note*/
-  ctx[11] !== void 0) {
+  ctx[12] !== void 0) {
     note_props.note =
     /*note*/
-    ctx[11];
+    ctx[12];
   }
 
   note = new _Note.default({
@@ -15441,7 +15767,7 @@ function create_each_block(ctx) {
         updating_note = true;
         note_changes.note =
         /*note*/
-        ctx[11];
+        ctx[12];
         (0, _internal.add_flush_callback)(() => updating_note = false);
       }
 
@@ -15464,7 +15790,7 @@ function create_each_block(ctx) {
     block,
     id: create_each_block.name,
     type: "each",
-    source: "(56:0) {#each note_list as note}",
+    source: "(58:0) {#each note_list as note}",
     ctx
   });
   return block;
@@ -15472,20 +15798,23 @@ function create_each_block(ctx) {
 
 function create_fragment(ctx) {
   let div;
+  let html_tag;
   let t0;
+  let html_tag_1;
   let t1;
   let t2;
-  let html_tag;
-  let raw1_value = "<style>.user_js_llej_outline{outline:2px solid red}</style>" + "";
+  let t3;
+  let html_tag_2;
+  let raw2_value = "<style>.user_js_llej_outline{outline:2px solid red}</style>" + "";
   let html_anchor;
   let current;
   let mounted;
   let dispose;
   let if_block =
   /*$isRange*/
-  ctx[3] &&
+  ctx[4] &&
   /*$elementEdit*/
-  ctx[4] && create_if_block(ctx);
+  ctx[5] && create_if_block(ctx);
   let each_value =
   /*note_list*/
   ctx[1];
@@ -15504,37 +15833,44 @@ function create_fragment(ctx) {
     c: function create() {
       div = (0, _internal.element)("div");
       t0 = (0, _internal.space)();
-      if (if_block) if_block.c();
       t1 = (0, _internal.space)();
+      if (if_block) if_block.c();
+      t2 = (0, _internal.space)();
 
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
 
-      t2 = (0, _internal.space)();
+      t3 = (0, _internal.space)();
       html_anchor = (0, _internal.empty)();
+      html_tag = new _internal.HtmlTag(t0);
+      html_tag_1 = new _internal.HtmlTag(null);
       (0, _internal.attr_dev)(div, "class", "root svelte-t1o6s3");
-      (0, _internal.add_location)(div, file, 44, 0, 921);
-      html_tag = new _internal.HtmlTag(html_anchor);
+      (0, _internal.add_location)(div, file, 45, 0, 979);
+      html_tag_2 = new _internal.HtmlTag(html_anchor);
     },
     l: function claim(nodes) {
       throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     },
     m: function mount(target, anchor) {
       (0, _internal.insert_dev)(target, div, anchor);
-      div.innerHTML =
+      html_tag.m(
       /*html*/
-      ctx[2];
-      (0, _internal.insert_dev)(target, t0, anchor);
-      if (if_block) if_block.m(target, anchor);
+      ctx[2], div);
+      (0, _internal.append_dev)(div, t0);
+      html_tag_1.m(
+      /*$styleText*/
+      ctx[3], div);
       (0, _internal.insert_dev)(target, t1, anchor);
+      if (if_block) if_block.m(target, anchor);
+      (0, _internal.insert_dev)(target, t2, anchor);
 
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].m(target, anchor);
       }
 
-      (0, _internal.insert_dev)(target, t2, anchor);
-      html_tag.m(raw1_value, target, anchor);
+      (0, _internal.insert_dev)(target, t3, anchor);
+      html_tag_2.m(raw2_value, target, anchor);
       (0, _internal.insert_dev)(target, html_anchor, anchor);
       current = true;
 
@@ -15546,29 +15882,33 @@ function create_fragment(ctx) {
     p: function update(ctx, [dirty]) {
       if (!current || dirty &
       /*html*/
-      4) div.innerHTML =
+      4) html_tag.p(
       /*html*/
-      ctx[2];
-      ;
+      ctx[2]);
+      if (!current || dirty &
+      /*$styleText*/
+      8) html_tag_1.p(
+      /*$styleText*/
+      ctx[3]);
 
       if (
       /*$isRange*/
-      ctx[3] &&
+      ctx[4] &&
       /*$elementEdit*/
-      ctx[4]) {
+      ctx[5]) {
         if (if_block) {
           if_block.p(ctx, dirty);
 
           if (dirty &
           /*$isRange, $elementEdit*/
-          24) {
+          48) {
             (0, _internal.transition_in)(if_block, 1);
           }
         } else {
           if_block = create_if_block(ctx);
           if_block.c();
           (0, _internal.transition_in)(if_block, 1);
-          if_block.m(t1.parentNode, t1);
+          if_block.m(t2.parentNode, t2);
         }
       } else if (if_block) {
         (0, _internal.group_outros)();
@@ -15597,7 +15937,7 @@ function create_fragment(ctx) {
             each_blocks[i] = create_each_block(child_ctx);
             each_blocks[i].c();
             (0, _internal.transition_in)(each_blocks[i], 1);
-            each_blocks[i].m(t2.parentNode, t2);
+            each_blocks[i].m(t3.parentNode, t3);
           }
         }
 
@@ -15632,13 +15972,13 @@ function create_fragment(ctx) {
     },
     d: function destroy(detaching) {
       if (detaching) (0, _internal.detach_dev)(div);
-      if (detaching) (0, _internal.detach_dev)(t0);
-      if (if_block) if_block.d(detaching);
       if (detaching) (0, _internal.detach_dev)(t1);
-      (0, _internal.destroy_each)(each_blocks, detaching);
+      if (if_block) if_block.d(detaching);
       if (detaching) (0, _internal.detach_dev)(t2);
+      (0, _internal.destroy_each)(each_blocks, detaching);
+      if (detaching) (0, _internal.detach_dev)(t3);
       if (detaching) (0, _internal.detach_dev)(html_anchor);
-      if (detaching) html_tag.d();
+      if (detaching) html_tag_2.d();
       mounted = false;
       (0, _internal.run_all)(dispose);
     }
@@ -15654,11 +15994,14 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
+  let $styleText;
   let $isRange;
   let $elementEdit;
   let $anchorRect;
+  (0, _internal.validate_store)(_highlighted_style.styleText, "styleText");
+  (0, _internal.component_subscribe)($$self, _highlighted_style.styleText, $$value => $$invalidate(3, $styleText = $$value));
   (0, _internal.validate_store)(_config.elementEdit, "elementEdit");
-  (0, _internal.component_subscribe)($$self, _config.elementEdit, $$value => $$invalidate(4, $elementEdit = $$value));
+  (0, _internal.component_subscribe)($$self, _config.elementEdit, $$value => $$invalidate(5, $elementEdit = $$value));
   let note_list = [];
 
   _store.note_list_store.subscribe(list => {
@@ -15676,9 +16019,9 @@ function instance($$self, $$props, $$invalidate) {
     anchorRect
   } = _util.SelectionEvent;
   (0, _internal.validate_store)(isRange, "isRange");
-  (0, _internal.component_subscribe)($$self, isRange, value => $$invalidate(3, $isRange = value));
+  (0, _internal.component_subscribe)($$self, isRange, value => $$invalidate(4, $isRange = value));
   (0, _internal.validate_store)(anchorRect, "anchorRect");
-  (0, _internal.component_subscribe)($$self, anchorRect, value => $$invalidate(5, $anchorRect = value));
+  (0, _internal.component_subscribe)($$self, anchorRect, value => $$invalidate(6, $anchorRect = value));
   const writable_props = [];
   Object.keys($$props).forEach(key => {
     if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Layout_div> was created with unknown prop '${key}'`);
@@ -15717,11 +16060,13 @@ function instance($$self, $$props, $$invalidate) {
     on_input: _fun.on_input,
     SelectionEvent: _util.SelectionEvent,
     elementEdit: _config.elementEdit,
+    styleText: _highlighted_style.styleText,
     note_list,
     html,
     paste,
     isRange,
     anchorRect,
+    $styleText,
     $isRange,
     $elementEdit,
     $anchorRect
@@ -15736,7 +16081,7 @@ function instance($$self, $$props, $$invalidate) {
     $$self.$inject_state($$props.$$inject);
   }
 
-  return [_util.SelectionEvent, note_list, html, $isRange, $elementEdit, $anchorRect, isRange, anchorRect, toolbar_highlighted_binding, note_note_binding];
+  return [_util.SelectionEvent, note_list, html, $styleText, $isRange, $elementEdit, $anchorRect, isRange, anchorRect, toolbar_highlighted_binding, note_note_binding];
 }
 
 class Layout_div extends _internal.SvelteComponentDev {
@@ -15756,7 +16101,7 @@ class Layout_div extends _internal.SvelteComponentDev {
 
 var _default = Layout_div;
 exports.default = _default;
-},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","svelte/transition":"../node_modules/svelte/transition/index.mjs","./state/store":"state/store.ts","./svelte/msg":"svelte/msg.svelte","./svelte/Note":"svelte/Note.svelte","./svelte/Toolbar":"svelte/Toolbar.svelte","./fun/fun":"fun/fun.ts","./util":"util.ts","./config":"config.ts","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"网页笔记.user.ts":[function(require,module,exports) {
+},{"svelte/internal":"../node_modules/svelte/internal/index.mjs","svelte/transition":"../node_modules/svelte/transition/index.mjs","./state/store":"state/store.ts","./svelte/msg":"svelte/msg.svelte","./svelte/Note":"svelte/Note.svelte","./svelte/Toolbar":"svelte/Toolbar.svelte","./fun/fun":"fun/fun.ts","./util":"util.ts","./config":"config.ts","./state/highlighted_style":"state/highlighted_style.ts","_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"网页笔记.user.ts":[function(require,module,exports) {
 "use strict";
 
 var _layout_div = _interopRequireDefault(require("./layout_div.svelte"));
@@ -15776,7 +16121,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.39
+// @version      1.40
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -15796,13 +16141,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   /** 调试用 */
 
 
-  window.CommandControl = _command.CommandControl; // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
+  window.CommandControl = _command.CommandControl;
+
+  window.llej_pageNotes_clearCurrentStore = () => {
+    (0, _store.setLocalItem)(_config.AllStoreName, undefined);
+    location.reload();
+  }; // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
 
   /** 自动加载本地暂存更改 */
 
+
   (async () => {
     const AllStoreStr = await (0, _store.getLocalItem)(_config.AllStoreName, undefined);
-    if (AllStoreStr === undefined) return console.warn("没有可用的存储库");
+    if (AllStoreStr === undefined || AllStoreStr === "undefined") return console.warn("没有可用的存储库");
     const allStore = JSON.parse(AllStoreStr);
 
     if (document.readyState === "complete") {
@@ -15857,7 +16208,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57113" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51228" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

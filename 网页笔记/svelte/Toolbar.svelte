@@ -2,7 +2,6 @@
   export let highlighted = () => {
     console.warn("没有传入高亮处理函数");
   };
-
   let color = "#ffff80";
   let backgroundColor = "#ffff80";
 </script>
@@ -36,12 +35,28 @@
 <div class="llej-toolbar">
   <label class="llej-toolbar-btn">
     文字颜色
-    <input type="color" bind:value={color} on:change={() => highlighted({ color })} />
+    <input
+      type="color"
+      bind:value={color}
+      on:change={() => highlighted({ style: `
+      color:${color};
+    ` })} />
   </label>
   <div class="llej-toolbar-btn">
     背景颜色
-    <input type="color" bind:value={backgroundColor} on:change={() => highlighted({ backgroundColor })} />
+    <input
+      type="color"
+      bind:value={backgroundColor}
+      on:change={() => highlighted({ style: `
+      background-color:${backgroundColor};
+    ` })} />
 
   </div>
-  <div class="llej-toolbar-btn" on:click={() => highlighted({ textDecoration: 'underline' })}>高亮</div>
+  <div
+    class="llej-toolbar-btn"
+    on:click={() => highlighted({ style: `
+      text-decoration: underline;
+    ` })}>
+    下划线
+  </div>
 </div>

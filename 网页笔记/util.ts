@@ -1,5 +1,7 @@
 import { derived, get, writable } from "svelte/store";
 import { isDev } from "./config";
+import { CommandControl, Highlighted } from "./fun/command";
+import { editElement } from "./state";
 /** 用于复制文本的input   */
 const input_copy = document.createElement("textarea");
 input_copy.id = "__";
@@ -59,6 +61,9 @@ export function getSelectors(el: Element) {
 /** 获取元素它在第几位 */
 export function getIndex(el: Element) {
   if (el.nodeName === "HTML") return 1;
+  if (el.parentElement === null) {
+    return 1;
+  }
   return 1 + Array.from(el.parentElement.children).findIndex((child) => child === el);
 }
 
@@ -121,7 +126,7 @@ export function log(...arg: any[]) {
 
 /** 用户选中事件 */
 export namespace SelectionEvent {
-  /** 用户选中的对象，唯一的。 */
+  /** 表示用户选中的对象，唯一的。不用每次去获取 */
   const s = window.getSelection();
   /** 是否处于 range 的选中状态 */
   export const isRange = writable(false);
@@ -134,27 +139,74 @@ export namespace SelectionEvent {
     return rect;
   });
 
-  export function 高亮(options: { textDecoration?: string; color?: string; backgroundColor?: string } = {}) {
-    const tagName = options.textDecoration ? "u" : "span";
+  export function 高亮(options: { textDecoration?: string; style?: string } = {}) {
+    const h = new Highlighted(options.style);
+    CommandControl.run(h);
+    const className = h.className;
+    const tagName = "span";
+    let 选中的所有节点 = [] as Node[];
+    if (/** 跨元素了 */ s.anchorNode !== s.focusNode) {
+      const startRange = s.getRangeAt(0);
+      const endRange = s.getRangeAt(s.rangeCount - 1);
+      let startNode = startRange.startContainer;
+      let endNode = endRange.endContainer;
 
-    if (s.anchorNode !== s.focusNode) {
-      let startNode = s.getRangeAt(0).startContainer;
-      let endNode = s.getRangeAt(s.rangeCount - 1).endContainer;
-      console.log("二位之间的东西", getIntermediateNodes(startNode, endNode));
-      return console.warn("目前还没有实现跨元素高亮的功能，之后会做的");
+      let cur = startNode;
+      if (cur instanceof Text) {
+        const s = startRange;
+        const t2 = cur.splitText(s.startOffset);
+        const t3 = t2.nextSibling;
+        const wrap = document.createElement(tagName);
+        wrap.appendChild(t2);
+        cur.parentNode.insertBefore(wrap, t3);
+      }
+      cur = endNode;
+      if (cur instanceof Text) {
+        const s = endRange;
+        const t2 = cur.splitText(s.endOffset);
+        const wrap = document.createElement(tagName);
+        wrap.appendChild(cur);
+        t2.parentNode.insertBefore(wrap, t2);
+
+        endNode = t2;
+      }
+      选中的所有节点 = getIntermediateNodes(startNode, endNode);
+    } else {
+      /** 单元素类 */
+      const cur = s.anchorNode;
+      if (cur instanceof Text) {
+        const t2 = cur.splitText(s.anchorOffset);
+        const t3 = t2.splitText(s.focusOffset);
+        选中的所有节点.push(t2);
+      } else {
+        选中的所有节点.push(cur);
+      }
     }
-    const cur = s.anchorNode;
-    if (cur instanceof Text) {
-      const t2 = cur.splitText(s.anchorOffset);
-      const t3 = t2.splitText(s.focusOffset);
-      const wrap = document.createElement(tagName);
-      wrap.appendChild(t2);
-      cur.parentNode.insertBefore(wrap, t3);
-      /** 设置高亮样式 */
-      wrap.style.color = options.color;
-      wrap.style.backgroundColor = options.backgroundColor;
-      wrap.style.textDecoration = options.textDecoration;
+    console.log("选中的所有节点", 选中的所有节点);
+    选中的所有节点.forEach((node) => {
+      let el;
+      if (node instanceof Element) {
+        el = node;
+      } else {
+        /** 对纯文本节点进行包装，因为纯文本节点无法附加样式等属性 */
+        const wrap = document.createElement(tagName);
+        const t2 = node.nextSibling;
+        const parent = node.parentNode;
+        wrap.appendChild(node);
+        parent.insertBefore(wrap, t2);
+        el = wrap;
+      }
+      el.classList.add(className);
+    });
+    /** 这些元素被添加了类名，甚至被包裹了一层。属于被污染的元素,直接标记他们的父亲 */
+    const 共存层 = getIntermediateNodes.寻找共存层(...选中的所有节点);
+    console.log("[共存层]", 共存层);
+    let parent = 共存层[0].parentElement;
+    /** 避免标记的是不够大的元素，实际上也是因为寻找元素的方法不够好否则也用不着这个 */
+    while (parent.className.includes("llej-page_notes-style")) {
+      parent = parent.parentElement;
     }
+    editElement.add(parent);
   }
   document.addEventListener("selectionchange", () => {
     isRange.set(s.type === "Range");
@@ -162,9 +214,13 @@ export namespace SelectionEvent {
 }
 
 function getIntermediateNodes(a: Node, b: Node): Node[] {
-  return 获取两元素之间的元素(a, b);
-
-  function 寻找共存层(...args: Node[]): Node[] {
+  return getIntermediateNodes.获取两元素之间的元素(a, b);
+}
+namespace getIntermediateNodes {
+  export function 寻找共存层(...args: Node[]): Node[] {
+    if (args.length === 1) {
+      return args;
+    }
     const parentList = args
       .map((el) => 获取父链路(el).reverse())
       .sort((a, b) => {
@@ -180,7 +236,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
     }
   }
   /** 越接近node的元素越在前面 */
-  function 获取父链路(node: Node) {
+  export function 获取父链路(node: Node) {
     const list = [] as Node[];
     list.push(node);
     let cur = node;
@@ -190,7 +246,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
     }
     return list;
   }
-  function 后面的兄弟元素(node: Node) {
+  export function 后面的兄弟元素(node: Node) {
     const list = [] as Node[];
     let cur = node;
     while (cur.nextSibling) {
@@ -199,7 +255,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
     }
     return list;
   }
-  function 前面的兄弟元素(node: Node) {
+  export function 前面的兄弟元素(node: Node) {
     const list = [] as Node[];
     let cur = node;
     while (cur.previousSibling) {
@@ -208,7 +264,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
     }
     return list;
   }
-  function 获取两元素之间的元素(a: Node, b: Node) {
+  export function 获取两元素之间的元素(a: Node, b: Node) {
     const list = [] as Node[];
     const aParentList = 获取父链路(a).reverse();
     const bParentList = 获取父链路(b).reverse();
@@ -225,7 +281,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
     }
     /** 获取共存层中间的元素 */
     let cur = n1.nextSibling as Node;
-    while (cur.nextSibling !== n2 && cur.nextSibling !== null) {
+    while (cur !== n2 && cur.nextSibling !== null) {
       list.push(cur);
       cur = cur.nextSibling;
     }
@@ -240,9 +296,7 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
       }
       cur = cur.nextSibling;
     }
-    // console.log("[n1在前]", n1在前, a, b);
     const [pre, next] = n1在前 ? [a, b] : [b, a];
-
     const 共存层 = 寻找共存层(a, b);
     cur = pre;
     while (!共存层.includes(cur)) {
@@ -257,4 +311,8 @@ function getIntermediateNodes(a: Node, b: Node): Node[] {
 
     return list;
   }
+}
+
+export function getWindow() {
+  return typeof unsafeWindow === "undefined" ? window : unsafeWindow;
 }

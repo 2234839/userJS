@@ -15,6 +15,7 @@
   import { on_mouse, on_keydown, on_input } from "./fun/fun";
   import { SelectionEvent } from "./util"
   import { elementEdit } from "./config";
+  import { styleText } from "./state/highlighted_style";
   let note_list=[]
 
   note_list_store.subscribe(list=>{
@@ -45,6 +46,7 @@
 <div class="root">
   <!-- <input on:paste="{paste}" placeholder="111111111111111"/> -->
   {@html html}
+  {@html $styleText}
 </div>
 
 {#if $isRange && $elementEdit}

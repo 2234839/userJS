@@ -1,11 +1,14 @@
 import { Message } from "../ui/message";
 import { getSelectors, log } from "../util";
 import { note_list_store } from "../state/store";
+import { get } from "svelte/store";
+import { styleList } from "../state/highlighted_style";
+import { curStore } from "../lib/store";
 
 /** 每一个命令都应该实现的东西 */
 export class Command {
   selectEL: HTMLElement;
-  constructor(/** 命令执行的元素 */ select: HTMLElement) {
+  constructor(/** 命令执行的元素 */ select?: HTMLElement) {
     this.selectEL = select;
   }
   /** 执行这个命令 */
@@ -27,9 +30,13 @@ export class Command {
       constructor: (<any>this).__proto__.constructor.name,
     };
   }
+  /** 用于可以使用 toJSON 生成的数据重建功能效果 */
+  public static 重建(obj: commandJSON) {
+    return new this(document.querySelector(obj.selectEL));
+  }
   /** 加载commandJSON转变为命令,通过泛型来构造对象的方式 */
-  static load<T>(obj: commandJSON, CLASS: new (el: HTMLElement) => T) {
-    return new CLASS(document.querySelector(obj.selectEL));
+  static load<T>(obj: T, CLASS: { 重建: (par: T) => Command }) {
+    return CLASS.重建(obj);
   }
 }
 
@@ -94,6 +101,47 @@ export class addNote extends Command {
   }
 }
 
+/** 高亮功能 */
+export class Highlighted extends Command {
+  /** css 类名 */
+  public className = `llej-page_notes-style-${curStore.Highlighted_count++}`;
+  constructor(private styleText: string) {
+    super();
+  }
+  do() {
+    styleList.update((r) => {
+      return [...r, this.getRawStyleText()];
+    });
+    return this;
+  }
+  getRawStyleText() {
+    return `
+    .${this.className}{
+      ${this.styleText}
+    }
+    `;
+  }
+  undo() {
+    styleList.update((r) => {
+      return r.filter((el) => el !== this.getRawStyleText());
+    });
+    return this;
+  }
+  static 重建(obj: ReturnType<Highlighted["toJSON"]>) {
+    const r = new this(obj.styleText);
+    r.className = obj.className;
+    return r;
+  }
+  toJSON() {
+    return {
+      selectEL: "",
+      className: this.className,
+      styleText: this.styleText,
+      constructor: (<any>this).__proto__.constructor.name,
+    };
+  }
+}
+
 /** 命令控制器 */
 export const CommandControl: CommandControl = {
   commandStack: [],
@@ -112,7 +160,6 @@ export const CommandControl: CommandControl = {
   },
   backOut() {
     if (this.commandStack.length === 0) {
-      console.warn("命令栈已空，无法进行撤销");
       Message.getMessage({ msg: "命令栈已空，无法进行撤销" }).autoHide();
       return;
     }
@@ -121,19 +168,20 @@ export const CommandControl: CommandControl = {
   },
   reform() {
     if (this.backOutStack.length === 0) {
-      console.warn("撤销栈已空，无法进行重做");
       Message.getMessage({ msg: "撤销栈已空，无法进行重做" }).autoHide();
       return;
     }
     const command = this.backOutStack.pop();
     return this.commandStack.push(command.redo());
   },
+  /** 从json重建命令栈 */
   loadCommandJSON(obj) {
     log("-执行命令-", obj.constructor);
     if (obj.constructor === "deleteSelect") return Command.load(obj, deleteSelect);
     if (obj.constructor === "editSelect") return Command.load(obj, editSelect);
     if (obj.constructor === "closeEditSelect") return Command.load(obj, closeEditSelect);
     if (obj.constructor === "addNote") return Command.load(obj, addNote);
+    if (obj.constructor === "Highlighted") return Command.load(obj as any, Highlighted);
   },
   getCommandStackJSON() {
     return JSON.stringify(this.commandStack);
@@ -150,7 +198,7 @@ export interface commandJSON {
   selectEL: string;
   /** 构造函数的名字，一般就是类名 */
   constructor: string;
-  /** 注意，要能 json */
+  /** 注意，要能被序列化 */
   [k: string]: any;
 }
 /** 命令控制器的接口 */

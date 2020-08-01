@@ -10,5 +10,5 @@ export function setPath(elList:HTMLElement[]) {
     currentElement=elList[0]
 }
 
-/** 标记被修改后的元素，以便保存修改的内容 */
-export const editElement:Set<HTMLElement>=new Set()
+/** 标记被修改后的元素(被污染了的元素)，以便保存修改的内容 */
+export const editElement:Set<Element>=new Set()

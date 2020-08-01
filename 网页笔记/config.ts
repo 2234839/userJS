@@ -1,7 +1,8 @@
 import { readable, writable } from "svelte/store";
 import { reactive, watchEffect } from "vue";
+import { log } from './util';
 /** 是不是开发环境 */
-export const isDev = false;
+export const isDev = (window as any).__llej__userjs__dev__ === true;
 /** 是否开启编辑 */
 export const elementEdit = writable(false);
 export const config = reactive({
@@ -17,8 +18,7 @@ export const config = reactive({
 watchEffect(() => {
   /** 同步是否开启编辑的状态给 writable  */
   elementEdit.set(config.elementEdit);
-  console.log("[编辑状态变更]",config.elementEdit);
-
+  log("[编辑状态变更]", config.elementEdit);
 });
 /** 存储命令栈的地方 */
 export const AllStoreName = "_storeName_llej_" + config.locationUrl;
