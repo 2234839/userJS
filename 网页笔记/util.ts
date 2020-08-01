@@ -138,6 +138,9 @@ export namespace SelectionEvent {
     const tagName = options.textDecoration ? "u" : "span";
 
     if (s.anchorNode !== s.focusNode) {
+      let startNode = s.getRangeAt(0).startContainer;
+      let endNode = s.getRangeAt(s.rangeCount - 1).endContainer;
+      console.log("二位之间的东西", getIntermediateNodes(startNode, endNode));
       return console.warn("目前还没有实现跨元素高亮的功能，之后会做的");
     }
     const cur = s.anchorNode;
@@ -147,7 +150,7 @@ export namespace SelectionEvent {
       const wrap = document.createElement(tagName);
       wrap.appendChild(t2);
       cur.parentNode.insertBefore(wrap, t3);
-
+      /** 设置高亮样式 */
       wrap.style.color = options.color;
       wrap.style.backgroundColor = options.backgroundColor;
       wrap.style.textDecoration = options.textDecoration;
@@ -156,4 +159,102 @@ export namespace SelectionEvent {
   document.addEventListener("selectionchange", () => {
     isRange.set(s.type === "Range");
   });
+}
+
+function getIntermediateNodes(a: Node, b: Node): Node[] {
+  return 获取两元素之间的元素(a, b);
+
+  function 寻找共存层(...args: Node[]): Node[] {
+    const parentList = args
+      .map((el) => 获取父链路(el).reverse())
+      .sort((a, b) => {
+        return a.length - b.length;
+      });
+    const 最短链路 = parentList[0];
+    for (let i = 0; i < 最短链路.length; i++) {
+      const element = 最短链路[i];
+      const 此层是否全相似 = parentList.map((el) => el[i]).every((el) => el === element);
+      if (此层是否全相似 === false) {
+        return Array.from(最短链路[i - 1].childNodes);
+      }
+    }
+  }
+  /** 越接近node的元素越在前面 */
+  function 获取父链路(node: Node) {
+    const list = [] as Node[];
+    list.push(node);
+    let cur = node;
+    while (cur.parentNode) {
+      list.push(cur.parentNode);
+      cur = cur.parentNode;
+    }
+    return list;
+  }
+  function 后面的兄弟元素(node: Node) {
+    const list = [] as Node[];
+    let cur = node;
+    while (cur.nextSibling) {
+      list.push(cur.nextSibling);
+      cur = cur.nextSibling;
+    }
+    return list;
+  }
+  function 前面的兄弟元素(node: Node) {
+    const list = [] as Node[];
+    let cur = node;
+    while (cur.previousSibling) {
+      list.push(cur.previousSibling);
+      cur = cur.previousSibling;
+    }
+    return list;
+  }
+  function 获取两元素之间的元素(a: Node, b: Node) {
+    const list = [] as Node[];
+    const aParentList = 获取父链路(a).reverse();
+    const bParentList = 获取父链路(b).reverse();
+    /** 找出 a 与 b 在共存层的父元素 */
+    const 短链路 = aParentList.length > bParentList.length ? bParentList : aParentList;
+    let n1 = 短链路[0];
+    let n2 = 短链路[0];
+    for (let i = 0; i < 短链路.length; i++) {
+      n1 = aParentList[i];
+      n2 = bParentList[i];
+      if (n1 !== n2) {
+        break;
+      }
+    }
+    /** 获取共存层中间的元素 */
+    let cur = n1.nextSibling as Node;
+    while (cur.nextSibling !== n2 && cur.nextSibling !== null) {
+      list.push(cur);
+      cur = cur.nextSibling;
+    }
+
+    /** 判断 a 是否在 b前面 */
+    cur = n1;
+    let n1在前 = false;
+    while (cur.nextSibling) {
+      if (n2 === cur) {
+        n1在前 = true;
+        break;
+      }
+      cur = cur.nextSibling;
+    }
+    // console.log("[n1在前]", n1在前, a, b);
+    const [pre, next] = n1在前 ? [a, b] : [b, a];
+
+    const 共存层 = 寻找共存层(a, b);
+    cur = pre;
+    while (!共存层.includes(cur)) {
+      list.push(...后面的兄弟元素(cur));
+      cur = cur.parentNode;
+    }
+    cur = next;
+    while (!共存层.includes(cur)) {
+      list.push(...前面的兄弟元素(cur));
+      cur = cur.parentNode;
+    }
+
+    return list;
+  }
 }
