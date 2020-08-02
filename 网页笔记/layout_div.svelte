@@ -44,9 +44,9 @@
   on:mouseover={on_mouse} />
 
 <div class="root">
-  <!-- <input on:paste="{paste}" placeholder="111111111111111"/> -->
   {@html html}
   {@html $styleText}
+  <Msg />
 </div>
 
 {#if $isRange && $elementEdit}

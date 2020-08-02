@@ -200,7 +200,7 @@ export namespace SelectionEvent {
     });
     /** 这些元素被添加了类名，甚至被包裹了一层。属于被污染的元素,直接标记他们的父亲 */
     const 共存层 = getIntermediateNodes.寻找共存层(...选中的所有节点);
-    console.log("[共存层]", 共存层);
+    // console.log("[共存层]", 共存层);
     let parent = 共存层[0].parentElement;
     /** 避免标记的是不够大的元素，实际上也是因为寻找元素的方法不够好否则也用不着这个 */
     while (parent.className.includes("llej-page_notes-style")) {

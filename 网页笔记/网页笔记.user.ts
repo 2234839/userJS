@@ -1,7 +1,7 @@
 import App from "./layout_div.svelte";
 import { saveChanges, loadChanges } from "./fun/fun";
 import { editElement } from "./state/index";
-import { getLocalItem, setLocalItem } from "./lib/store";
+import { curStore, getLocalItem, setLocalItem } from "./lib/store";
 import { AllStoreName } from "./config";
 import { CommandControl } from "./fun/command";
 
@@ -20,32 +20,17 @@ import { CommandControl } from "./fun/command";
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
 (async function () {
-  if (typeof unsafeWindow === "undefined") {
-    window.unsafeWindow = window;
-  } else {
+  if (typeof unsafeWindow !== "undefined") {
     window = unsafeWindow;
   }
   /** 调试用 */
   (<any>window).CommandControl = CommandControl;
+  /** 清除当前这个页面的修改 */
   (<any>window).llej_pageNotes_clearCurrentStore = () => {
     setLocalItem(AllStoreName, undefined);
     location.reload();
   };
-  // setLocalItem("__开发者__", " 崮生 admin@shenzilong.cn");
-  /** 自动加载本地暂存更改 */
-  (async () => {
-    const AllStoreStr = await getLocalItem(AllStoreName, undefined);
-    if (AllStoreStr === undefined || AllStoreStr === "undefined") return console.warn("没有可用的存储库");
 
-    const allStore = JSON.parse(AllStoreStr);
-    if (document.readyState === "complete") {
-      loadChanges(allStore);
-    } else {
-      window.addEventListener("load", function () {
-        loadChanges(allStore);
-      });
-    }
-  })();
   const app_div = document.createElement("div");
   document.body.appendChild(app_div);
   const app = new App({

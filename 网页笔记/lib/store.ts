@@ -1,14 +1,12 @@
-import { reactive, watchEffect } from "vue";
-import { getWindow, log } from "../util";
+import { reactive } from "vue";
+import { loadChanges } from "../fun/fun";
 import { AllStoreName } from "../config";
-import { Command, commandJSON } from "../fun/command";
-
-const w = getWindow();
+import { commandJSON } from "../fun/command";
 
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {
   //为了在非油猴环境下存储依旧能起一部分的作用
-  if (w.hasOwnProperty("GM") && w.hasOwnProperty("GM")) {
+  if (typeof unsafeWindow !== "undefined") {
     return await GM.setValue(name, value);
   } else {
     return await localStorage.setItem(name, String(value));
@@ -17,7 +15,7 @@ export async function setLocalItem(name: string, value: string) {
 
 /** 读取一条本地存储 */
 export async function getLocalItem<T>(/** 键名 */ name: string, /** 没有的时候的默认值 */ defaultValue?: T) {
-  if (w.hasOwnProperty("GM") && w.hasOwnProperty("GM")) {
+  if (typeof unsafeWindow !== "undefined") {
     const res = await GM.getValue(name, defaultValue);
     return res;
   } else {
@@ -28,7 +26,7 @@ export async function getLocalItem<T>(/** 键名 */ name: string, /** 没有的�
   }
 }
 
-/** 存储所有的东西 */
+/** 所有被存储的东西 */
 export interface AllStore {
   CommandStack: commandJSON[];
   element_List: {
@@ -48,8 +46,15 @@ export const curStore = reactive({
 
 getLocalItem(AllStoreName, "{}").then((s) => {
   Object.assign(curStore, JSON.parse(s));
-});
-
-watchEffect(() => {
-  log("存储变更", curStore);
+  /** 自动加载本地暂存更改 */
+  (async () => {
+    console.log(curStore);
+    if (document.readyState === "complete") {
+      loadChanges(curStore);
+    } else {
+      window.addEventListener("load", function () {
+        loadChanges(curStore);
+      });
+    }
+  })();
 });

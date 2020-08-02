@@ -99,6 +99,7 @@ export async function saveChanges(editElement: Set<Element>) {
     element_List: {} as AllStore["element_List"],
     CommandStack: CommandControl.commandStack,
   };
+  /** 获取修改过的元素的html */
   editElement.forEach((el) => {
     const selectors = getSelectors(el);
     data.element_List[selectors] = el.innerHTML;
@@ -112,16 +113,14 @@ export async function saveChanges(editElement: Set<Element>) {
 export async function loadChanges(allStore: AllStore) {
   /** 将修改过的 html 写回去 */
   for (const selectors in allStore.element_List) {
-    if (allStore.element_List.hasOwnProperty(selectors)) {
-      const html = allStore.element_List[selectors];
-      const el = document.querySelector(selectors);
-      if (el === null) {
-        console.error(`${selectors} 的元素无法找到，无法重写`);
-      } else {
-        editElement.add(<HTMLElement>el);
-        el.innerHTML = html;
-        log("-重写-", el);
-      }
+    const html = allStore.element_List[selectors];
+    const el = document.querySelector(selectors);
+    if (el === null) {
+      console.error(`${selectors} 的元素无法找到，无法重写`);
+    } else {
+      editElement.add(<HTMLElement>el);
+      el.innerHTML = html;
+      log("-重写-", el);
     }
   }
   /** 重新执行命令栈 */
