@@ -7,7 +7,7 @@
     "@tsconfig/svelte": "^1.0.2",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
-    "marked": "^0.6.2",
+    "marked": "^0.7.0",
     "parcel": "^2.0.0-beta.1",
     "parcel-plugin-svelte": "^4.0.6",
     "rollup-plugin-postcss": "^3.1.3",
