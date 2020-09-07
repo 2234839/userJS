@@ -37,4 +37,3 @@ export interface Message_Data {
   msg: string;
   style?: string;
 }
-
