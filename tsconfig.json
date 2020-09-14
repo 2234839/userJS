@@ -14,10 +14,6 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     // "sourceMap": false,
-    "types": [
-      "webpack-env",
-      "@dcloudio/types/uni-app"
-    ],
     "paths": {
       "@/*": [
         "./src/*"
@@ -28,7 +24,6 @@
       "dom.iterable",
       "scripthost",
       "ESNext",
-
     ],
     // "noImplicitReturns": true, // 并不是所有函数里的代码都有返回值时，抛出错误
     "noFallthroughCasesInSwitch": true, // 报告 switch 语句的 fallthrough 错误。（即，不允许 switch 的 case 语句贯穿）
