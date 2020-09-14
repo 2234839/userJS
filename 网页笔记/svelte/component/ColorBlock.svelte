@@ -1,6 +1,5 @@
 <script>
   import { createEventDispatcher } from "svelte/internal/index.mjs";
-  console.log("[this]", this);
   const dispatch = createEventDispatcher();
   export let defaultColor = "#EB5757";
   export let defaultColorList = [
