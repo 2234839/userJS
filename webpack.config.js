@@ -7,9 +7,11 @@ const text = fs.readFileSync(entry, { encoding: "utf8" });
 const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
 module.exports = {
   mode: "development",
-  entry: entry,
+  entry: {
+    "网页笔记.user.js": entry,
+  },
   output: {
-    filename: "bundle.js",
+    filename: "[name]",
     path: path.resolve(__dirname, "./dist"),
   },
   resolve: {
