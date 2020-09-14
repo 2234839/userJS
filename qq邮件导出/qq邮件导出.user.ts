@@ -10,6 +10,7 @@
 // @run-at       document-end
 
 // ==/UserScript==
+
 const q = (selector: string, d: Document | Element = document) => Array.from(d.querySelectorAll(selector));
 
 let sid = "";
@@ -18,7 +19,7 @@ export async function main() {
   /** qq 邮箱的工具条  */
   const mainFrame = q("iframe#mainFrame")[0]! as HTMLIFrameElement;
   mainFrame.addEventListener("load", () => {
-    const toolList = q(".toolbg>.left", mainFrame.contentDocument!)[0];
+    const toolList = q(`.toolbg [class$="left"]`, mainFrame.contentDocument!)[0];
 
     const 导出按钮 = document.createElement("a");
 
@@ -39,10 +40,15 @@ setTimeout(() => {
 }, 1 * 1000);
 
 async function 导出_action() {
+  const mailId = [] as string[];
   for await (const iterator of generatorMailId()) {
+    mailId.push(...iterator);
     console.log("[iterator]", iterator);
   }
+  const downloadUrl = mailId.map((id) => 生成下载地址(sid, id));
+  console.log("提取mailid完成", downloadUrl);
 }
+/** 获取所有的 mailId ,会自动翻页  */
 async function* generatorMailId(): AsyncGenerator<string[]> {
   while (true) {
     yield getCurrentMailId();
@@ -51,8 +57,6 @@ async function* generatorMailId(): AsyncGenerator<string[]> {
       break;
     }
   }
-  console.log("全部处理完成");
-
   function getCurrentMailId() {
     const mailId = q("span[mailid]", getMainDoc()).map((el) => el.getAttribute("mailid"));
     return mailId;
@@ -89,6 +93,10 @@ async function* generatorMailId(): AsyncGenerator<string[]> {
     }
   }
   //
+}
+
+function 生成下载地址(sid: string, mailId: string) {
+  return `https://mail.qq.com/cgi-bin/readmail?sid=${sid}&mailid=${mailId}&action=downloademl`;
 }
 
 class NotNextBtnError extends Error {}
