@@ -1,9 +1,9 @@
-import App from "./layout_div.svelte";
-import { saveChanges, loadChanges } from "./fun/fun";
-import { editElement } from "./state/index";
-import { curStore, getLocalItem, setLocalItem } from "./lib/store";
 import { AllStoreName } from "./config";
 import { CommandControl } from "./fun/command";
+import { saveChanges } from "./fun/fun";
+import App from "./layout_div.svelte";
+import { setLocalItem } from "./lib/store";
+import { editElement } from "./state/index";
 
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择

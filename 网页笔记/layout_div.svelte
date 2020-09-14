@@ -17,7 +17,6 @@
   import { elementEdit } from "./config";
   import { styleText } from "./state/highlighted_style";
   let note_list=[]
-
   note_list_store.subscribe(list=>{
     note_list=list
   })

@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-export const msg = writable("");
 
 /** 用来显示笔记的地方 */
 export const note_list_store = writable([] as Note[]);
@@ -12,3 +11,4 @@ type Note = {
   content: string;
 };
 
+export const store = {};
