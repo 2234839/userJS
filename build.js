@@ -7,7 +7,6 @@ const project = [
   "./祭奠百度/祭奠百度.user.ts",
   "./请求代理/请求代理.user.ts",
   "./自动同步文章/自动同步文章.ts",
-  "./网页笔记/网页笔记.user.ts",
   "./api自动提取/api自动提取.user.ts",
   "./文本分类/文本分类.user.ts",
   "./去除顶部遮挡/去除顶部遮挡.user.ts",
@@ -17,3 +16,4 @@ const project = [
 project.forEach((el) => {
   run(`npx parcel build --no-minify --no-source-maps ${el}`);
 });
+run(`npm run buildAll`);
