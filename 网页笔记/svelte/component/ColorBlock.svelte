@@ -1,5 +1,6 @@
-<script>
-  import { createEventDispatcher } from "svelte/internal/index.mjs";
+<script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
   const dispatch = createEventDispatcher();
   export let defaultColor = "#EB5757";
   export let defaultColorList = [
@@ -26,7 +27,7 @@
     "#6FCF97",
   ];
 
-  function changeColor(c) {
+  function changeColor(c: string) {
     defaultColor = c;
     dispatch("change", c);
   }
