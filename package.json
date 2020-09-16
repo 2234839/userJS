@@ -12,7 +12,7 @@
     "parcel-transformer-svelte": "^1.0.4",
     "rollup-plugin-postcss": "^3.1.8",
     "svelte-check": "^1.0.41",
-    "svelte-preprocess": "^4.2.1",
+    "svelte-preprocess": "^4.3.0",
     "ts-loader": "^8.0.3",
     "typescript": "^3.9.7",
     "webpack-cli": "^3.3.12"
@@ -27,6 +27,7 @@
     "ansi-to-html": "^0.6.14",
     "ansi_up": "^4.0.4",
     "autoprefixer": "^9.8.6",
+    "firebase": "^7.20.0",
     "glob": "^7.1.4",
     "idb": "^5.0.5",
     "parcel-bundler": "^1.12.4",
