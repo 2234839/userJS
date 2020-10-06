@@ -20,18 +20,18 @@ firebase.initializeApp({
 export const fireStore = firebase.firestore();
 
 /** 监听用户状态改变 */
-firebase.auth().onAuthStateChanged(function (user) {
-  if (user) {
-    console.log("[登录成功]", user.email);
-  }
-});
+// firebase.auth().onAuthStateChanged(function (user) {
+//   if (user) {
+//     console.log("[登录成功]", user.email);
+//   }
+// });
 
-firebase
-  .auth()
-  .signInWithEmailAndPassword("admin@shenzilong.cn", "987456321")
-  .catch(function (error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    // ...
-  });
+// firebase
+//   .auth()
+//   .signInWithEmailAndPassword("admin@shenzilong.cn", "987456321")
+//   .catch(function (error) {
+//     // Handle Errors here.
+//     var errorCode = error.code;
+//     var errorMessage = error.message;
+//     // ...
+//   });
