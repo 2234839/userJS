@@ -208,7 +208,7 @@ export async function on_keydown(event: KeyboardEvent) {
   }
 }
 /** 编辑事件 */
-export function on_input(event: InputEvent) {
+export function on_input(event: Event) {
   if (event.target instanceof HTMLElement) {
     const el = event.target;
     if (el.innerHTML.length > 10 * 1000)

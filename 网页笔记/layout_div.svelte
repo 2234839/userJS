@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     fade,
     blur,
@@ -8,20 +8,21 @@
     scale,
     slide
   } from "svelte/transition";
-  import { msg,note_list_store } from "./state/store";
-  import Msg from "./svelte/msg";
-  import Note from "./svelte/Note";
-  import Toolbar from "./svelte/Toolbar";
+  import { note_list_store } from "./state/store";
+  import Msg from "./svelte/msg.svelte";
+  import Note from "./svelte/Note.svelte";
+  import Toolbar from "./svelte/Toolbar.svelte";
+  import LoginFramet from "./svelte/framet/login.svelte";
   import { on_mouse, on_keydown, on_input } from "./fun/fun";
   import { SelectionEvent } from "./util"
   import { elementEdit } from "./config";
   import { styleText } from "./state/highlighted_style";
-  let note_list=[]
+  let note_list=[] as any[]
   note_list_store.subscribe(list=>{
     note_list=list
   })
   let html=""
-  function paste(e) {
+  function paste(e:any) {
     html=e.clipboardData.getData('text/html')
   }
 
@@ -47,6 +48,8 @@
   {@html $styleText}
   <Msg />
 </div>
+
+<LoginFramet/>
 
 {#if $isRange && $elementEdit}
   <div style="position:fixed;top:{$anchorRect.top}px;left:{$anchorRect.left}px;transform:translateY(-100%);user-select: none;">
