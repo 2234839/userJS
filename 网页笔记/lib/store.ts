@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 import { loadChanges } from "../fun/fun";
 import { AllStoreName } from "../config";
-import { commandJSON } from "../fun/command";
+import type { commandJSON } from "../fun/command";
 
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {

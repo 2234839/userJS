@@ -47,9 +47,12 @@ export function getSelectors(el: Element) {
   const id = el.id;
   if (id) id_className += `#${id}`;
 
-  el.classList.forEach((className) => {
-    id_className += `.${className}`;
-  });
+  Array.from(el.classList)
+    /** 排除自定义类名 */
+    .filter((el) => el.includes("_llej_"))
+    .forEach((className) => {
+      id_className += `.${className}`;
+    });
 
   /** nth-child 选择 看它是第几个元素 */
   const index = getIndex(el);
