@@ -181,7 +181,11 @@ export function on_mouse(event: MouseEvent) {
 export async function on_keydown(event: KeyboardEvent) {
   const code = event.code;
   //有元素获得焦点，视为正在输入文本，不执行指令
-  if (document.querySelectorAll(":focus").length > 0) {
+  if (
+    document.querySelector(":focus") ||
+    /** 如果目标元素是自定义组件的话上面这个还检测不了，需要检测 shadow 中是否存在焦点 */
+    ((event.target as any).shadowRoot && (event.target as any).shadowRoot.querySelector(":focus"))
+  ) {
     return;
   }
   /** 切换编辑模式 */

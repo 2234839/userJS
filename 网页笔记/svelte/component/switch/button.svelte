@@ -14,15 +14,15 @@
   .c {
     border: 1px solid black;
     background-color: rgb(228, 228, 228);
-    border-radius: 4px;
+    border-radius: 0.4em;
     display: flex;
-    padding: 4px 3px;
+    padding: 0.2em 0.3em;
   }
   .c-indicator {
     background-color: rgb(202, 202, 202);
     transition: all 0.4s;
-    padding: 4px 9px;
-    border-radius: 4px;
+    padding: 0.2em 0.5em;
+    border-radius: 0.4em;
   }
   .c.-select .c-indicator {
     background-color: rgb(172, 255, 151);
