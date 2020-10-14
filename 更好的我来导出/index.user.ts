@@ -83,7 +83,6 @@ export namespace 我来md导出 {
   interface columnNode extends Node {
     type: "column";
   }
-
   interface imageNode extends Node {
     type: "image";
     attributes: {
