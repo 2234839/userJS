@@ -9,6 +9,7 @@ module.exports = {
   mode: "development",
   entry: {
     "网页笔记.user.js": entry,
+    "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
   },
   output: {
     filename: "[name]",
