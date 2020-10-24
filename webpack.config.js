@@ -1,16 +1,20 @@
 const path = require("path");
 const webpack = require("webpack");
 const fs = require("fs");
-const entry = path.resolve(__dirname, "./网页笔记/网页笔记.user.ts");
-const text = fs.readFileSync(entry, { encoding: "utf8" });
+const entry = {
+  "网页笔记.user.js": path.resolve(__dirname, "./网页笔记/网页笔记.user.ts"),
+  "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
+};
 
-const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
+function getMeta(filePath) {
+  const text = fs.readFileSync(filePath, { encoding: "utf8" });
+  const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
+  return meta;
+}
+
 module.exports = {
   mode: "development",
-  entry: {
-    "网页笔记.user.js": entry,
-    "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
-  },
+  entry,
   output: {
     filename: "[name]",
     path: path.resolve(__dirname, "./dist"),
@@ -49,7 +53,11 @@ module.exports = {
   },
   plugins: [
     new webpack.BannerPlugin({
-      banner: `${meta}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`,
+      banner(options) {
+        return `${getMeta(
+          entry[options.chunk.id],
+        )}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`;
+      },
       raw: true,
     }),
   ],

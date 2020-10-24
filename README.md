@@ -88,3 +88,5 @@
 #### 实现思路
 
 使用 [ajax-hook](https://github.com/wendux/Ajax-hook) 这个库可以很容易的在请求发起前修改请求参数，具体见 [请求代理.user.ts](./请求代理/请求代理.user.ts) 这里的代码
+
+## [LICENSE](./LICENSE)
