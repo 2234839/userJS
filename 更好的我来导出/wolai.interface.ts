@@ -86,9 +86,9 @@ export interface codeNode extends Node {
   attributes: { title: NodeTitle; lineBreak: false; ligatures: false; language: "HTML"; line_number: false };
 }
 export interface todoListNode extends Node {
-    type: "todoList";
-    attributes: { title: NodeTitle; checked:'no' };
-  }
+  type: "todoList";
+  attributes: { title: NodeTitle; checked?: "no" | "yes" };
+}
 
 export interface pageChunkRes {
   code: number;

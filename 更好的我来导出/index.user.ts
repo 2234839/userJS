@@ -168,7 +168,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => p.type === "todoList",
     async parer(p: todoListNode, pageChunkRes: pageChunkRes) {
-      return `[${p.attributes.checked === "no" ? " " : "x"}] ${NodeTitleToMarkdown(p.attributes.title)}`;
+      return `[${p.attributes.checked === "yes" ? "x" : " "}] ${NodeTitleToMarkdown(p.attributes.title)}`;
     },
   },
 );
@@ -202,7 +202,7 @@ proxy({
   const newBtn = btn.cloneNode(true) as HTMLElement;
   btn.parentElement.appendChild(newBtn);
 
-  newBtn.querySelectorAll("span")[1].textContent = `[✨] 导出页面`;
+  newBtn.querySelectorAll("span")[1].textContent = `[✨] 导出Markdown`;
   newBtn.addEventListener("click", async () => {
     if (curData === null) {
       return alert("没有获取到当前页面数据，您可以尝试刷新重试。");
@@ -212,8 +212,8 @@ proxy({
     const blob = new Blob([md], { type: "text/plain;charset=utf-8" });
     const downloadUrl = URL.createObjectURL(blob);
     console.log(`[markdown:${downloadUrl}]\n----\n`, md);
-    console.log('[copy(md)]',copy(md));
-    alert("复制成功")
+    console.log("[copy(md)]", copy(md));
+    alert("复制成功");
   });
 });
 
