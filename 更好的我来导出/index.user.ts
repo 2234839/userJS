@@ -14,8 +14,8 @@
 import { proxy } from "ajax-hook";
 import { 检测元素状态 } from "../util/dom/elment";
 import { copy } from "../util/dom/剪贴板";
-import { fun } from "../网页笔记/fun/fun";
 import type {
+  bookmarkNode,
   bullListNode,
   codeNode,
   columnNode,
@@ -196,6 +196,16 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return NodeTitleToMarkdown(p.attributes.title);
     },
   },
+  /** 对书签的解析， **这里到时候应该要调成可控的** */
+  {
+    check: (p) => p.type === "bookmark",
+    async parer(p: bookmarkNode) {
+      const rich = p.attributes.rich_media[0];
+      const thumbnail = rich?.thumbnail?.length ? `![](${rich.thumbnail[0].href}){:height="60px" width="60px"}` : "";
+      const description = rich.description || "";
+      return `> [![](${rich.icons[0].href}){:height="30px" width="30px"} 崮生 一些随笔](${p.attributes.source} "${description}") ${description} ${thumbnail}`;
+    },
+  },
   {
     check: (p) => p.type === "text",
     async parer(p: textNode) {
@@ -273,10 +283,10 @@ function sub_nodeToNode(p: Node, pageChunkRes: pageChunkRes) {
         while (cur?.parent_id) {
           l++;
           cur = pageChunkRes.data.block[cur.parent_id]?.value;
-          if(cur?.type==="toggleList"){
+          if (cur?.type === "toggleList") {
             /** 不是相同的结构了，层级关系算到这里位置，更外层的层级关系交给该结构自行处理 */
-            l++ /** 因为上面算了页面，这里将 toggleList 当做和页面一样看待 */
-            break
+            l++; /** 因为上面算了页面，这里将 toggleList 当做和页面一样看待 */
+            break;
           }
         }
         /** 不算页面这一级 */
