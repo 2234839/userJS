@@ -14,10 +14,12 @@
 import { proxy } from "ajax-hook";
 import { 检测元素状态 } from "../util/dom/elment";
 import { copy } from "../util/dom/剪贴板";
+import { fun } from "../网页笔记/fun/fun";
 import type {
   bullListNode,
   codeNode,
   columnNode,
+  enumListNode,
   imageNode,
   midHeaderNode,
   Node,
@@ -39,17 +41,15 @@ export namespace 我来md导出 {
     const blocks = Object.keys(p.data.block)
       .map((k) => p.data.block[k])
       .map((el) => el.value);
+
     console.log("[blocks]", blocks);
+
     const page = findPage(blocks);
     if (!page) {
       throw "没有寻找到page块";
     }
 
-    mdText += `# ${NodeTitleToMarkdown(page.attributes.title)}${_n}`;
-
-    for (const sub_node of page.sub_nodes.map((id) => p.data.block[id])) {
-      mdText += (await nodeToMarkdown(sub_node.value, p)) + _n;
-    }
+    mdText += await nodeToMarkdown(page, p);
     return mdText;
   }
 
@@ -62,15 +62,39 @@ export namespace 我来md导出 {
     /** 其他自定义扩展项 */
     [k: string]: any;
   }
+  interface sub_node_parer {
+    parer: (
+      /** 父节点自身可能解析出来的代码 */ md_str: string,
+      Node: any,
+      pageChunkRes: pageChunkRes,
+    ) => Promise<string>;
+    check: (parent: Node, pageChunkRes: pageChunkRes) => boolean;
+    /** 其他自定义扩展项 */
+    [k: string]: any;
+  }
   /** 存储所有节点解析器 */
   const nodeParers = [] as parer[];
+  /** 对 子节点和父节点的关系 进行处理，因为不同父子节点的组织方式可能不一样 */
+  const sub_nodeParers = [] as sub_node_parer[];
   export function registerNodeParer(...parers: parer[]) {
     nodeParers.push(...parers);
+  }
+  export function registerSubNodeParer(...parers: sub_node_parer[]) {
+    sub_nodeParers.push(...parers);
   }
   export async function nodeToMarkdown(p: Node, pageChunkRes: pageChunkRes): Promise<string> {
     const parer = nodeParers.find((el) => el.check(p, pageChunkRes));
     if (parer) {
-      return await parer.parer(p, pageChunkRes);
+      const md_str = await parer.parer(p, pageChunkRes);
+      if (p.sub_nodes.length) {
+        const sub_node_parer = sub_nodeParers.find((el) => el.check(p, pageChunkRes));
+        if (sub_node_parer) {
+          return await sub_node_parer.parer(md_str, p, pageChunkRes);
+        } else {
+          console.log(`[没有对应的结构解析器 ${p.type}]`, p);
+        }
+      }
+      return md_str;
     } else {
       console.log(`[没有对应的解析器 ${p.type}]`, p);
       return `--- 没有对应的解析器 -> ${p.type} ---`;
@@ -137,8 +161,10 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `> ${NodeTitleToMarkdown(p.attributes.title)}`;
     },
   },
+  /** 对各级标题进行处理
+   *  对bullList节点进行处理 */
   (() => {
-    const header = { header: "#", midHeader: "##", subHeader: "###", tinyHeader: "####" };
+    const header = { bullList: "-", header: "#", midHeader: "##", subHeader: "###", tinyHeader: "####" };
 
     return {
       check: (p: any) => header.hasOwnProperty(p.type),
@@ -148,6 +174,21 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       },
     };
   })(),
+  /** 数字列表的解析 */
+  {
+    check: (p) => p.type === "enumList",
+    async parer(p: enumListNode, pageChunkRes) {
+      let l = 0;
+      const brothers = sub_nodeToNode(pageChunkRes.data.block[p.parent_id].value, pageChunkRes);
+      let i = brothers.findIndex((el) => el.id === p.id);
+      while (i >= 0 && brothers[i].type === "enumList") {
+        i -= 1;
+        l += 1;
+      }
+      // const l = pageChunkRes.data.block[p.parent_id].value.sub_nodes.findIndex((id) => id === p.id) + 1;
+      return `${l}. ${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
   {
     check: (p) => p.type === "text",
     async parer(p: textNode) {
@@ -182,7 +223,13 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => p.type === "page",
     async parer(p: pageNode, pageChunkRes: pageChunkRes) {
-      return `[${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+      if (p.parent_id === p.page_id) {
+        /** 顶层块 也就是当前页面块 */
+        return `# [${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+      } else {
+        /** 页面内引用其他页面的块 */
+        return `[${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+      }
     },
   },
   {
@@ -191,10 +238,27 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `[${p.attributes.checked === "yes" ? "x" : " "}] ${NodeTitleToMarkdown(p.attributes.title)}`;
     },
   },
-  {
-    check: (p) => p.type === "bullList",
-    async parer(p: bullListNode, pageChunkRes: pageChunkRes) {
-      /** 对于子块应该要有更好的解决方案 */
+);
+
+function sub_nodeToNode(p: Node, pageChunkRes: pageChunkRes) {
+  return p.sub_nodes.map((id) => pageChunkRes.data.block[id].value);
+}
+我来md导出.registerSubNodeParer(
+  /** 对页面下面的一级节点进行处理 */ {
+    check: (p) => p.type === "page",
+    async parer(md_str, p: Node, pageChunkRes) {
+      return (
+        md_str +
+        "\n\n" +
+        (
+          await Promise.all(sub_nodeToNode(p, pageChunkRes).map((p) => 我来md导出.nodeToMarkdown(p, pageChunkRes)))
+        ).join("\n\n")
+      );
+    },
+  },
+  /** 对列表类的层级进行处理 */ {
+    check: (p) => ["bullList", "enumList"].includes(p.type),
+    async parer(md_str, p: Node, pageChunkRes) {
       /** 获取一个节点有多少父级 */
       function getNodeNumberOfLayers(p: Node, pageChunkRes: pageChunkRes) {
         let l = 0;
@@ -206,19 +270,14 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
         return l - 1;
       }
       const l = getNodeNumberOfLayers(p, pageChunkRes) - 1;
-      console.log(l, p);
 
       const md_str_List = (
-        await Promise.all(
-          p.sub_nodes
-            .map((id) => pageChunkRes.data.block[id])
-            .map((p) => 我来md导出.nodeToMarkdown(p.value, pageChunkRes)),
-        )
+        await Promise.all(sub_nodeToNode(p, pageChunkRes).map((p) => 我来md导出.nodeToMarkdown(p, pageChunkRes)))
       ).map(
         (md_str) =>
           `${"".padEnd(/** 列表内的是当前节点的子节点而l是当前节点的层级，所以这里要+1 */ l + 1, "\t")}${md_str}`,
       );
-      return `- ${NodeTitleToMarkdown(p.attributes.title)}${md_str_List.length ? "\n" + md_str_List.join("\n") : ""}`;
+      return `${md_str}${md_str_List.length ? "\n" + md_str_List.join("\n") : ""}`;
     },
   },
 );

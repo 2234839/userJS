@@ -1,6 +1,6 @@
 export interface Block {
   role: string;
-  value: midHeaderNode | pageNode | quoteNode | textNode | rowNode | columnNode | imageNode | codeNode;
+  value: midHeaderNode | pageNode | quoteNode | textNode | rowNode | columnNode | imageNode | codeNode | enumListNode;
 }
 export type NodeTitle = (
   | [string]
@@ -24,7 +24,6 @@ export interface Node {
     | {
         title?: NodeTitle;
       }
-    | unknown;
   created_by: string;
   created_time: number;
   edited_by: string;
