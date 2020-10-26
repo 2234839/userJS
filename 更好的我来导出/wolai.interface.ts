@@ -102,7 +102,7 @@ export interface toggleListNode extends Node {
 }
 export interface calloutNode extends Node {
   type: "callout";
-  attributes: { title: NodeTitle;};
+  attributes: { title: NodeTitle };
 }
 export interface bookmarkNode extends Node {
   type: "bookmark";
@@ -126,16 +126,14 @@ export interface fileNode extends Node {
   attributes: {
     title: NodeTitle;
     alias: string[];
-    file: string[]
-    bucket: string[][]
-
+    file: string[];
+    bucket: string[][];
   };
 }
 export interface blockEquationNode extends Node {
   type: "blockEquation";
   attributes: {
     title: NodeTitle;
-
   };
 }
 
@@ -148,6 +146,24 @@ export interface embedNode extends Node {
     /** 嵌入块的地址 */ embedLink: string;
   };
 }
+
+export interface simpleTableNode extends Node {
+  type: "simpleTable";
+  attributes: {
+    title: NodeTitle;
+    cells: string;
+    cellsJson: {
+      column: {
+        id: string;
+        attributes: {
+          title: NodeTitle;
+        };
+        setting: {};
+      }[];
+      flex: number;
+    }[];
+  };
+}
 export interface pageChunkRes {
   code: number;
   data: {
@@ -158,3 +174,37 @@ export interface pageChunkRes {
   };
   message: string;
 }
+
+const t = [
+  {
+    column: [
+      { id: "b1Bh3ZixtGpqabK5H9Ydd8", attributes: { title: [["这是简单表格", [["B"]]]] }, setting: {} },
+      {
+        id: "iHjmeSHDhTtyUnVEgfsTWS",
+        attributes: { title: [["测试页面", [["BiLink", "cVskxFpJphYGSeukC7CdVx", "jf3mMBrXqF8vdnqQqVjg5X"]]]] },
+        setting: {},
+      },
+      { id: "cAc1GmjYiSnn8ynQ7WsAMt", attributes: { title: [[""]] }, setting: {} },
+      { id: "hDqmduG6xS8eXUjn3pwCN3", attributes: { title: [[""]] }, setting: {} },
+    ],
+    flex: 213,
+  },
+  {
+    column: [
+      { id: "jjEHZn7sH8ugFio7EK5Z6v", attributes: { title: [["第二列"]] }, setting: {} },
+      { id: "kvMoYCoLqbcn72hM3ouGw2", attributes: { title: [[""]] }, setting: {} },
+      { id: "jciogQDoDgdJ4wELDjcvap", attributes: { title: [[""]] }, setting: {} },
+      { id: "3az2Bs1gpeNCuCm61B5RPE", attributes: { title: [[""]] }, setting: {} },
+    ],
+    flex: 100,
+  },
+  {
+    column: [
+      { id: "2CnQmWwweUqLyjhQz44SU8", attributes: { title: [[""]] }, setting: {} },
+      { id: "4s8UdCfJRSE7nHU3HQP7nq", attributes: { title: [[""]] }, setting: {} },
+      { id: "i8PeeR8pDDNdE8Z61PdbcZ", attributes: { title: [[""]] }, setting: {} },
+      { id: "t2CgiRkcq1T9FoB3wjwijD", attributes: { title: [[""]] }, setting: {} },
+    ],
+    flex: 100,
+  },
+];

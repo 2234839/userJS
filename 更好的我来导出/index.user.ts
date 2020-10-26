@@ -32,6 +32,7 @@ import type {
   pageNode,
   quoteNode,
   rowNode,
+  simpleTableNode,
   textNode,
   todoListNode,
 } from "./wolai.interface";
@@ -256,6 +257,31 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     async parer(p: Node) {
       /** TODO 暂不解析模板按钮 */
       return ``;
+    },
+  },
+  /** 表格解析器 */
+  {
+    check: (p) => ["simpleTable"].includes(p.type),
+    async parer(p: simpleTableNode) {
+      /** TODO 暂不解析模板按钮 */
+      const cells = JSON.parse(p.attributes.cells) as simpleTableNode["attributes"]["cellsJson"];
+      let md_str = "";
+      /** 遍历行 */
+      for (let i = 0; i < cells[0].column.length; i++) {
+        if (i === 1) {
+          /** 标题栏的分隔 */
+          md_str += "|" + cells.map((el) => "-").join("|") + "|\n";
+        }
+        md_str += "|";
+        /** 遍历列 */
+        for (let j = 0; j < cells.length; j++) {
+          /** 当前遍历到的元素 */
+          const cur = cells[j].column[i];
+          md_str += 我来md导出.NodeTitleToMarkdown(cur.attributes.title) + "|";
+        }
+        md_str += "\n";
+      }
+      return md_str;
     },
   },
   {
