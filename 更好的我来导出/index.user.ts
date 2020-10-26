@@ -247,8 +247,15 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => ["blockEquation"].includes(p.type),
     async parer(p: blockEquationNode) {
-      /** TODO 这里需要获取签名才能访问 */
       return `$$\n${p.attributes.title.join("\n")}\n$$`;
+    },
+  },
+  /** 公式 */
+  {
+    check: (p) => ["templateButton"].includes(p.type),
+    async parer(p: Node) {
+      /** TODO 暂不解析模板按钮 */
+      return ``;
     },
   },
   {
