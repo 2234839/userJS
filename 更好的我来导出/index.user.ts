@@ -218,11 +218,18 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `<iframe src="${p.attributes.embedLink}"></iframe>`;
     },
   },
-   /** 对嵌入内容的解析， **这里到时候应该要调成可控的** */
-   {
+  /** 对着重文字的解析 */
+  {
     check: (p) => ["callout"].includes(p.type),
     async parer(p: calloutNode) {
       return `<em>${我来md导出.NodeTitleToMarkdown(p.attributes.title)}</em>`;
+    },
+  },
+  /** 分割线 */
+  {
+    check: (p) => ["divider"].includes(p.type),
+    async parer(p: calloutNode) {
+      return `---`;
     },
   },
   {
