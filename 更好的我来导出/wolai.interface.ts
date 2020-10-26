@@ -121,6 +121,24 @@ export interface bookmarkNode extends Node {
   };
 }
 
+export interface fileNode extends Node {
+  type: "file";
+  attributes: {
+    title: NodeTitle;
+    alias: string[];
+    file: string[]
+    bucket: string[][]
+
+  };
+}
+export interface blockEquationNode extends Node {
+  type: "blockEquation";
+  attributes: {
+    title: NodeTitle;
+
+  };
+}
+
 /** 嵌入块 */
 export interface embedNode extends Node {
   type: "embed";

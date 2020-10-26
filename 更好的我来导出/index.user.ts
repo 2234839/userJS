@@ -15,6 +15,7 @@ import { proxy } from "ajax-hook";
 import { 检测元素状态 } from "../util/dom/elment";
 import { copy } from "../util/dom/剪贴板";
 import type {
+  blockEquationNode,
   bookmarkNode,
   bullListNode,
   calloutNode,
@@ -22,6 +23,7 @@ import type {
   columnNode,
   embedNode,
   enumListNode,
+  fileNode,
   imageNode,
   midHeaderNode,
   Node,
@@ -228,8 +230,25 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   /** 分割线 */
   {
     check: (p) => ["divider"].includes(p.type),
-    async parer(p: calloutNode) {
+    async parer(p: Node) {
       return `---`;
+    },
+  },
+  /** 文件 */
+  {
+    check: (p) => ["file"].includes(p.type),
+    async parer(p: fileNode) {
+      /** TODO 这里需要获取签名才能访问 */
+      const src = encodeURIComponent(`https://${p.attributes.bucket[0][0]}.wolai.com/${p.attributes.file[0]}`);
+      return `[file:${p.attributes.alias[0]}](${src}})`;
+    },
+  },
+  /** 公式 */
+  {
+    check: (p) => ["blockEquation"].includes(p.type),
+    async parer(p: blockEquationNode) {
+      /** TODO 这里需要获取签名才能访问 */
+      return `$$\n${p.attributes.title.join("\n")}\n$$`;
     },
   },
   {
