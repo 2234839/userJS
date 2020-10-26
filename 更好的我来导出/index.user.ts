@@ -97,14 +97,27 @@ export namespace 我来md导出 {
               _text = `[${_text}](${mode[1]})`;
             } else if (mode[0] === "BiLink") {
               _text = `[${_text}](BiLink:${mode[1]}_${mode[2]})`;
-            } else if (mode[0] === "<>") {
+            } else if (mode[0] === "<>" /** 行内代码块 */) {
               _text = `\`${_text}\``;
-            } else if (mode[0] === "B") {
+            } else if (mode[0] === "B" /** 粗体 */) {
               _text = `**${_text}**`;
+            } else if (mode[0] === "h" /** 字体以及背景颜色 */) {
+              /** 这里在某些选项下可以选择开启转换 */
+              _text = _text;
+            } else if (mode[0] === "i" /** 斜体 */) {
+              _text = `*${_text}*`;
+            } else if (mode[0] === "U" /** 下划线 */) {
+              /** 这里在某些选项下可以选择开启转换 */
+              _text = `${_text}`;
+            } else if (mode[0] === "S" /** 删除线 */) {
+              _text = `~~${_text}~~`;
+            } else if (mode[0] === "Equation" /** 公式 */) {
+              _text = `$${_text}$`;
             } else {
               /** 这里mode的类型应当始终为 never */
               mode;
-              _text = "<未知类型>";
+              _text = `<未知类型 ${mode[0]}>`;
+              console.log(`<未知类型 ${mode[0]}>`, mode, 修饰, el);
             }
           }
           return _text;
