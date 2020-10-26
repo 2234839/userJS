@@ -95,9 +95,14 @@ export interface enumListNode extends Node {
   type: "enumList";
   attributes: { title: NodeTitle; checked?: "no" | "yes" };
 }
+
 export interface toggleListNode extends Node {
   type: "toggleList";
   attributes: { title: NodeTitle; checked?: "no" | "yes" };
+}
+export interface calloutNode extends Node {
+  type: "callout";
+  attributes: { title: NodeTitle;};
 }
 export interface bookmarkNode extends Node {
   type: "bookmark";

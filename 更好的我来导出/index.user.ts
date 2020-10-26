@@ -17,6 +17,7 @@ import { copy } from "../util/dom/剪贴板";
 import type {
   bookmarkNode,
   bullListNode,
+  calloutNode,
   codeNode,
   columnNode,
   embedNode,
@@ -202,16 +203,26 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     check: (p) => p.type === "bookmark",
     async parer(p: bookmarkNode) {
       const rich = p.attributes.rich_media[0];
-      const thumbnail = rich?.thumbnail?.length ? `![](${rich.thumbnail[0].href}){:height="60px" width="60px"}` : "";
       const description = rich.description || "";
+      const thumbnail =
+        /** 和我来一样有描述信息才显示缩略图 */ description && rich?.thumbnail?.length
+          ? `![](${rich.thumbnail[0].href}){:height="60px" width="60px"}`
+          : "";
       return `> [![](${rich.icons[0].href}){:height="30px" width="30px"} 崮生 一些随笔](${p.attributes.source} "${description}") ${description} ${thumbnail}`;
     },
   },
-   /** 对书签的解析， **这里到时候应该要调成可控的** */
-   {
-    check: (p) => p.type === "embed",
+  /** 对嵌入内容的解析， **这里到时候应该要调成可控的** */
+  {
+    check: (p) => ["embed", "bilibiliVideo", "tencentVideo", "youkuVideo", "youtubeVideo"].includes(p.type),
     async parer(p: embedNode) {
-     return `<iframe src="${p.attributes.embedLink}"></iframe>`
+      return `<iframe src="${p.attributes.embedLink}"></iframe>`;
+    },
+  },
+   /** 对嵌入内容的解析， **这里到时候应该要调成可控的** */
+   {
+    check: (p) => ["callout"].includes(p.type),
+    async parer(p: calloutNode) {
+      return `<em>${我来md导出.NodeTitleToMarkdown(p.attributes.title)}</em>`;
     },
   },
   {
