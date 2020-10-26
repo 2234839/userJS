@@ -58,6 +58,8 @@ export namespace 我来md导出 {
   interface parer {
     parer: (Node: any, pageChunkRes: pageChunkRes) => Promise<string>;
     check: (Node: Node, pageChunkRes: pageChunkRes) => boolean;
+    /** 其他自定义扩展项 */
+    [k: string]: any;
   }
   /** 存储所有节点解析器 */
   const nodeParers = [] as parer[];
@@ -134,13 +136,18 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `> ${NodeTitleToMarkdown(p.attributes.title)}`;
     },
   },
-  {
-    check: (p) => p.type === "midHeader" || p.type === "subHeader",
-    async parer(p: midHeaderNode) {
-      const t = { midHeader: "##", subHeader: "###" }[p.type];
-      return `${t} ${NodeTitleToMarkdown(p.attributes.title)}`;
-    },
-  },
+  (() => {
+    /** 这里或许可以有个选项来给他们降个级 */
+    const header = { header: "#", midHeader: "##", subHeader: "###", tinyHeader: "####" };
+
+    return {
+      check: (p:any) => header.hasOwnProperty(p.type),
+      async parer(p: midHeaderNode) {
+        const t = header[p.type];
+        return `${t} ${NodeTitleToMarkdown(p.attributes.title)}`;
+      },
+    };
+  })(),
   {
     check: (p) => p.type === "text",
     async parer(p: textNode) {
