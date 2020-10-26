@@ -189,6 +189,13 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `${l}. ${NodeTitleToMarkdown(p.attributes.title)}`;
     },
   },
+  /** 折叠列表的解析 */
+  {
+    check: (p) => p.type === "toggleList",
+    async parer(p: enumListNode, pageChunkRes) {
+      return NodeTitleToMarkdown(p.attributes.title);
+    },
+  },
   {
     check: (p) => p.type === "text",
     async parer(p: textNode) {
@@ -257,19 +264,26 @@ function sub_nodeToNode(p: Node, pageChunkRes: pageChunkRes) {
     },
   },
   /** 对列表类的层级进行处理 */ {
-    check: (p) => ["bullList", "enumList"].includes(p.type),
+    check: (p) => ["bullList", "enumList", "todoList"].includes(p.type),
     async parer(md_str, p: Node, pageChunkRes) {
       /** 获取一个节点有多少父级 */
       function getNodeNumberOfLayers(p: Node, pageChunkRes: pageChunkRes) {
         let l = 0;
-        while (p?.parent_id) {
+        let cur = p;
+        while (cur?.parent_id) {
           l++;
-          p = pageChunkRes.data.block[p.parent_id]?.value;
+          cur = pageChunkRes.data.block[cur.parent_id]?.value;
+          if(cur?.type==="toggleList"){
+            /** 不是相同的结构了，层级关系算到这里位置，更外层的层级关系交给该结构自行处理 */
+            l++ /** 因为上面算了页面，这里将 toggleList 当做和页面一样看待 */
+            break
+          }
         }
         /** 不算页面这一级 */
         return l - 1;
       }
       const l = getNodeNumberOfLayers(p, pageChunkRes) - 1;
+      // console.log(l,p,md_str);
 
       const md_str_List = (
         await Promise.all(sub_nodeToNode(p, pageChunkRes).map((p) => 我来md导出.nodeToMarkdown(p, pageChunkRes)))
@@ -278,6 +292,18 @@ function sub_nodeToNode(p: Node, pageChunkRes: pageChunkRes) {
           `${"".padEnd(/** 列表内的是当前节点的子节点而l是当前节点的层级，所以这里要+1 */ l + 1, "\t")}${md_str}`,
       );
       return `${md_str}${md_str_List.length ? "\n" + md_str_List.join("\n") : ""}`;
+    },
+  },
+  /** 对折叠列表类的层级进行处理 */ {
+    check: (p) => ["toggleList"].includes(p.type),
+    async parer(md_str, p: Node, pageChunkRes) {
+      const md_str_List = await Promise.all(
+        sub_nodeToNode(p, pageChunkRes).map((p) => 我来md导出.nodeToMarkdown(p, pageChunkRes)),
+      );
+      return `<details>
+      <summary>${md_str}</summary>
+${md_str_List.join(_n)}
+  </details>`;
     },
   },
 );
