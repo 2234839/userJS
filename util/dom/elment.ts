@@ -1,8 +1,8 @@
 export function 检测元素状态(
   selector: string,
-  出现: (el: HTMLElement) => void,
-  变化: (el: HTMLElement) => void,
-  消失: () => void,
+  出现: (el: HTMLElement) => void=()=>{},
+  变化: (el: HTMLElement) => void=()=>{},
+  消失: () => void=()=>{},
 ) {
   let status = false;
   let html = "";

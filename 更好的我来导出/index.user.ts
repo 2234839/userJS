@@ -1,4 +1,3 @@
-import { proxy } from "ajax-hook";
 // ==UserScript==
 // @name         更好的我来导出
 // @namespace    http://tampermonkey.net/
@@ -12,126 +11,43 @@ import { proxy } from "ajax-hook";
 // @grant        GM.xmlHttpRequest
 // @connect      shenzilong.cn
 // ==/UserScript==
+import { proxy } from "ajax-hook";
+import { 检测元素状态 } from "../util/dom/elment";
+import { copy } from "../util/dom/剪贴板";
+import type {
+  codeNode,
+  columnNode,
+  imageNode,
+  midHeaderNode,
+  Node,
+  NodeTitle,
+  pageChunkRes,
+  pageNode,
+  quoteNode,
+  rowNode,
+  textNode,
+  todoListNode,
+} from "./wolai.interface";
+
+const _n = "\n\n";
+// const _n = "\n";
+
 export namespace 我来md导出 {
-  type Mutable<T> = {
-    -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? Mutable<U>[] : Mutable<T[P]>;
-  };
-  // type T = Mutable<typeof pageChunkRes>;
-  interface Block {
-    role: string;
-    value: midHeaderNode | pageNode | quoteNode | textNode | rowNode | columnNode | imageNode | codeNode;
-  }
-  type NodeTitle = (
-    | [string]
-    | [
-        string,
-        (
-          | (
-              | [/** 我来内部链接 */ "BiLink", string, string]
-              | [/** 一般超链接 */ "Link", string]
-              | [/** 行内代码 */ "<>"]
-              | [/** 加粗 */ "B"]
-            )[]
-          | [/** 啥也不做 */]
-        ),
-      ]
-  )[];
-  interface Node {
-    id: string;
-    active: boolean;
-    attributes:
-      | {
-          title?: NodeTitle;
-        }
-      | unknown;
-    created_by: string;
-    created_time: number;
-    edited_by: string;
-    edited_time: number;
-    page_id: string;
-    parent_id: string;
-    parent_type: string;
-    permissions: any[];
-    setting: {};
-    sub_nodes: string[];
-    text_content: string;
-    type: string;
-    ver: number;
-    workspace_id: string;
-  }
-  interface midHeaderNode extends Node {
-    type: "midHeader";
-    attributes: { title: NodeTitle };
-  }
-  interface pageNode extends Node {
-    type: "page";
-    attributes: { title: NodeTitle };
-  }
-  interface quoteNode extends Node {
-    type: "quote";
-    attributes: { title: NodeTitle };
-  }
-
-  interface textNode extends Node {
-    type: "text";
-    attributes: { title: NodeTitle };
-  }
-  interface rowNode extends Node {
-    type: "row";
-    attributes: {};
-  }
-  interface columnNode extends Node {
-    type: "column";
-  }
-  interface imageNode extends Node {
-    type: "image";
-    attributes: {
-      dimensions: {
-        width: number;
-        height: number;
-      }[];
-      original: {
-        width: number;
-        height: number;
-      }[][];
-      img: string[][];
-      source: string;
-      bucket: string[][];
-    };
-  }
-  interface codeNode extends Node {
-    type: "code";
-    attributes: { title: NodeTitle; lineBreak: false; ligatures: false; language: "HTML"; line_number: false };
-  }
-
-  interface pageChunkRes {
-    code: number;
-    data: {
-      block: {
-        [id: string]: Block;
-      };
-      position: unknown;
-    };
-    message: string;
-  }
-  const _n = "\n\n";
-  // const _n = "\n";
-
-  export function toMarkdown(p: pageChunkRes) {
+  export async function toMarkdown(p: pageChunkRes) {
     let mdText = "";
     const blocks = Object.keys(p.data.block)
       .map((k) => p.data.block[k])
       .map((el) => el.value);
-
+    console.log("[blocks]", blocks);
     const page = findPage(blocks);
     if (!page) {
       throw "没有寻找到page块";
     }
 
-    mdText += `# ${page.text_content}${_n}`;
+    mdText += `# ${NodeTitleToMarkdown(page.attributes.title)}${_n}`;
 
     for (const sub_node of page.sub_nodes.map((id) => p.data.block[id])) {
-      mdText += nodeToMarkdown(sub_node.value, p) + _n;
+      mdText += (await nodeToMarkdown(sub_node.value, p)) + _n;
     }
     return mdText;
   }
@@ -139,38 +55,27 @@ export namespace 我来md导出 {
   function findPage(p: Node[]): pageNode | undefined {
     return p.find((el) => el.type === "page") as pageNode;
   }
-  function nodeToMarkdown(p: Node, pageChunkRes: pageChunkRes): string {
-    if (isQuoted(p)) {
-      return `> ${NodeTitleToMarkdown(p.attributes.title)}`;
-    } else if (isMidHeaderNode(p)) {
-      /** 中标题 */
-      return `## ${NodeTitleToMarkdown(p.attributes.title)}`;
-    } else if (isTextNode(p)) {
-      return `${NodeTitleToMarkdown(p.attributes.title)}`;
-    } else if (isRowNode(p) || isColumnNode(p)) {
-      const sub_nodes = p.sub_nodes.map((id) => pageChunkRes.data.block[id]);
-      let mdText = ``;
-      for (const el of sub_nodes) {
-        mdText += nodeToMarkdown(el.value, pageChunkRes) + _n;
-      }
-      return mdText;
-    } else if (isCodeNode(p)) {
-      return `\`\`\`${p.attributes.language}\n${NodeTitleToMarkdown(p.attributes.title)}\n\`\`\``;
-    } else if (isImgNode(p)) {
-      /** 此处需要在浏览器内才能正常运行 */
-      const src = (document.querySelector(`#id-${p.id} img`) as HTMLImageElement).getAttribute("src");
-      return `![](${src})`;
-      // return `![](${p.attributes.img[0][0]})`;
-    } else if (isPageNode(p)) {
-      /** 此处需要在浏览器内才能正常运行 */
-      return `[${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
-      // return `![](${p.attributes.img[0][0]})`;
+  interface parer {
+    parer: (Node: any, pageChunkRes: pageChunkRes) => Promise<string>;
+    check: (Node: Node, pageChunkRes: pageChunkRes) => boolean;
+  }
+  /** 存储所有节点解析器 */
+  const nodeParers = [] as parer[];
+  export function registerNodeParer(...parers: parer[]) {
+    nodeParers.push(...parers);
+  }
+  export async function nodeToMarkdown(p: Node, pageChunkRes: pageChunkRes): Promise<string> {
+    const parer = nodeParers.find((el) => el.check(p, pageChunkRes));
+    if (parer) {
+      return await parer.parer(p, pageChunkRes);
+    } else {
+      console.log("[没有对应的解析器]", p);
+      return `--- 没有对应的解析器 -> ${p.type} ---`;
     }
-    return `--- ${p.type} ---`;
   }
 
   /** 对块的title属性进行解析 */
-  function NodeTitleToMarkdown(p: NodeTitle) {
+  export function NodeTitleToMarkdown(p: NodeTitle) {
     if (!p) {
       return "";
     }
@@ -207,33 +112,68 @@ export namespace 我来md导出 {
       })
       .join("");
   }
-  /** ═════════🏳‍🌈 节点类型判断 🏳‍🌈═════════  */
-  function isQuoted(p: Node): p is quoteNode {
-    return p.type === "quote";
-  }
-  function isMidHeaderNode(p: Node): p is midHeaderNode {
-    return p.type === "midHeader";
-  }
-  function isTextNode(p: Node): p is textNode {
-    return p.type === "text";
-  }
-  function isRowNode(p: Node): p is rowNode {
-    return p.type === "row";
-  }
-  function isColumnNode(p: Node): p is columnNode {
-    return p.type === "column";
-  }
-  function isCodeNode(p: Node): p is codeNode {
-    return p.type === "code";
-  }
-  function isImgNode(p: Node): p is imageNode {
-    return p.type === "image";
-  }
-  function isPageNode(p: Node): p is pageNode {
-    return p.type === "page";
-  }
 }
+const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
+我来md导出.registerNodeParer(
+  {
+    check: (p) => p.type === "quote",
+    async parer(p: quoteNode) {
+      return `> ${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
+  {
+    check: (p) => p.type === "midHeader" || p.type === "subHeader",
+    async parer(p: midHeaderNode) {
+      const t = { midHeader: "##", subHeader: "###" }[p.type];
+      return `${t} ${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
+  {
+    check: (p) => p.type === "text",
+    async parer(p: textNode) {
+      return `${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
+  {
+    check: (p) => p.type === "row" || p.type === "column",
+    async parer(p: rowNode, pageChunkRes: pageChunkRes) {
+      const sub_nodes = p.sub_nodes.map((id) => pageChunkRes.data.block[id]);
+      let mdText = ``;
+      for (const el of sub_nodes) {
+        mdText += (await 我来md导出.nodeToMarkdown(el.value, pageChunkRes)) + _n;
+      }
+      return mdText;
+    },
+  },
+  {
+    check: (p) => p.type === "code",
+    async parer(p: codeNode, pageChunkRes: pageChunkRes) {
+      return `\`\`\`${p.attributes.language}\n${NodeTitleToMarkdown(p.attributes.title)}\n\`\`\``;
+    },
+  },
+  {
+    check: (p) => p.type === "image",
+    async parer(p: imageNode, pageChunkRes: pageChunkRes) {
+      /** 此处需要在浏览器内才能正常运行 */
+      const src = (document.querySelector(`#id-${p.id} img`) as HTMLImageElement).getAttribute("src");
+      return `![${NodeTitleToMarkdown(p.attributes.title)}](${src})`; // TODO 描述应该要去获取到
+    },
+  },
+  {
+    check: (p) => p.type === "page",
+    async parer(p: pageNode, pageChunkRes: pageChunkRes) {
+      return `[${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+    },
+  },
+  {
+    check: (p) => p.type === "todoList",
+    async parer(p: todoListNode, pageChunkRes: pageChunkRes) {
+      return `[${p.attributes.checked === "no" ? " " : "x"}] ${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
+);
 
+let curData = null as null | string;
 proxy({
   //请求发起前进入
   onRequest: (config, handler) => {
@@ -251,18 +191,35 @@ proxy({
   onResponse: (response, handler) => {
     handler.next(response);
     if (response.config.url.endsWith("transaction/getPageChunks")) {
-      setTimeout(() => {
-        console.log("[response]", response.config.url);
-        const res = JSON.parse(response.response);
-        const md = 我来md导出.toMarkdown(res);
-        const blob = new Blob([md], { type: "text/plain;charset=utf-8" });
-        const downloadUrl = URL.createObjectURL(blob);
-        console.log(`[markdown:${downloadUrl}]`, md);
-      }, 5 * 1000);
+      curData = response.response;
     }
   },
 });
+
+检测元素状态('[data-growing-title="复制页面引用链接-头部栏"]', (el) => {
+  console.log("[  el]", el);
+  const btn = el.nextElementSibling;
+  const newBtn = btn.cloneNode(true) as HTMLElement;
+  btn.parentElement.appendChild(newBtn);
+
+  newBtn.querySelectorAll("span")[1].textContent = `[✨] 导出页面`;
+  newBtn.addEventListener("click", async () => {
+    if (curData === null) {
+      return alert("没有获取到当前页面数据，您可以尝试刷新重试。");
+    }
+    const res = JSON.parse(curData);
+    const md = await 我来md导出.toMarkdown(res);
+    const blob = new Blob([md], { type: "text/plain;charset=utf-8" });
+    const downloadUrl = URL.createObjectURL(blob);
+    console.log(`[markdown:${downloadUrl}]\n----\n`, md);
+    console.log('[copy(md)]',copy(md));
+    alert("复制成功")
+  });
+});
+
+namespace 附加按钮 {
+  export let 已附加 = false;
+}
 /** 替换 windows 上的 xml 对象 */
 //@ts-ignore
 unsafeWindow.XMLHttpRequest = XMLHttpRequest;
-console.log(222);
