@@ -20,10 +20,9 @@ export type NodeTitle = (
 export interface Node {
   id: string;
   active: boolean;
-  attributes:
-    | {
-        title?: NodeTitle;
-      }
+  attributes: {
+    title?: NodeTitle;
+  };
   created_by: string;
   created_time: number;
   edited_by: string;
@@ -102,15 +101,29 @@ export interface toggleListNode extends Node {
 }
 export interface bookmarkNode extends Node {
   type: "bookmark";
-  attributes: { title: NodeTitle; /** 书签导向的真实地址 */ source:string,rich_media:{
-    /** 网页的描述 */
-    description?:string
-    hostname?:string
-    icons:{href:string}[]
-    /** 缩略图 */
-    thumbnail:{href:string}[]
-    title:string
-  }[] };
+  attributes: {
+    title: NodeTitle;
+    /** 书签导向的真实地址 */ source: string;
+    rich_media: {
+      /** 网页的描述 */
+      description?: string;
+      hostname?: string;
+      icons: { href: string }[];
+      /** 缩略图 */
+      thumbnail: { href: string }[];
+      title: string;
+    }[];
+  };
+}
+
+/** 嵌入块 */
+export interface embedNode extends Node {
+  type: "embed";
+  attributes: {
+    title: NodeTitle;
+    /** 嵌入块的地址 */ source: string;
+    /** 嵌入块的地址 */ embedLink: string;
+  };
 }
 export interface pageChunkRes {
   code: number;

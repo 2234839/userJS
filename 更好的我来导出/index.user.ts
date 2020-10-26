@@ -19,6 +19,7 @@ import type {
   bullListNode,
   codeNode,
   columnNode,
+  embedNode,
   enumListNode,
   imageNode,
   midHeaderNode,
@@ -204,6 +205,13 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       const thumbnail = rich?.thumbnail?.length ? `![](${rich.thumbnail[0].href}){:height="60px" width="60px"}` : "";
       const description = rich.description || "";
       return `> [![](${rich.icons[0].href}){:height="30px" width="30px"} 崮生 一些随笔](${p.attributes.source} "${description}") ${description} ${thumbnail}`;
+    },
+  },
+   /** 对书签的解析， **这里到时候应该要调成可控的** */
+   {
+    check: (p) => p.type === "embed",
+    async parer(p: embedNode) {
+     return `<iframe src="${p.attributes.embedLink}"></iframe>`
     },
   },
   {
