@@ -30,6 +30,16 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      },
+      {
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         loader: "ts-loader",
       },
@@ -38,6 +48,7 @@ module.exports = {
         include: /node_modules/,
         type: "javascript/auto",
       },
+
       {
         test: /\.(html|svelte)$/,
         exclude: /node_modules/,
