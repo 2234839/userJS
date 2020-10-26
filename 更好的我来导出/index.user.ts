@@ -15,6 +15,7 @@ import { proxy } from "ajax-hook";
 import { 检测元素状态 } from "../util/dom/elment";
 import { copy } from "../util/dom/剪贴板";
 import type {
+  bullListNode,
   codeNode,
   columnNode,
   imageNode,
@@ -71,7 +72,7 @@ export namespace 我来md导出 {
     if (parer) {
       return await parer.parer(p, pageChunkRes);
     } else {
-      console.log("[没有对应的解析器]", p);
+      console.log(`[没有对应的解析器 ${p.type}]`, p);
       return `--- 没有对应的解析器 -> ${p.type} ---`;
     }
   }
@@ -137,11 +138,10 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     },
   },
   (() => {
-    /** 这里或许可以有个选项来给他们降个级 */
     const header = { header: "#", midHeader: "##", subHeader: "###", tinyHeader: "####" };
 
     return {
-      check: (p:any) => header.hasOwnProperty(p.type),
+      check: (p: any) => header.hasOwnProperty(p.type),
       async parer(p: midHeaderNode) {
         const t = header[p.type];
         return `${t} ${NodeTitleToMarkdown(p.attributes.title)}`;
@@ -189,6 +189,36 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     check: (p) => p.type === "todoList",
     async parer(p: todoListNode, pageChunkRes: pageChunkRes) {
       return `[${p.attributes.checked === "yes" ? "x" : " "}] ${NodeTitleToMarkdown(p.attributes.title)}`;
+    },
+  },
+  {
+    check: (p) => p.type === "bullList",
+    async parer(p: bullListNode, pageChunkRes: pageChunkRes) {
+      /** 对于子块应该要有更好的解决方案 */
+      /** 获取一个节点有多少父级 */
+      function getNodeNumberOfLayers(p: Node, pageChunkRes: pageChunkRes) {
+        let l = 0;
+        while (p?.parent_id) {
+          l++;
+          p = pageChunkRes.data.block[p.parent_id]?.value;
+        }
+        /** 不算页面这一级 */
+        return l - 1;
+      }
+      const l = getNodeNumberOfLayers(p, pageChunkRes) - 1;
+      console.log(l, p);
+
+      const md_str_List = (
+        await Promise.all(
+          p.sub_nodes
+            .map((id) => pageChunkRes.data.block[id])
+            .map((p) => 我来md导出.nodeToMarkdown(p.value, pageChunkRes)),
+        )
+      ).map(
+        (md_str) =>
+          `${"".padEnd(/** 列表内的是当前节点的子节点而l是当前节点的层级，所以这里要+1 */ l + 1, "\t")}${md_str}`,
+      );
+      return `- ${NodeTitleToMarkdown(p.attributes.title)}${md_str_List.length ? "\n" + md_str_List.join("\n") : ""}`;
     },
   },
 );

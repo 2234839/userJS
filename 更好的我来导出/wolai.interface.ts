@@ -89,7 +89,18 @@ export interface todoListNode extends Node {
   type: "todoList";
   attributes: { title: NodeTitle; checked?: "no" | "yes" };
 }
-
+export interface bullListNode extends Node {
+  type: "bullList";
+  attributes: { title: NodeTitle; checked?: "no" | "yes" };
+}
+export interface enumListNode extends Node {
+  type: "enumList";
+  attributes: { title: NodeTitle; checked?: "no" | "yes" };
+}
+export interface toggleListNode extends Node {
+  type: "toggleList";
+  attributes: { title: NodeTitle; checked?: "no" | "yes" };
+}
 export interface pageChunkRes {
   code: number;
   data: {
