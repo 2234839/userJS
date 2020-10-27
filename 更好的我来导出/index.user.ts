@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         更好的我来导出
 // @namespace    https://shenzilong.cn/
-// @version      1.0.0
-// @description  更好的我来导出
+// @version      1.0.2
+// @description  从我来导出markdown 文档
 // @author       崮生 admin@shenzilong.cn
-// @include      www.wolai.com/*
+// @include      https://www.wolai.com/*
 // @grant        unsafeWindow
 // @grant        GM.setValue
 // @grant        GM.getValue
