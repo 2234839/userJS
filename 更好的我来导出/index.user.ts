@@ -12,7 +12,7 @@
 // @connect      shenzilong.cn
 // ==/UserScript==
 import { proxy } from "ajax-hook";
-import { 检测元素状态 } from "../util/dom/elment";
+import { 检测元素状态 } from "../util/dom/element";
 import { copy } from "../util/dom/剪贴板";
 import type {
   blockEquationNode,
