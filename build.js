@@ -32,12 +32,14 @@ fs.readdir("./dist/", (err, files) => {
       } catch (error) {
         path = `./${name}/index.user.ts`;
       }
-      console.log(file, getMeta(path));
+      const outFilePath = "./dist/" + file;
+      const code = fs.readFileSync(outFilePath).toString("utf-8");
+      fs.writeFileSync(outFilePath, getMeta(path) + code);
     });
 });
 function getMeta(filePath) {
-  const text = fs.readFileSync(filePath, { encoding: "utf8" });
+  const text = fs.readFileSync(filePath, { encoding: "utf-8" });
   const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
 
-  return `${meta}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`;
+  return `${meta}\n// 这些代码都来自github actions 编译后的代码，不编译版本体积太大，不放心的欢迎去 https://github.com/2234839/userJS 审查代码, \n\n`;
 }
