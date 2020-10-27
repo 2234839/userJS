@@ -318,7 +318,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => p.type === "page",
     async parer(p: pageNode, pageChunkRes: pageChunkRes) {
-      if (p.parent_id === p.page_id) {
+      if (p.id === Object.keys(pageChunkRes.data.block)[0]) {
         /** 顶层块 也就是当前页面块 */
         return `# [${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
       } else {
