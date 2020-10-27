@@ -425,7 +425,7 @@ proxy({
   },
 });
 
-检测元素状态('[data-growing-title="复制页面引用链接-头部栏"]', (el) => {
+检测元素状态('div.oqjLp:nth-child(3) > div:nth-child(1)', (el) => {
   console.log("[  el]", el);
   const btn = el.nextElementSibling;
   const newBtn = btn.cloneNode(true) as HTMLElement;
@@ -445,10 +445,6 @@ proxy({
     alert("复制成功");
   });
 });
-
-namespace 附加按钮 {
-  export let 已附加 = false;
-}
 /** 替换 windows 上的 xml 对象 */
 //@ts-ignore
 unsafeWindow.XMLHttpRequest = XMLHttpRequest;
