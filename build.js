@@ -1,4 +1,5 @@
 var exec = require("child_process").execSync;
+const fs = require("fs");
 function run(str) {
   process.stdout.write(exec(str));
 }
@@ -17,3 +18,25 @@ project.forEach((el) => {
   run(`npx parcel build --no-minify --no-source-maps ${el}`);
 });
 run(`npm run buildAll`);
+
+console.log("--编译完成--开始生成 banner ---");
+
+fs.readdir("./dist/", (err, files) => {
+  files
+    .filter((path) => path.endsWith("user.js"))
+    .forEach((file) => {
+      const name = file.slice(0, -8);
+      let path = `./${name}/${name}.user.ts`;
+      try {
+        fs.statSync(path);
+      } catch (error) {
+        path = `./${name}/index.user.ts`;
+      }
+      console.log(file, getMeta(path));
+    });
+});
+function getMeta(filePath) {
+  const text = fs.readFileSync(filePath, { encoding: "utf8" });
+  const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
+  return meta;
+}

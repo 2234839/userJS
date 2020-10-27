@@ -15,12 +15,12 @@ export function setPath(elList: HTMLElement[]) {
 /** 标记被修改后的元素(被污染了的元素)，以便保存修改的内容 */
 export const editElement: Set<Element> = new Set();
 
-const globalSettingRef = fireStore.doc("setting/global");
-globalSettingRef.onSnapshot({
-  next(r) {
-    console.log("[    r]", r.data());
-  },
-});
+// const globalSettingRef = fireStore.doc("setting/global");
+// globalSettingRef.onSnapshot({
+//   next(r) {
+//     console.log("[    r]", r.data());
+//   },
+// });
 // globalSettingRef.update({
 //   test: 3,
 // });
