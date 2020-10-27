@@ -157,6 +157,11 @@ export namespace 我来md导出 {
       })
       .join("");
   }
+
+  /** 当前打开页面的工作空间链接 */
+  export function getWorkUrl() {
+    return  location.href.match(/.*?wolai\.com\/.*?\//)[0]
+  }
 }
 const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
 我来md导出.registerNodeParer(
@@ -240,7 +245,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     check: (p) => ["file"].includes(p.type),
     async parer(p: fileNode) {
       /** TODO 这里需要获取签名才能访问 */
-      const src = `https://${p.attributes.bucket[0][0]}.wolai.com/${encodeURIComponent(p.attributes.file[0])}`;
+      const src = `https://secure-static.wolai.com/${encodeURIComponent(p.attributes.file[0])}`;
       return `[file:${p.attributes.alias[0]}](${src}})`;
     },
   },
@@ -318,12 +323,13 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => p.type === "page",
     async parer(p: pageNode, pageChunkRes: pageChunkRes) {
+      const workspace_url=我来md导出.getWorkUrl()
       if (p.id === Object.keys(pageChunkRes.data.block)[0]) {
         /** 顶层块 也就是当前页面块 */
-        return `# [${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+        return `# [${NodeTitleToMarkdown(p.attributes.title)}](${workspace_url}${p.id})`;
       } else {
         /** 页面内引用其他页面的块 */
-        return `[${NodeTitleToMarkdown(p.attributes.title)}](page:${p.id})`;
+        return `[${NodeTitleToMarkdown(p.attributes.title)}](${workspace_url}${p.id})`;
       }
     },
   },
