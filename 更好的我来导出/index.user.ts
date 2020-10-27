@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         更好的我来导出
 // @namespace    https://shenzilong.cn/
-// @version      1.0.2
+// @version      1.0.3
 // @description  从我来导出markdown 文档
 // @author       崮生 admin@shenzilong.cn
 // @include      https://www.wolai.com/*
