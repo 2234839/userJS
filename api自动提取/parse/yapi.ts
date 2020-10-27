@@ -1,7 +1,7 @@
 import { api, par } from "../i_api";
 import { qALL, getTable } from "../api_util";
 import { reduction_tree } from "./rap2-taobo";
-import { 检测元素状态 } from "../../util/dom/elment";
+import { 检测元素状态 } from "../../util/dom/element";
 
 const $$ = qALL;
 
