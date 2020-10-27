@@ -127,8 +127,9 @@ export namespace 我来md导出 {
           for (const mode of 修饰) {
             if (mode[0] === "Link") {
               _text = `[${_text}](${mode[1]})`;
-            } else if (mode[0] === "BiLink") {
-              _text = `[${_text}](BiLink:${mode[1]}_${mode[2]})`;
+            } else if (mode[0] === "BiLink" /** 我来内部链接 */) {
+              const workspace_url = getWorkUrl();
+              _text = `[${_text}](${workspace_url}${mode[2]})`;
             } else if (mode[0] === "<>" /** 行内代码块 */) {
               _text = `\`${_text}\``;
             } else if (mode[0] === "B" /** 粗体 */) {
@@ -160,7 +161,7 @@ export namespace 我来md导出 {
 
   /** 当前打开页面的工作空间链接 */
   export function getWorkUrl() {
-    return  location.href.match(/.*?wolai\.com\/.*?\//)[0]
+    return location.href.match(/.*?wolai\.com\/.*?\//)[0];
   }
 }
 const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
@@ -323,7 +324,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
   {
     check: (p) => p.type === "page",
     async parer(p: pageNode, pageChunkRes: pageChunkRes) {
-      const workspace_url=我来md导出.getWorkUrl()
+      const workspace_url = 我来md导出.getWorkUrl();
       if (p.id === Object.keys(pageChunkRes.data.block)[0]) {
         /** 顶层块 也就是当前页面块 */
         return `# [${NodeTitleToMarkdown(p.attributes.title)}](${workspace_url}${p.id})`;
