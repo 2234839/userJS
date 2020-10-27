@@ -69,20 +69,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new webpack.BannerPlugin({
-      banner(options) {
-        console.log(222222222);
-        return `${getMeta(
-          entry[options.chunk.name],
-        )}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`;
-      },
-      entryOnly: true,
-      raw: true,
-    }),
-  ],
   devtool: "source-map",
-
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     disableHostCheck: true,

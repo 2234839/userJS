@@ -38,5 +38,6 @@ fs.readdir("./dist/", (err, files) => {
 function getMeta(filePath) {
   const text = fs.readFileSync(filePath, { encoding: "utf8" });
   const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
-  return meta;
+
+  return `${meta}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`;
 }
