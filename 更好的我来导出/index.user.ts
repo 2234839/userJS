@@ -240,7 +240,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
     check: (p) => ["file"].includes(p.type),
     async parer(p: fileNode) {
       /** TODO 这里需要获取签名才能访问 */
-      const src = encodeURIComponent(`https://${p.attributes.bucket[0][0]}.wolai.com/${p.attributes.file[0]}`);
+      const src = `https://${p.attributes.bucket[0][0]}.wolai.com/${encodeURIComponent(p.attributes.file[0])}`;
       return `[file:${p.attributes.alias[0]}](${src}})`;
     },
   },
@@ -251,7 +251,7 @@ const NodeTitleToMarkdown = 我来md导出.NodeTitleToMarkdown;
       return `$$\n${p.attributes.title.join("\n")}\n$$`;
     },
   },
-  /** 公式 */
+  /** 模板按钮 */
   {
     check: (p) => ["templateButton"].includes(p.type),
     async parer(p: Node) {
