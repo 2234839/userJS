@@ -1,10 +1,11 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.12.3",
     "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-env": "^7.12.1",
     "@parcel/transformer-typescript-tsc": "^2.0.0-alpha.3",
     "@tsconfig/svelte": "^1.0.10",
+    "babel-loader": "^8.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
@@ -19,6 +20,8 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
     "@babel/preset-typescript": "^7.10.4",
     "@parcel/config-default": "^2.0.0-alpha.3",
     "@reactivex/rxjs": "^6.6.3",
