@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const fs = require("fs");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const entry = {
   "网页笔记.user.js": path.resolve(__dirname, "./网页笔记/网页笔记.user.ts"),
   "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
@@ -14,10 +15,16 @@ function getMeta(filePath) {
 
 module.exports = {
   mode: "development",
+  mode: "production",
+  optimization: {
+    usedExports: true,
+
+  },
   entry,
   output: {
     filename: "[name]",
     path: path.resolve(__dirname, "./dist"),
+    sourceMapFilename: "[file].map", // Default
   },
   resolve: {
     alias: {
@@ -32,11 +39,11 @@ module.exports = {
         test: /\.tsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
+            presets: ["@babel/preset-env"],
+          },
+        },
       },
       {
         test: /\.tsx?$/,
@@ -62,16 +69,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new webpack.BannerPlugin({
-      banner(options) {
-        return `${getMeta(
-          entry[options.chunk.id],
-        )}\n// 以下代码是打包后的代码，可以去 https://github.com/2234839/userJS 查看正常代码`;
-      },
-      raw: true,
-    }),
-  ],
+  devtool: "source-map",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     disableHostCheck: true,
@@ -82,5 +80,37 @@ module.exports = {
       "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
     },
   },
-  devtool: "inline-source-map",
 };
+
+function censor(censor) {
+  var i = 0;
+
+  return function (key, value) {
+    if (i !== 0 && typeof censor === "object" && typeof value == "object" && censor == value) return "[Circular]";
+
+    if (i >= 29)
+      // seems to be a harded maximum of 30 serialized objects?
+      return "[Unknown]";
+
+    ++i; // so we know we aren't using the original object anymore
+
+    return value;
+  };
+}
+
+function simpleStringify(object) {
+  var simpleObject = {};
+  for (var prop in object) {
+    if (!object.hasOwnProperty(prop)) {
+      continue;
+    }
+    if (typeof object[prop] == "object") {
+      continue;
+    }
+    if (typeof object[prop] == "function") {
+      continue;
+    }
+    simpleObject[prop] = object[prop];
+  }
+  return JSON.stringify(simpleObject); // returns cleaned up JSON
+}

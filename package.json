@@ -15,6 +15,7 @@
     "rollup-plugin-postcss": "^3.1.8",
     "svelte-check": "^1.0.41",
     "svelte-preprocess": "^4.3.0",
+    "terser-webpack-plugin": "^5.0.1",
     "ts-loader": "^8.0.3",
     "typescript": "^3.9.7",
     "webpack-cli": "^3.3.12"
@@ -45,6 +46,7 @@
     "svelte": "^3.25.0",
     "svelte-loader": "^2.13.6",
     "synaptic": "^1.1.4",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue": "^3.0.0-rc.10",
     "webpack": "^4.44.1",
     "webpack-dev-server": "^3.11.0",
@@ -56,5 +58,6 @@
     "buildAll": "webpack --config webpack.config.js",
     "test": "npx parcel@next build ./api自动提取/api自动提取.user.ts"
   },
-  "browserslist": "last 3 chrome versions"
+  "browserslist": "last 3 chrome versions",
+  "sideEffects": false
 }
