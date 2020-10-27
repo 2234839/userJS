@@ -1,15 +1,14 @@
 // ==UserScript==
 // @name         更好的我来导出
-// @namespace    http://tampermonkey.net/
+// @namespace    https://shenzilong.cn/
 // @version      1.0.0
 // @description  更好的我来导出
-// @author       崮生 2234839456@qq.com
+// @author       崮生 admin@shenzilong.cn
 // @include      www.wolai.com/*
 // @grant        unsafeWindow
 // @grant        GM.setValue
 // @grant        GM.getValue
 // @grant        GM.xmlHttpRequest
-// @connect      shenzilong.cn
 // ==/UserScript==
 import { proxy } from "ajax-hook";
 import { 检测元素状态 } from "../util/dom/element";
