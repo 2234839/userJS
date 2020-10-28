@@ -94,4 +94,4 @@
 
 ## 鸣谢
 
-[![jetBrains logo](./_资源文件/jetbrains-variant-2.svg){:width="40px" height="40px"}](https://www.jetbrains.com/?from=userJS)
+[![jetBrains logo](./_资源文件/jetbrains-variant-2.svg)](https://www.jetbrains.com/?from=userJS)
