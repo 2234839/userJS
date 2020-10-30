@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   export let setProcessingMethod;
   export let defaultCode;
   let code = defaultCode;
@@ -28,7 +27,8 @@
   <textarea bind:value={code} name="" id="" cols="30" rows="10" />
   <button
     on:click={() => {
-      setProcessingMethod(eval(code), code);
+      setProcessingMethod(window.eval(code), code);
+      alert("替换成功！")
     }}>
     替换url处理函数
   </button>

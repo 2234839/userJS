@@ -1,16 +1,8 @@
-import App from "./request_agent_interface.svelte";
-
-if (typeof unsafeWindow === "undefined") {
-  window.unsafeWindow = window;
-} else {
-  window = unsafeWindow;
-}
-const { proxy, unProxy, hook } = require("ajax-hook");
 // ==UserScript==
 // @name         请求代理
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
-// @description  请求代理,可以对请求的url进行重定向
+// @version      1.0.2
+// @description  请求代理,可以修改任意请求的url
 // @author       崮生 2234839456@qq.com
 // @include      *
 // @grant        unsafeWindow
@@ -20,13 +12,17 @@ const { proxy, unProxy, hook } = require("ajax-hook");
 // @run-at       document-start
 // @connect      shenzilong.cn
 // ==/UserScript==
+import App from "./request_agent_interface.svelte";
+//@ts-ignore
+typeof unsafeWindow === "undefined" ? (window.unsafeWindow = window) : (window = unsafeWindow);
+import { proxy } from "ajax-hook";
 (async function () {
   let Xhr = window.XMLHttpRequest;
   let urlHandler = (url: string) => url;
   proxy({
     //请求发起前进入
     onRequest: (config: any, handler: any) => {
-      console.log("[💚开始请求]", config.url, config);
+      console.log("[💚开始请求]", config.url, urlHandler(config.url));
       config.url = urlHandler(config.url);
       /** 关闭 withCredentials 避免触发跨域 */
       config.withCredentials = false;
@@ -43,7 +39,7 @@ const { proxy, unProxy, hook } = require("ajax-hook");
   });
   /** 替换 XMLHttpRequest */
   window.XMLHttpRequest = XMLHttpRequest;
-  document.createElementNS("http://www.w3.org/1999/xhtml","div")
+  document.createElementNS("http://www.w3.org/1999/xhtml", "div");
   const app_div = document.createElement("div");
   setTimeout(() => {
     document.body.appendChild(app_div);

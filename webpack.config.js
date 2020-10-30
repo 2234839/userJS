@@ -5,6 +5,7 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const entry = {
   "网页笔记.user.js": path.resolve(__dirname, "./网页笔记/网页笔记.user.ts"),
   "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
+  "请求代理.user.js": path.resolve(__dirname, "./请求代理/请求代理.user.ts"),
 };
 
 function getMeta(filePath) {

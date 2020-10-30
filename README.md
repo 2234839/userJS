@@ -71,20 +71,6 @@
 
 [安装地址](https://greasyfork.org/zh-CN/scripts/406284-%E8%AF%B7%E6%B1%82%E4%BB%A3%E7%90%86)
 
-通过在这里写 js 代码，插件内部会调用该代码来处理请求的 url，从而实现像生产的网站访问自己本地服务这样的效果，例如将下面的代码改为下面这样的，所有请求就都会发往本机服务了，要记得允许跨域
-
-```javascript
-(url) => {
-    //return "http://127.0.0.1" + url;
-    return  url.replace('http://domain'.'http://127.0.0.1');
-
-}
-```
-
-![效果图](./请求代理/doc/效果图.jpg)
-
-通过在这里写 js 代码，插件内部会调用该代码来处理请求的 url，从而实现像生产的网站访问自己本地服务这样的效果
-
 #### 实现思路
 
 使用 [ajax-hook](https://github.com/wendux/Ajax-hook) 这个库可以很容易的在请求发起前修改请求参数，具体见 [请求代理.user.ts](./请求代理/请求代理.user.ts) 这里的代码
