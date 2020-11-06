@@ -9,7 +9,7 @@ import { getYapiApi, 修改人列表_扩展 } from "./parse/yapi";
 // ==UserScript==
 // @name         api自动提取
 // @namespace    http://tampermonkey.net/
-// @version      1.1.3
+// @version      1.1.4
 // @description  使用方式是打开控制台，输入_api你可以看到一些方法，在支持的网站执行对应的方法就ok了，
 // @author       崮生 2234839456@qq.com
 // @include      *://www.showdoc.cc/*
@@ -62,11 +62,4 @@ import { getYapiApi, 修改人列表_扩展 } from "./parse/yapi";
     });
     document.body.appendChild(btn);
   }
-  // 拖拽多选();
-  // setTimeout(() => {
-  //   const code = uw._api.getYapiApiCode();
-  //   console.log(code);
-
-  //   util.copyTitle(code);
-  // }, 3000);
 })();

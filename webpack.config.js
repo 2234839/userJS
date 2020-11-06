@@ -6,11 +6,12 @@ const entry = {
   "网页笔记.user.js": path.resolve(__dirname, "./网页笔记/网页笔记.user.ts"),
   "更好的我来导出.user.js": path.resolve(__dirname, "./更好的我来导出/index.user.ts"),
   "请求代理.user.js": path.resolve(__dirname, "./请求代理/请求代理.user.ts"),
+  "uri_preview.user.js": path.resolve(__dirname, "./uri_preview/uri_preview.user.ts"),
 };
 
 function getMeta(filePath) {
   const text = fs.readFileSync(filePath, { encoding: "utf8" });
-  const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[0];
+  const meta = text.match(/\/\/ ==UserScript==[\s\S]+\/\/ ==\/UserScript==/g)[ 0 ];
   return meta;
 }
 
@@ -31,8 +32,8 @@ module.exports = {
     alias: {
       svelte: path.resolve("node_modules", "svelte"),
     },
-    extensions: [".ts", ".tsx", ".mjs", ".js", ".svelte"],
-    mainFields: ["svelte", "browser", "module", "main"],
+    extensions: [ ".ts", ".tsx", ".mjs", ".js", ".svelte" ],
+    mainFields: [ "svelte", "browser", "module", "main" ],
   },
   module: {
     rules: [
@@ -42,7 +43,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"],
+            presets: [ "@babel/preset-env" ],
           },
         },
       },
@@ -105,13 +106,13 @@ function simpleStringify(object) {
     if (!object.hasOwnProperty(prop)) {
       continue;
     }
-    if (typeof object[prop] == "object") {
+    if (typeof object[ prop ] == "object") {
       continue;
     }
-    if (typeof object[prop] == "function") {
+    if (typeof object[ prop ] == "function") {
       continue;
     }
-    simpleObject[prop] = object[prop];
+    simpleObject[ prop ] = object[ prop ];
   }
   return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
