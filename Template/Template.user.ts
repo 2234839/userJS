@@ -9,7 +9,7 @@
 // @connect      shenzilong.cn
 // ==/UserScript==
 
-async function main() {
+export async function main() {
   const list = [];
   const q = (selector: string, d: Document = document) => Array.from(d.querySelectorAll(selector));
   const sid = q("a.toptitle:nth-child(1)")![0]

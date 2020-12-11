@@ -8,7 +8,7 @@ import { editElement } from "./state/index";
 // ==UserScript==
 // @name         网页文本编辑,做笔记的好选择
 // @namespace    http://tampermonkey.net/
-// @version      1.42
+// @version      1.43
 // @description  所见即所得！
 // @author       崮生 2234839456@qq.com
 // @match        *
@@ -20,13 +20,16 @@ import { editElement } from "./state/index";
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
 (async function () {
-  if (typeof unsafeWindow !== "undefined") {
-    window = unsafeWindow;
-  }
+  let global = (typeof unsafeWindow !== "undefined" ? window : unsafeWindow) as typeof window & {
+    CommandControl: typeof CommandControl;
+    /** 清除当前页面的缓存 */
+    llej_pageNotes_clearCurrentStore: () => void;
+  };
+
   /** 调试用 */
-  (<any>window).CommandControl = CommandControl;
+  global.CommandControl = CommandControl;
   /** 清除当前这个页面的修改 */
-  (<any>window).llej_pageNotes_clearCurrentStore = () => {
+  global.llej_pageNotes_clearCurrentStore = () => {
     setLocalItem(AllStoreName, undefined);
     location.reload();
   };

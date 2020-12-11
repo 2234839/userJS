@@ -54,8 +54,8 @@
   },
   "scripts": {
     "网页笔记": "npx webpack-dev-server --config webpack.config.js --mode development",
-    "build": "node ./build.js",
-    "buildAll": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js",
+    "buildAll": "node ./build.js",
     "test": "npx parcel@next build ./api自动提取/api自动提取.user.ts"
   },
   "browserslist": "last 3 chrome versions",

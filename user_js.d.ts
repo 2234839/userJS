@@ -1,2 +1,2 @@
-declare const unsafeWindow: any;
-declare const GM: any;
+declare var unsafeWindow: any;
+declare var GM: any;

@@ -15,7 +15,7 @@ const project = [
 project.forEach((el) => {
   run(`npx parcel build --no-minify --no-source-maps ${el}`);
 });
-run(`npm run buildAll`);
+run(`npm run build`);
 
 console.log("--编译完成--开始生成 banner ---");
 
