@@ -154,7 +154,7 @@ export const CommandControl: CommandControl = {
       this.backOutStack.splice(0, this.backOutStack.length);
       return this.pushCommand(command.do());
     } catch (error) {
-      console.error("命令执行失败", command, error);
+      console.error("命令执行失败", command);
     }
     return -1;
   },

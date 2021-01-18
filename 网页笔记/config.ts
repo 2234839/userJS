@@ -1,9 +1,9 @@
 import { readable, writable } from "svelte/store";
 import { reactive, watchEffect } from "vue";
+import { Message } from "./ui/message";
 /** 是不是开发环境 */
 export const isDev = (window as any).__llej__userjs__dev__ === true;
-/** 是否开启编辑 */
-export const elementEdit = writable(false);
+
 export const config = reactive({
   state: 0, //是开发环境自动开启
   /** 是否开启编辑 */ elementEdit: isDev,
@@ -14,10 +14,22 @@ export const config = reactive({
   /** 存储登录凭证的 */
   loginCredentials: "loginCredentials",
 });
-watchEffect(() => {
-  /** 同步是否开启编辑的状态给 writable  */
-  elementEdit.set(config.elementEdit);
+
+export const elementEdit = writable(config.elementEdit, (set) => {
+  watchEffect(() => {
+    set(config.elementEdit);
+  });
 });
+elementEdit.subscribe((value) => {
+  config.elementEdit = value;
+  console.log('[value]',value)
+});
+
+watchEffect(() => {
+  console.log('[config.elementEdit]',config.elementEdit)
+  new Message({ msg: `${config.elementEdit ? "开启" : "关闭"}编辑模式` }).autoHide();
+});
+
 /** 存储命令栈的地方 */
 export const AllStoreName = "_storeName_llej_" + config.locationUrl;
 export default config;

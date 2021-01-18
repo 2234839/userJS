@@ -25,4 +25,3 @@ export async function main() {
   console.log(sid, getCurrentMailId());
 }
 main();
-console.log(22222222222);

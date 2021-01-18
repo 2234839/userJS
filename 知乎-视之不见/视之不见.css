@@ -1,0 +1,14 @@
+/** 完全不看 */
+.-no_see {
+  display: none;
+}
+
+/** 折叠到高度只有 5px 鼠标移上去后可以看到 */
+.-px5:not(:hover) {
+  box-sizing: border-box;
+  height: 5px;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: rgb(161, 161, 161);
+}

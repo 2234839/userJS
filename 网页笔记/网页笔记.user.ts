@@ -33,6 +33,7 @@ import { editElement } from "./state/index";
     setLocalItem(AllStoreName, undefined);
     location.reload();
   };
+  console.log("[global]", typeof unsafeWindow === "undefined", global);
 
   const app_div = document.createElement("div");
   document.body.appendChild(app_div);

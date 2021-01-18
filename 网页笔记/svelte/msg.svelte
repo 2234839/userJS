@@ -18,6 +18,7 @@
     padding: 3px 7px;
     display: flex;
     align-items: center;
+    z-index: 900;
   }
   .llej-msg_list-item-point {
     --s: 4px;

@@ -8,6 +8,7 @@ const entry = {
   "请求代理.user.js": path.resolve(__dirname, "./请求代理/请求代理.user.ts"),
   "uri_preview.user.js": path.resolve(__dirname, "./uri_preview/uri_preview.user.ts"),
   "讯飞文字转语音提取链接.user.js": path.resolve(__dirname, "./讯飞文字转语音提取链接/index.user.ts"),
+  "知乎-视之不见.user.js": path.resolve(__dirname, "./知乎-视之不见/知乎-视之不见.user.ts"),
 };
 
 function getMeta(filePath) {
@@ -18,10 +19,10 @@ function getMeta(filePath) {
 
 module.exports = {
   mode: "development",
-  mode: "production",
+  // mode: "production",
   optimization: {
     usedExports: true,
-
+    minimize: false
   },
   entry,
   output: {
@@ -70,6 +71,10 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
+      }
     ],
   },
   devtool: "source-map",

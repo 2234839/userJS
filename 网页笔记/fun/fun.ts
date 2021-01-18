@@ -91,7 +91,19 @@ export const KeyMap = {
   KeyP: [fun.downloadThe, fun.saveChanges],
   KeyK: [fun.register],
   KeyL: [fun.login],
+  F2:[] as any[],
+  KeyM:[] as any[],
 };
+/** 编辑模式下才能运行 */
+function editRun<T extends () => void>(list: T[]): (() => void)[] {
+  return list.map((f) => async () => {
+    if (config.elementEdit === false) {
+      log("没有开启编辑功能");
+    } else {
+      return await f();
+    }
+  });
+}
 
 /** 保存修改 */
 export async function saveChanges(editElement: Set<Element>) {
@@ -180,35 +192,35 @@ export function on_mouse(event: MouseEvent) {
 /** 监测按键事件 */
 export async function on_keydown(event: KeyboardEvent) {
   const code = event.code;
-  //有元素获得焦点，视为正在输入文本，不执行指令
-  if (
-    document.querySelector(":focus") ||
-    /** 如果目标元素是自定义组件的话上面这个还检测不了，需要检测 shadow 中是否存在焦点 */
-    ((event.target as any).shadowRoot && (event.target as any).shadowRoot.querySelector(":focus"))
-  ) {
-    return;
-  }
-  /** 切换编辑模式 */
-  if (code === "F2" || code === "KeyM") {
-    return switchState(event);
-  }
-
-  /** 没有开启编辑功能 */
-  if (config.elementEdit === false) {
-    return;
-  }
 
   if (code in KeyMap) {
-    /** 执行按键绑定的函数 */
-    const func_list = KeyMap[code as keyof typeof KeyMap];
-    log(
-      `[按下了] ${code},执行了:`,
-      (func_list as Function[]).map((f) => f.name),
+    if (isEditing()) {
+      return new Message({ msg: "有元素获得焦点，视为正在输入文本，不执行指令" }).autoHide();
+    } else {
+      if (code === "F2" || code === "KeyM") {
+        /** 切换编辑模式 */
+        return switchState();
+      } else if (config.elementEdit === false) {
+        log("没有开启编辑功能");
+      } else {
+        /** 执行按键绑定的函数 */
+        const func_list = KeyMap[code as keyof typeof KeyMap];
+        log(`[按下了] ${code},执行了: ${(func_list as Function[]).map((f) => f.name).join(" ")}`);
+        for await (const f of func_list) {
+          await f();
+        }
+      }
+    }
+  } else {
+    log("未注册该按键处理程序 " + code);
+  }
+  function isEditing() {
+    return (
+      document.querySelector(":focus") ||
+      /** 如果目标元素是自定义组件的话上面这个还检测不了，需要检测 shadow 中是否存在焦点 */
+      //@ts-expect-error
+      (event.target.shadowRoot && event.target.shadowRoot.querySelector(":focus"))
     );
-
-    func_list.forEach((func) => {
-      func();
-    });
   }
 }
 /** 编辑事件 */
@@ -223,9 +235,6 @@ export function on_input(event: Event) {
   }
 }
 /** 切换状态 */
-export function switchState(event: KeyboardEvent) {
-  config.elementEdit = !config.elementEdit;
-  event.preventDefault();
-  event.returnValue = false;
-  return false;
+export function switchState() {
+  return (config.elementEdit = !config.elementEdit);
 }
