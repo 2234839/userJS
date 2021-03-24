@@ -16,6 +16,7 @@ import { editElement } from "./state/index";
 // @connect      shenzilong.cn
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        GM.deleteValue
 // @grant        unsafeWindow
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
