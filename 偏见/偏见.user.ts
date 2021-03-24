@@ -2,9 +2,10 @@
 // @name         偏见
 // @namespace    https://shenzilong.cn/
 // @version      0.0.1
-// @description  偏见是常态，没有偏见是一种很难做到的事情
+// @description  偏见是常态，没有偏见是一种很难做到的事情；可用于知乎彻底拉黑
 // @author       崮生 2234839456@qq.com
 // @match        *
+// @include      *
 // @grant        unsafeWindow
 // @grant        GM.setValue
 // @grant        GM.getValue
