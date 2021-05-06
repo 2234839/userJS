@@ -29,25 +29,34 @@ function serve() {
 		}
 	};
 }
-const toRollupConfig = ({ input = "src/main.ts", destFile = 'public/build/bundle.js', format = "iife" }) => ({
+
+const toRollupConfig = ({
+	input = "src/main.ts",
+	destFile = 'public/build/bundle.js',
+	format = "iife",
+	sourcemap = !production,
+	customElement = false
+}) => ({
 	input,
 	output: {
-		sourcemap: true,
+		sourcemap,
 		format,
 		name: 'app',
 		file: destFile
 	},
 	plugins: [
 		svelte({
-			preprocess: sveltePreprocess({ sourceMap: !production }),
+			preprocess: sveltePreprocess({ sourceMap: sourcemap }),
+			emitCss: false,
 			compilerOptions: {
+				customElement,
 				// enable run-time checks when not in production
 				dev: !production
 			}
 		}),
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
-		css({ output: 'bundle.css' }),
+		css({ output: true }),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
@@ -60,7 +69,7 @@ const toRollupConfig = ({ input = "src/main.ts", destFile = 'public/build/bundle
 		}),
 		commonjs(),
 		typescript({
-			sourceMap: !production,
+			sourceMap: sourcemap,
 			inlineSources: !production
 		}),
 
@@ -83,10 +92,9 @@ const toRollupConfig = ({ input = "src/main.ts", destFile = 'public/build/bundle
 
 
 export default [
-	toRollupConfig({}),
+	toRollupConfig({ destFile: "public/build/website/bundle.js" }),
 	...(production ? [
-		// toRollupConfig({ src: "./src/components/block-ref.svelte", dest: "./public/build/block-ref.web_components.js" }),
-		// toRollupConfig({ src: "./src/components/embedded-block.svelte", dest: "./public/build/embedded-block.web_components.js" }),
-		// toRollupConfig({ src: "./src/all_components.ts", dest: "./public/build/all_components.js" }),
+		/** 通过 customElement 配置将css打包进js文件  */
+		toRollupConfig({ input: "src/App.svelte", destFile: "public/build/customElement/bundle.js" }),
 	] : [])
 ];

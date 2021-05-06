@@ -6,8 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-
-./packages/uri_preview/public/build/
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -92,3 +90,5 @@ node_modules
 .parcel-cache
 
 dist
+
+packages/**/public/build/

@@ -9,6 +9,6 @@
     "public/*"
   ],
   "compilerOptions": {
-    "strict": true
+    "strict": true,
   }
 }

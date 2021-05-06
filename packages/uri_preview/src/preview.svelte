@@ -4,7 +4,7 @@
 
   let target = null as HTMLAnchorElement | null;
   let 预览结果: Promise<uriPreview.预览返回值>[] = [];
-
+  document.body.addEventListener('mousemove',onGlobalMouseMove)
   function onGlobalMouseMove(e: MouseEvent) {
     const newTarget = findA(e.target as HTMLElement);
     if (target === newTarget) {
@@ -35,8 +35,6 @@
     }
   }
 </script>
-
-<svelte:body on:mousemove={onGlobalMouseMove} />
 {#if 预览结果.length}
   <div class="c">
     {#each 预览结果 as p}
@@ -64,9 +62,9 @@
 <style>
   .c {
     position: absolute;
-    z-index: 100;
-    left: 30vw;
-    top: 40vh;
+    z-index: 9999;
+    left: 0px;
+    top: 0px;
     background-color: antiquewhite;
     padding: 4px 8px;
     border-radius: 5px;

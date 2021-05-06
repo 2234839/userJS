@@ -5,3 +5,9 @@
 <div>
   {text}
 </div>
+
+<style>
+  div {
+    color: red;
+  }
+</style>

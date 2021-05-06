@@ -8,7 +8,7 @@ export namespace uriPreview {
     html: string;
   };
   export type 预览返回值 = [预览结果, null] | [null, 预览错误];
-  const [res,err] =0 as unknown as 预览返回值
+  const [res, err] = (0 as unknown) as 预览返回值;
 
   export type 预览者 = {
     匹配: (url: string) => boolean;
@@ -67,5 +67,18 @@ export namespace uriPreview {
       // });
     },
   };
-  预览者.push(githubIssues预览);
+  const 知乎预览: 预览者 = {
+    匹配(src: string) {
+      return src.startsWith("https://www.zhihu.com/question/");
+    },
+    async 预览(src: string) {
+      try {
+        return await (await fetch(src)).text().then((r) => [{ html: r }, null]);
+      } catch (error) {
+        return [null, { html: error }];
+      }
+    },
+  };
+  预览者.push(githubIssues预览, 知乎预览);
 }
+console.log("========= url preview =======");
