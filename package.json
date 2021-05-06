@@ -10,7 +10,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "css-loader": "^5.2.4",
-    "marked": "^1.2.9",
+    "marked": "^2.0.0",
     "parcel": "^2.0.0-nightly.651",
     "parcel-transformer-svelte": "^1.1.1",
     "rollup-plugin-postcss": "^3.1.8",
