@@ -19,8 +19,8 @@ function serve() {
 	return {
 		writeBundle() {
 			if (server) return;
-			server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
-				stdio: ['ignore', 'inherit', 'inherit'],
+			server = require('child_process').spawn('npm', [ 'run', 'start', '--', '--dev' ], {
+				stdio: [ 'ignore', 'inherit', 'inherit' ],
 				shell: true
 			});
 
@@ -29,14 +29,13 @@ function serve() {
 		}
 	};
 }
-
-export default {
-	input: 'src/main.ts',
+const toRollupConfig = ({ input = "src/main.ts", destFile = 'public/build/bundle.js', format = "iife" }) => ({
+	input,
 	output: {
 		sourcemap: true,
-		format: 'iife',
+		format,
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: destFile
 	},
 	plugins: [
 		svelte({
@@ -57,7 +56,7 @@ export default {
 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
 		resolve({
 			browser: true,
-			dedupe: ['svelte']
+			dedupe: [ 'svelte' ]
 		}),
 		commonjs(),
 		typescript({
@@ -80,4 +79,14 @@ export default {
 	watch: {
 		clearScreen: false
 	}
-};
+});
+
+
+export default [
+	toRollupConfig({}),
+	...(production ? [
+		// toRollupConfig({ src: "./src/components/block-ref.svelte", dest: "./public/build/block-ref.web_components.js" }),
+		// toRollupConfig({ src: "./src/components/embedded-block.svelte", dest: "./public/build/embedded-block.web_components.js" }),
+		// toRollupConfig({ src: "./src/all_components.ts", dest: "./public/build/all_components.js" }),
+	] : [])
+];

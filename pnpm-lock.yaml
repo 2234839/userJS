@@ -4,15 +4,15 @@ importers:
 
   .:
     specifiers:
-      '@babel/core': ^7.12.3
-      '@babel/plugin-proposal-nullish-coalescing-operator': ^7.12.1
-      '@babel/plugin-proposal-optional-chaining': ^7.12.1
-      '@babel/plugin-transform-runtime': ^7.11.5
-      '@babel/preset-env': ^7.12.1
-      '@babel/preset-typescript': ^7.10.4
+      '@babel/core': ^7.14.0
+      '@babel/plugin-proposal-nullish-coalescing-operator': ^7.13.8
+      '@babel/plugin-proposal-optional-chaining': ^7.13.12
+      '@babel/plugin-transform-runtime': ^7.13.15
+      '@babel/preset-env': ^7.14.1
+      '@babel/preset-typescript': ^7.13.0
       '@parcel/config-default': ^2.0.0-alpha.3
       '@parcel/transformer-typescript-tsc': ^2.0.0-alpha.3
-      '@reactivex/rxjs': ^6.6.3
+      '@reactivex/rxjs': ^6.6.7
       '@tsconfig/svelte': ^1.0.10
       '@types/synaptic': ^1.0.3
       ajax-hook: ^2.0.3
@@ -20,39 +20,39 @@ importers:
       ansi-html: 0.0.7
       ansi-to-html: ^0.6.14
       autoprefixer: ^9.8.6
-      babel-loader: ^8.1.0
+      babel-loader: ^8.2.2
       babel-plugin-transform-runtime: ^6.23.0
       babel-preset-env: ^1.7.0
       babel-preset-es2015: ^6.24.1
-      css-loader: ^5.0.1
-      firebase: ^7.20.0
-      glob: ^7.1.4
-      idb: ^5.0.5
-      marked: ^1.1.1
-      parcel: ^2.0.0-nightly.399
-      parcel-transformer-svelte: ^1.0.4
+      css-loader: ^5.2.4
+      firebase: ^7.24.0
+      glob: ^7.1.6
+      idb: ^5.0.8
+      marked: ^1.2.9
+      parcel: ^2.0.0-nightly.651
+      parcel-transformer-svelte: ^1.1.1
       postcss-modules: ^2.0.0
       rollup-plugin-commonjs: ^10.1.0
       rollup-plugin-node-resolve: ^5.2.0
       rollup-plugin-postcss: ^3.1.8
-      rollup-plugin-typescript2: ^0.27.2
+      rollup-plugin-typescript2: ^0.27.3
       rrweb: ^0.7.33
-      rxjs: ^6.6.3
+      rxjs: ^6.6.7
       segment: ^0.1.3
       style-loader: ^2.0.0
-      svelte: ^3.25.0
-      svelte-check: ^1.0.41
+      svelte: ^3.38.2
+      svelte-check: ^1.5.2
       svelte-loader: ^2.13.6
-      svelte-preprocess: ^4.3.0
+      svelte-preprocess: ^4.7.3
       synaptic: ^1.1.4
-      terser-webpack-plugin: ^5.0.1
-      ts-loader: ^8.0.3
-      typescript: ^3.9.7
+      terser-webpack-plugin: ^5.1.1
+      ts-loader: ^8.2.0
+      typescript: ^3.9.9
       uglifyjs-webpack-plugin: ^2.2.0
-      vue: ^3.0.0-rc.10
-      webpack: ^4.44.1
+      vue: ^3.0.11
+      webpack: ^4.46.0
       webpack-cli: ^3.3.12
-      webpack-dev-server: ^3.11.0
+      webpack-dev-server: ^3.11.2
       wired-elements: ^2.1.2
     dependencies:
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.13.8_@babel+core@7.14.0
@@ -1119,7 +1119,7 @@ packages:
       babel-plugin-polyfill-corejs2: 0.2.0_@babel+core@7.14.0
       babel-plugin-polyfill-corejs3: 0.2.0_@babel+core@7.14.0
       babel-plugin-polyfill-regenerator: 0.2.0_@babel+core@7.14.0
-      core-js-compat: 3.11.3
+      core-js-compat: 3.12.0
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -1567,7 +1567,7 @@ packages:
       nullthrows: 1.1.1
     dev: true
 
-  /@parcel/cache/2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c:
+  /@parcel/cache/2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651:
     resolution: {integrity: sha512-TF0qMOOHfRvee8czPBFAbEAg4MKHcIULjks08mSntXhspSfh2YFZDTvj/HdRWxnVxfjIkd02QcZRez7JZ3r3mg==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -1644,7 +1644,7 @@ packages:
       - supports-color
     dev: false
 
-  /@parcel/config-default/2.0.0-nightly.653_6155bda9b87e1b4f5cd544730a842ac1:
+  /@parcel/config-default/2.0.0-nightly.653_a646b70c3795ad8d7449c0fbdcaa85bb:
     resolution: {integrity: sha512-OwZ/h3rIhNPFpBfAqVEB8fFTzYJowtDDILZri4VGb83beTbXq9BBFxsF/A5uQVVBVzwmA/duphg611mLa/whUg==}
     peerDependencies:
       '@parcel/core': ^2.0.0-alpha.3.1
@@ -1687,17 +1687,17 @@ packages:
     resolution: {integrity: sha512-appt/FQPig9/1TCgN4gqqJNm7BDjP7FOLZRTcKPlEgU3+BFN8T+yTQmwOJN3SGGJsp8cA0mcXjPdCL0NN2TNig==}
     engines: {node: '>= 12.0.0'}
     dependencies:
-      '@parcel/cache': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/cache': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/diagnostic': 2.0.0-nightly.653
       '@parcel/events': 2.0.0-nightly.653
-      '@parcel/fs': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/fs': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/logger': 2.0.0-nightly.653
-      '@parcel/package-manager': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/package-manager': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/plugin': 2.0.0-nightly.653
       '@parcel/source-map': 2.0.0-alpha.4.21
       '@parcel/types': 2.0.0-nightly.653
       '@parcel/utils': 2.0.0-nightly.653
-      '@parcel/workers': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/workers': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       abortcontroller-polyfill: 1.7.1
       base-x: 3.0.8
       browserslist: 4.16.6
@@ -1767,7 +1767,7 @@ packages:
       rimraf: 2.7.1
     dev: false
 
-  /@parcel/fs/2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c:
+  /@parcel/fs/2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651:
     resolution: {integrity: sha512-GUYoCYs/jw2K4ENVAIi7gl0WvQvsMmaGtCseImiA+d+s08Puj8+JnSyje0m3U/IL1GcI2+8vYDhDk64UPwpR9A==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -1778,7 +1778,7 @@ packages:
       '@parcel/fs-write-stream-atomic': 2.0.0-nightly.2275
       '@parcel/utils': 2.0.0-nightly.653
       '@parcel/watcher': 2.0.0-alpha.10
-      '@parcel/workers': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/workers': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       graceful-fs: 4.2.6
       mkdirp: 0.5.5
       ncp: 2.0.0
@@ -1947,7 +1947,7 @@ packages:
       terser: 5.7.0
     dev: true
 
-  /@parcel/package-manager/2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c:
+  /@parcel/package-manager/2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651:
     resolution: {integrity: sha512-Bh/5xzz2B0Lz8Bp22sxJ7I+hPFHCcg5iiEneL7xsRYFzEcIqr9EaZKznOF8xVFjF28qYVHNMe0Yoa/HBToe8Tw==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -1955,10 +1955,10 @@ packages:
     dependencies:
       '@parcel/core': 2.0.0-nightly.651
       '@parcel/diagnostic': 2.0.0-nightly.653
-      '@parcel/fs': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/fs': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/logger': 2.0.0-nightly.653
       '@parcel/utils': 2.0.0-nightly.653
-      '@parcel/workers': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/workers': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       command-exists: 1.2.9
       cross-spawn: 6.0.5
       nullthrows: 1.1.1
@@ -2282,7 +2282,7 @@ packages:
       '@parcel/source-map': 2.0.0-alpha.4.22
       '@parcel/utils': 2.0.0-alpha.3
       browserslist: 4.16.6
-      core-js: 3.11.3
+      core-js: 3.12.0
       nullthrows: 1.1.1
       semver: 5.7.1
     transitivePeerDependencies:
@@ -2307,7 +2307,7 @@ packages:
       '@parcel/plugin': 2.0.0-nightly.653
       '@parcel/utils': 2.0.0-nightly.653
       browserslist: 4.16.6
-      core-js: 3.11.3
+      core-js: 3.12.0
       nullthrows: 1.1.1
       semver: 5.7.1
     transitivePeerDependencies:
@@ -2717,7 +2717,7 @@ packages:
       physical-cpu-count: 2.0.0
     dev: false
 
-  /@parcel/workers/2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c:
+  /@parcel/workers/2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651:
     resolution: {integrity: sha512-VXmLhMO+PWaf4MtUCemYhzr7t7kiZJkrq28Zk1JwiLTAjAp4r02dJ3WqhLjttFLXnpA+Uvc4WR/+fZHgBoWa3w==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -3575,7 +3575,7 @@ packages:
     dependencies:
       '@babel/core': 7.14.0
       '@babel/helper-define-polyfill-provider': 0.2.0_@babel+core@7.14.0
-      core-js-compat: 3.11.3
+      core-js-compat: 3.12.0
     transitivePeerDependencies:
       - supports-color
 
@@ -4603,8 +4603,8 @@ packages:
     resolution: {integrity: sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=}
     engines: {node: '>=0.10.0'}
 
-  /core-js-compat/3.11.3:
-    resolution: {integrity: sha512-oNjHN/qUHOA0dPv+v5prqHfeSvIEJrk3hYVoaUK4MNzL9U433uu0MN+pImcdntV8o9pDq0r1v+9lTfKPjjbX/A==}
+  /core-js-compat/3.12.0:
+    resolution: {integrity: sha512-vvaN8EOvYBEjrr+MN3vCKrMNc/xdYZI+Rt/uPMROi4T5Hj8Fz6TiPQm2mrB9aZoQVW1lCFHYmMrv99aUct9mkg==}
     dependencies:
       browserslist: 4.16.6
       semver: 7.0.0
@@ -4614,8 +4614,8 @@ packages:
     deprecated: core-js@<3.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
     requiresBuild: true
 
-  /core-js/3.11.3:
-    resolution: {integrity: sha512-DFEW9BllWw781Op5KdYGtXfj3s9Cmykzt16bY6elaVuqXHCUwF/5pv0H3IJ7/I3BGjK7OeU+GrjD1ChCkBJPuA==}
+  /core-js/3.12.0:
+    resolution: {integrity: sha512-SaMnchL//WwU2Ot1hhkPflE8gzo7uq1FGvUJ8GKmi3TOU7rGTHIU+eir1WGf6qOtTyxdfdcp10yPdGZ59sQ3hw==}
     requiresBuild: true
 
   /core-js/3.6.5:
@@ -7767,13 +7767,13 @@ packages:
     engines: {node: '>= 12.0.0'}
     hasBin: true
     dependencies:
-      '@parcel/config-default': 2.0.0-nightly.653_6155bda9b87e1b4f5cd544730a842ac1
+      '@parcel/config-default': 2.0.0-nightly.653_a646b70c3795ad8d7449c0fbdcaa85bb
       '@parcel/core': 2.0.0-nightly.651
       '@parcel/diagnostic': 2.0.0-nightly.653
       '@parcel/events': 2.0.0-nightly.653
-      '@parcel/fs': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/fs': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/logger': 2.0.0-nightly.653
-      '@parcel/package-manager': 2.0.0-nightly.653_e52ce846cca4a5260d921b104ce80e8c
+      '@parcel/package-manager': 2.0.0-nightly.653_@parcel+core@2.0.0-nightly.651
       '@parcel/reporter-cli': 2.0.0-nightly.653
       '@parcel/reporter-dev-server': 2.0.0-nightly.653
       '@parcel/utils': 2.0.0-nightly.653
