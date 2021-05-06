@@ -37,7 +37,6 @@
     "firebase": "^7.20.0",
     "glob": "^7.1.4",
     "idb": "^5.0.5",
-    "parcel-bundler": "^1.12.4",
     "postcss-modules": "^2.0.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",

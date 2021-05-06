@@ -10,7 +10,7 @@
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
 //@ts-ignore
-import App from "./main.svelte";
+import App from "./preview.svelte";
 async function main() {
   const app_div = document.createElement("div");
   document.body.appendChild(app_div);
