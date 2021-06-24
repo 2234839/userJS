@@ -22,9 +22,10 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
-    - name: npm install -d pnpm
-      run: npm install -d pnpm
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.8.0
+        run_install: true
     - name: npx pnpm install
       run: npx pnpm install
     - name: buildAll
