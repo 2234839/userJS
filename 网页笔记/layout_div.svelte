@@ -14,9 +14,7 @@
     note_list = list;
   });
   $: console.log($elementEdit);
-  setTimeout(() => {
-    elementEdit.set(false);
-  }, 5000);
+
   const { isRange, anchorRect } = SelectionEvent;
 </script>
 

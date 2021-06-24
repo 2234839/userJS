@@ -2,6 +2,7 @@ import { reactive } from "vue";
 import { loadChanges } from "../fun/fun";
 import { AllStoreName } from "../config";
 import type { commandJSON } from "../fun/command";
+import { log } from "../util";
 
 /** 设置一条本地存储 */
 export async function setLocalItem(name: string, value: string) {
@@ -45,7 +46,12 @@ export const curStore = reactive({
 });
 
 getLocalItem(AllStoreName, "{}").then((s) => {
-  Object.assign(curStore, JSON.parse(s));
+  try {
+    Object.assign(curStore, JSON.parse(s));
+  } catch (error) {
+    log("本地存储序列化失败",s)
+  }
+
   /** 自动加载本地暂存更改 */
   (async () => {
     console.log(curStore);

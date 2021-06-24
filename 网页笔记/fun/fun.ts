@@ -132,7 +132,7 @@ export async function loadChanges(allStore: AllStore) {
     } else {
       editElement.add(<HTMLElement>el);
       el.innerHTML = html;
-      log("-重写-", el);
+      log("-重写-", selectors,el);
     }
   }
   /** 重新执行命令栈 */
@@ -195,7 +195,8 @@ export async function on_keydown(event: KeyboardEvent) {
 
   if (code in KeyMap) {
     if (isEditing()) {
-      return new Message({ msg: "有元素获得焦点，视为正在输入文本，不执行指令" }).autoHide();
+      // return new Message({ msg: "有元素获得焦点，视为正在输入文本，不执行指令" }).autoHide();
+      return
     } else {
       if (code === "F2" || code === "KeyM") {
         /** 切换编辑模式 */

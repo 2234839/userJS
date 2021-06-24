@@ -22,7 +22,6 @@ export const elementEdit = writable(config.elementEdit, (set) => {
 });
 elementEdit.subscribe((value) => {
   config.elementEdit = value;
-  console.log('[value]',value)
 });
 
 watchEffect(() => {

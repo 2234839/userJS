@@ -2,6 +2,7 @@ import { derived, get, writable } from "svelte/store";
 import { isDev } from "./config";
 import { CommandControl, Highlighted } from "./fun/command";
 import { editElement } from "./state";
+import { cssPath } from "./dom_path";
 /** 用于复制文本的input   */
 const input_copy = document.createElement("textarea");
 input_copy.id = "__";
@@ -34,6 +35,7 @@ export default {
 
 /** 获取一个元素的选择器 */
 export function getSelectors(el: Element) {
+  return cssPath(el,true)
   /** 通过path路径来确定元素 */
   let pathSelectors = nodePath(el)
     .reverse()
@@ -72,7 +74,7 @@ export function getIndex(el: Element) {
 
 /** 获取一个元素的所有父节点到html为止  */
 export function nodePath(...path: Element[]): HTMLElement[] {
-  while (path[path.length - 1].parentElement != null) {
+  while (path[path.length - 1].parentElement != null || path[path.length - 1].tagName!=="HTML") {
     path.push(path[path.length - 1].parentElement);
   }
   /** 只需要是HTMLElement的 */
@@ -319,3 +321,39 @@ namespace getIntermediateNodes {
 export function getWindow() {
   return typeof unsafeWindow === "undefined" ? window : unsafeWindow;
 }
+function getPath(element:Element)
+{
+  const path = []
+  while(element !== null && element.nodeType === Node.ELEMENT_NODE) // If element is null it's the end of partial. It's a loose element which has, sofar, not been attached to a parent in the node tree.
+  {
+    let selector = element.nodeName
+
+    if(element.id)
+    {
+      selector += `#${element.id}`
+    }
+    else
+    {
+      let
+      sibling           = element, // Walk backwards until there is no previous sibling
+      siblingSelectors  = [] // Will hold nodeName to join for adjacent selection
+
+      while(sibling !== null && sibling.nodeType === Node.ELEMENT_NODE)
+      {
+        siblingSelectors.unshift(sibling.nodeName)
+        sibling = sibling.previousElementSibling
+      }
+
+      // :first-child does not apply to HTML
+      if(siblingSelectors[0] !== 'HTML')
+        siblingSelectors[0] = siblingSelectors[0] + ':first-child'
+
+      selector = siblingSelectors.join(' + ')
+    }
+    path.unshift(selector)
+    element = element.parentElement
+  }
+
+  return path.join(' > ')
+}
+
