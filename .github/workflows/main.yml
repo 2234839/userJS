@@ -23,12 +23,12 @@ jobs:
     - uses: actions/checkout@v2
 
     # Runs a single command using the runners shell
-    - name: npm install -g pnpm
-      run: npm install -g pnpm
-    - name: pnpm install
-      run: pnpm install
+    - name: npm install -d pnpm
+      run: npm install -d pnpm
+    - name: npx pnpm install
+      run: npx pnpm install
     - name: buildAll
-      run: pnpm run build --filter web_notes
+      run: npx pnpm run build --filter web_notes
     - name: move file
       run: mkdir scripts && mv ./packages/web_notes/public/build/web_notes.user.js ./scripts/web_notes.user.js
     -
