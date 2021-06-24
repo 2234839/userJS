@@ -33,7 +33,7 @@
     // "inlineSourceMap": true, // 生成单个 soucemaps 文件，而不是将 sourcemaps 生成不同的文件
   },
   "include": [
-    "./网页笔记/网页笔记.user.ts",
+    "packages/web_notes/网页笔记.user.ts.ts",
     "./user_js.d.ts"
   ],
   "exclude": [
