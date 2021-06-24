@@ -28,13 +28,15 @@ jobs:
     - name: pnpm install
       run: pnpm install
     - name: buildAll
-      run: pnpm run buildAll
+      run: pnpm run build --filter web_notes
+    - name: move file
+      run: mkdir scripts && mv ./packages/web_notes/public/build/web_notes.user.js ./scripts/web_notes.user.js
     -
       name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: dist
+        build_dir: scripts
       env:
         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
