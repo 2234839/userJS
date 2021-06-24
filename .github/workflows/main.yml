@@ -26,10 +26,9 @@ jobs:
       with:
         version: 6.8.0
         run_install: true
-    - name: npx pnpm install
-      run: npx pnpm install
+
     - name: buildAll
-      run: npx pnpm run build --filter web_notes
+      run: pnpm run build --filter web_notes
     - name: move file
       run: mkdir scripts && mv ./packages/web_notes/public/build/web_notes.user.js ./scripts/web_notes.user.js
     -
